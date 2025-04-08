@@ -5,7 +5,7 @@
 @use "vendors/simplebar";
 
 body {
-  background-color: var(--cui-tertiary-bg);
+  background-color: white;
 }
 
 .wrapper {
@@ -13,11 +13,22 @@ body {
   padding-inline: var(--cui-sidebar-occupy-start, 0) var(--cui-sidebar-occupy-end, 0);
   will-change: auto;
   @include transition(padding .15s);
+  background-color: burlywood;
+}
+.sidebar{
+  background-color: lightseagreen;
 }
 
 .header > .container-fluid,
 .sidebar-header {
   min-height: calc(4rem + 1px); // stylelint-disable-line function-disallowed-list
+  
+}
+.sidebar-header{
+  background-color: lightseagreen
+}
+.header{
+  background-color: beige;
 }
 
 .sidebar-brand-full {
@@ -28,37 +39,50 @@ body {
   .nav-underline-border {
     --cui-nav-underline-border-link-padding-x: 1rem;
     --cui-nav-underline-border-gap: 0;
+    
+    
   }
 
   .nav-link {
     display: flex;
     align-items: center;
     min-height: calc(4rem + 1px); // stylelint-disable-line function-disallowed-list
+    
+    
   }
 }
 
 .sidebar-toggler {
   margin-inline-start: auto;
+  
 }
 
 .sidebar-narrow,
 .sidebar-narrow-unfoldable:not(:hover) {
   .sidebar-toggler {
     margin-inline-end: auto;
+    
   }
 }
 
 .header > .container-fluid + .container-fluid {
   min-height: 3rem;
+  background-color: burlywood;
 }
+.p{
+  color :black
+}
+
 
 .footer {
   min-height: calc(3rem + 1px); // stylelint-disable-line function-disallowed-list
+  background-color: beige
+  
 }
 
 @include color-mode(dark) {
   body {
-    background-color: var(--cui-dark-bg-subtle);
+    background-color:white;
   }
 
   .footer {

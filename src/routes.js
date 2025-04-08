@@ -36,6 +36,9 @@ const Range = React.lazy(() => import('./views/forms/range/Range'))
 const Select = React.lazy(() => import('./views/forms/select/Select'))
 const Validation = React.lazy(() => import('./views/forms/validation/Validation'))
 
+const donations = React.lazy(() => import('./views/pages/donation/donation.js')) 
+
+
 const Charts = React.lazy(() => import('./views/charts/Charts'))
 
 // Icons
@@ -97,6 +100,8 @@ const routes = [
   { path: '/notifications/modals', name: 'Modals', element: Modals },
   { path: '/notifications/toasts', name: 'Toasts', element: Toasts },
   { path: '/widgets', name: 'Widgets', element: Widgets },
+  {path: '/donations', name: 'Donations', element: donations},
+
 ]
 
 export default routes
