@@ -4,32 +4,15 @@
 @use "@coreui/chartjs/scss/coreui-chartjs";
 @use "vendors/simplebar";
 
-body {
-  background-color: white;
-}
 
 .wrapper {
   width: 100%;
   padding-inline: var(--cui-sidebar-occupy-start, 0) var(--cui-sidebar-occupy-end, 0);
   will-change: auto;
   @include transition(padding .15s);
-  background-color: burlywood;
-}
-.sidebar{
-  background-color: lightseagreen;
+
 }
 
-.header > .container-fluid,
-.sidebar-header {
-  min-height: calc(4rem + 1px); // stylelint-disable-line function-disallowed-list
-  
-}
-.sidebar-header{
-  background-color: lightseagreen
-}
-.header{
-  background-color: beige;
-}
 
 .sidebar-brand-full {
   margin-left: 3px;
@@ -65,10 +48,7 @@ body {
   }
 }
 
-.header > .container-fluid + .container-fluid {
-  min-height: 3rem;
-  background-color: burlywood;
-}
+
 .p{
   color :black
 }
@@ -76,14 +56,11 @@ body {
 
 .footer {
   min-height: calc(3rem + 1px); // stylelint-disable-line function-disallowed-list
-  background-color: beige
+
   
 }
 
 @include color-mode(dark) {
-  body {
-    background-color:white;
-  }
 
   .footer {
     --cui-footer-bg: var(--cui-body-bg);

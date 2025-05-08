@@ -1,0 +1,186 @@
+{
+  "estudiantes": [
+    {
+      "cedula": "87654321",
+      "primer_nombre": "María",
+      "segundo_nombre": "Isabel",
+      "primer_apellido": "Rodríguez",
+      "segundo_apellido": "Fernández",
+      "fecha_nac": "2009-08-23",
+      "celular": "04261234567",
+      "tarjeta_de_ident": "123456789",
+      "lugar_de_nac": "Maracaibo",
+      "estado_nac": "Z",
+      "edo_civil": "Soltera",
+      "correo": "maria.rodriguez@example.com",
+      "rol_id": 3,
+      "id": "f4f2"
+    },
+    {
+      "cedula": "11223344",
+      "primer_nombre": "Pedro",
+      "segundo_nombre": "Luis",
+      "primer_apellido": "Martínez",
+      "segundo_apellido": "García",
+      "fecha_nac": "2011-02-10",
+      "celular": "04141231234",
+      "tarjeta_de_ident": "567891234",
+      "lugar_de_nac": "Valencia",
+      "estado_nac": "C",
+      "edo_civil": "Soltero",
+      "correo": "pedro.martinez@example.com",
+      "rol_id": 3,
+      "id": "e86b"
+    },
+    {
+      "id": "2159",
+      "cedula": "30134422",
+      "primer_nombre": "xavier",
+      "segundo_nombre": "david",
+      "primer_apellido": "castellanos",
+      "segundo_apellido": "garcia",
+      "fecha_nac": "2003-05-27",
+      "celular": "04161740574",
+      "tarjeta_de_ident": "no",
+      "lugar_de_nac": "san cristobal",
+      "estado_nac": "tachira",
+      "edo_civil": "solteroski",
+      "correo": "xavier@gmail.com"
+    },
+    {
+      "id": "9124",
+      "cedula": "31800900",
+      "primer_nombre": "moises",
+      "segundo_nombre": "de jesus",
+      "primer_apellido": "becerra",
+      "segundo_apellido": "rangel",
+      "fecha_nac": "2004-06-11",
+      "celular": "04147146602",
+      "tarjeta_de_ident": "",
+      "lugar_de_nac": "san cristobal",
+      "estado_nac": "tachira",
+      "edo_civil": "soltero",
+      "correo": "moises.becerra07@gmail.com"
+    },
+    {
+      "id": "7e18",
+      "cedula": "30397984",
+      "primer_nombre": "geremi",
+      "segundo_nombre": "alsand",
+      "primer_apellido": "sala",
+      "segundo_apellido": "smdkic",
+      "fecha_nac": "2025-05-13",
+      "celular": "041474145856",
+      "tarjeta_de_ident": "6659",
+      "lugar_de_nac": "dlsks",
+      "estado_nac": "lslsls",
+      "edo_civil": "slslsls",
+      "correo": "moises@gmail.com"
+    },
+    {
+      "id": "b512",
+      "cedula": "j",
+      "primer_nombre": "j",
+      "segundo_nombre": "j",
+      "primer_apellido": "j",
+      "segundo_apellido": "j",
+      "fecha_nac": "0007-07-07",
+      "celular": "77",
+      "tarjeta_de_ident": "7",
+      "lugar_de_nac": "7",
+      "estado_nac": "7",
+      "edo_civil": "7",
+      "correo": "uuaua@gmail.com"
+    },
+    {
+      "id": "8e1a",
+      "cedula": "jj",
+      "primer_nombre": "j",
+      "segundo_nombre": "j",
+      "primer_apellido": "j",
+      "segundo_apellido": "j",
+      "fecha_nac": "0002-07-02",
+      "celular": "u",
+      "tarjeta_de_ident": "u",
+      "lugar_de_nac": "u",
+      "estado_nac": "uu",
+      "edo_civil": "u",
+      "correo": "u@gmi.com"
+    },
+    {
+      "id": "8d70",
+      "cedula": "31800900",
+      "primer_nombre": "kkk",
+      "segundo_nombre": "j",
+      "primer_apellido": "jj",
+      "segundo_apellido": "jj",
+      "fecha_nac": "52020-02-20",
+      "celular": "25125",
+      "tarjeta_de_ident": "2151",
+      "lugar_de_nac": "1512",
+      "estado_nac": "51512",
+      "edo_civil": "1512",
+      "correo": "moises@gmail.com"
+    }
+  ],
+  "roles": [
+    {
+      "id": "1",
+      "nombre": "Director"
+    },
+    {
+      "id": "2",
+      "nombre": "Profesor"
+    },
+    {
+      "id": "3",
+      "nombre": "Estudiante"
+    },
+    {
+      "id": "4",
+      "nombre": "Administrativo"
+    }
+  ],
+  "docentes": [
+    {
+      "cedula_doc": "12345678",
+      "Nombre": "Juan",
+      "Apellido": "González",
+      "Correo": "juan.gonzalez@example.com",
+      "rol_id": 2,
+      "id": "621f"
+    },
+    {
+      "cedula_doc": "87654321",
+      "Nombre": "Laura",
+      "Apellido": "Martínez",
+      "Correo": "laura.martinez@example.com",
+      "rol_id": 2,
+      "id": "20dc"
+    },
+    {
+      "cedula_doc": "11223344",
+      "Nombre": "Ricardo",
+      "Apellido": "Fernández",
+      "Correo": "ricardo.fernandez@example.com",
+      "rol_id": 2,
+      "id": "1355"
+    },
+    {
+      "cedula_doc": "44556677",
+      "Nombre": "Andrea",
+      "Apellido": "Ramírez",
+      "Correo": "andrea.ramirez@example.com",
+      "rol_id": 2,
+      "id": "5146"
+    },
+    {
+      "cedula_doc": "99887766",
+      "Nombre": "José",
+      "Apellido": "Pérez",
+      "Correo": "jose.perez@example.com",
+      "rol_id": 2,
+      "id": "47a0"
+    }
+  ]
+}
