@@ -9,7 +9,7 @@ const comunidades = [
   "Comunidad A",
   "Comunidad B",
   "Comunidad C",
-  "Comunidad D"
+  "Comunidad Z"
 ];
 
 const Damnificados = () => {
