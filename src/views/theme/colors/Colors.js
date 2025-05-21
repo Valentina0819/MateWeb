@@ -81,6 +81,18 @@ const Colors = () => {
             <ThemeColor className="bg-dark">
               <h6>Brand Dark Color</h6>
             </ThemeColor>
+            <ThemeColor className="naranja1" >
+              <h6 style={{color:'#fff'}}>Orange 1</h6>
+              <div style={{background:'#FFA726', width:'100%', height:'30px', borderRadius:'8px'}}></div>
+            </ThemeColor>
+            <ThemeColor className="bg-naranja" >
+              <h6 style={{color:'#fff'}}>Orange 2</h6>
+              <div style={{background:'#FB8C00', width:'100%', height:'30px', borderRadius:'8px'}}></div>
+            </ThemeColor>
+            <ThemeColor className="naranja3" >
+              <h6 style={{color:'#fff'}}>Orange 3</h6>
+              <div style={{background:'#FF7043', width:'100%', height:'30px', borderRadius:'8px'}}></div>
+            </ThemeColor>
           </CRow>
         </CCardBody>
       </CCard>

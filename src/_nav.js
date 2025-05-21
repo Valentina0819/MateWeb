@@ -1,12 +1,22 @@
 import React from 'react'
 import CIcon from '@coreui/icons-react'
 import {
-  cilDoor,
   cilSpeedometer,
-  cilPeople,
-  cilDevices,
+  cilBullhorn,
+  cilHome,
+  cilBuilding,
+  cilRain,
+  cilList,
+  cilGift,
+  cilInstitution,
+  cilWarning,
+  cilUserPlus,
+  cilLockLocked,
+  cilHeart,
+  cilUserX,
 } from '@coreui/icons'
-import { CNavGroup, CNavItem, CNavTitle } from '@coreui/react'
+import { CNavItem, CNavTitle } from '@coreui/react'
+
 
 const _nav = [
   {
@@ -21,29 +31,81 @@ const _nav = [
   },
   {
     component: CNavTitle,
-    name: 'PROFILES',
+    name: 'GESTIÓN',
   },
   {
     component: CNavItem,
-    name: 'Estudiantes',
-    to: '/students',
-    icon: <CIcon icon={cilPeople} customClassName="nav-icon" />,
-  },
-
-  {
-    component: CNavItem,
-    name: 'Docentes',
+    name: 'Inicio',
     to: '/docents',
-    icon: <CIcon icon={cilDevices} customClassName="nav-icon" />,
+    icon: <CIcon icon={cilHome} customClassName="nav-icon" />,
+  },
+  {
+    component: CNavItem,
+    name: 'Noticias',
+    to: '/noticias',
+    icon: <CIcon icon={cilBullhorn} customClassName="nav-icon" />,
+  },
+    {
+    component: CNavItem,
+    name: 'Movimientos de tierra',
+    to: '/prueba',
+    icon: <CIcon icon={cilBuilding} customClassName="nav-icon" />,
+  },
+  {
+    component: CNavItem,
+    name: 'Desbordamientos de Rios',
+    to: '/desbordes',
+    icon: <CIcon icon={cilRain} customClassName="nav-icon" />,
+  },
+  {
+    component: CNavItem,
+    name: 'Damnificados',
+    to: '/damnificados',
+    icon: <CIcon icon={cilUserPlus} customClassName="nav-icon" />,
+  },
+  {
+    component: CNavItem,
+    name: 'Victimas Fatales',
+    to: '/victimas',
+    icon: <CIcon icon={cilUserX} customClassName="nav-icon" />,
+  },
+  {
+    component: CNavItem,
+    name: 'Donaciones',
+    to: '/donaciones',
+    icon: <CIcon icon={cilGift} customClassName="nav-icon" />,
+  },
+  {
+    component: CNavItem,
+    name: 'Donantes',
+    to: '/donantes',
+    icon: <CIcon icon={cilHeart} customClassName="nav-icon" />,
+  },
+  {
+    component: CNavItem,
+    name: 'Registrar Comunidad',
+    to: '/comunidad',
+    icon: <CIcon icon={cilInstitution} customClassName="nav-icon" />,
+  },
+  {
+    component: CNavItem,
+    name: 'Listado de Comunidades',
+    to: '/ComunidadCrud',
+    icon: <CIcon icon={cilList} customClassName="nav-icon" />,
+  },
+  {
+    component: CNavItem,
+    name: 'Zonas De Riesgo',
+    to: '/zonas',
+    icon: <CIcon icon={cilWarning} customClassName="nav-icon" />,
   },
 
   {
     component: CNavItem,
-    name: 'Aulas',
-    to: '/classrooms',
-    icon: <CIcon icon={cilDoor} customClassName="nav-icon" />,
+    name: 'Login',
+    to: '/login',
+    icon: <CIcon icon={cilLockLocked} customClassName="nav-icon" />,
   },
-
 ]
 
 export default _nav

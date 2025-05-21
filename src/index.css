@@ -32,3 +32,26 @@
 .tabla-container{
     background-color: aliceblue;
 }
+/* Puedes poner esto en src/App.css */
+.sidebar-nav .nav-link,
+.c-sidebar-nav .nav-link {
+  color: #fff !important;
+  transition: background 0.2s, color 0.2s;
+}
+
+.sidebar-nav .nav-link:hover,
+.c-sidebar-nav .nav-link:hover,
+.sidebar-nav .nav-link.active,
+.c-sidebar-nav .nav-link.active {
+  background: #ffffff !important; /* Azul que combina con naranja */
+  color: #000000 !important;
+  .nav-icon{
+    color: #1d1d1d !important;
+    
+}
+}
+.nav-icon{
+    color: #414141 !important;
+    
+}
+

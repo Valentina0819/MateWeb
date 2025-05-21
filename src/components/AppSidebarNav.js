@@ -61,7 +61,7 @@ export const AppSidebarNav = ({ items }) => {
   }
 
   return (
-    <CSidebarNav as={SimpleBar}>
+    <CSidebarNav className="bg-orange-3" as={SimpleBar} style={{ background: '#FF7043' }}>
       {items &&
         items.map((item, index) => (item.items ? navGroup(item, index) : navItem(item, index)))}
     </CSidebarNav>

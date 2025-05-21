@@ -7,9 +7,9 @@ const AppFooter = () => {
       <div>
         <span className="ms-1">&copy; 2025 UNEFA.</span>
       </div>
-      <div className="ms-auto">
+      <div className="text-secondary " style={{ fontStyle: 'italic', fontSize: 15 }}>
         
-      <span>Liceo Libertador - Panel de administrativo</span>
+      <span>"Preparados para ayudar, unidos para salvar"</span>
       </div>
     </CFooter>
   )
