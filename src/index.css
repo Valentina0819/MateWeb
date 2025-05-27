@@ -35,7 +35,7 @@
 /* Puedes poner esto en src/App.css */
 .sidebar-nav .nav-link,
 .c-sidebar-nav .nav-link {
-  color: #fff !important;
+  color: #ffffff !important;
   transition: background 0.2s, color 0.2s;
 }
 
@@ -43,15 +43,15 @@
 .c-sidebar-nav .nav-link:hover,
 .sidebar-nav .nav-link.active,
 .c-sidebar-nav .nav-link.active {
-  background: #ffffff !important; /* Azul que combina con naranja */
+  background: #f2e6cf !important; /* Azul que combina con naranja */
   color: #000000 !important;
   .nav-icon{
-    color: #1d1d1d !important;
+    color: #000000 !important;
     
 }
 }
 .nav-icon{
-    color: #414141 !important;
+    color: #ffffff !important;
     
 }
 

@@ -21,15 +21,48 @@ const Donantes = () => {
     ) {
       newErrors.identificador = "Ingrese una cédula (solo números) o RIF válido (Ej: J-12345678-9)";
     }
-    if (!form.nombre.trim()) newErrors.nombre = "Nombre requerido";
+    // Solo letras y espacios para nombre
+    if (!form.nombre.trim()) {
+      newErrors.nombre = "Nombre requerido";
+    } else if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(form.nombre)) {
+      newErrors.nombre = "Solo letras y espacios";
+    }
     if (!form.tipo) newErrors.tipo = "Seleccione el tipo";
-    if (!/^\d{11}$/.test(form.telefono)) newErrors.telefono = "Teléfono debe tener 11 números";
+    // Solo números para teléfono
+    if (!/^\d{11}$/.test(form.telefono)) {
+      newErrors.telefono = "Teléfono debe tener 11 números";
+    }
     return newErrors;
   };
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-    setErrors({ ...errors, [e.target.name]: undefined });
+    const { name, value } = e.target;
+    // Solo permitir letras en nombre
+    if (name === "nombre") {
+      if (/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*$/.test(value)) {
+        setForm({ ...form, [name]: value });
+        setErrors({ ...errors, [name]: undefined });
+      }
+    }
+    // Solo permitir números y guiones en identificador
+    else if (name === "identificador") {
+      if (/^[VEJPG\-0-9]*$/.test(value)) {
+        setForm({ ...form, [name]: value });
+        setErrors({ ...errors, [name]: undefined });
+      }
+    }
+    // Solo permitir números en teléfono
+    else if (name === "telefono") {
+      if (/^\d*$/.test(value) && value.length <= 11) {
+        setForm({ ...form, [name]: value });
+        setErrors({ ...errors, [name]: undefined });
+      }
+    }
+    // Otros campos
+    else {
+      setForm({ ...form, [name]: value });
+      setErrors({ ...errors, [name]: undefined });
+    }
   };
 
   const handleSubmit = (e) => {
@@ -53,7 +86,7 @@ const Donantes = () => {
     <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "90vh" }}>
       <CCard className="shadow-lg w-100 " style={{ maxWidth: 500 }}>
         <CCardBody>
-          <h3 className="mb-4 text-center text-black">Registro de Donante</h3>
+          <h3 className="" style={{ backgroundColor: "#0059b3", color: "white" }}>Registro de Donante</h3>
           <CForm onSubmit={handleSubmit} autoComplete="off">
             <CCol className="mb-3">
               <CFormLabel>Cédula o RIF</CFormLabel>
@@ -64,6 +97,7 @@ const Donantes = () => {
                 maxLength={12}
                 placeholder="Ej: 12345678 o J-12345678-9"
                 invalid={!!errors.identificador}
+                required
               />
               {errors.identificador && <CAlert color="danger" className="py-1 my-1">{errors.identificador}</CAlert>}
             </CCol>
@@ -76,6 +110,7 @@ const Donantes = () => {
                 maxLength={50}
                 placeholder="Ingrese el nombre"
                 invalid={!!errors.nombre}
+                required
               />
               {errors.nombre && <CAlert color="danger" className="py-1 my-1">{errors.nombre}</CAlert>}
             </CCol>
@@ -86,6 +121,7 @@ const Donantes = () => {
                 value={form.tipo}
                 onChange={handleChange}
                 invalid={!!errors.tipo}
+                required
               >
                 <option value="">Seleccione...</option>
                 <option value="Persona">Persona</option>
@@ -98,14 +134,11 @@ const Donantes = () => {
               <CFormInput
                 name="telefono"
                 value={form.telefono}
-                onChange={e => {
-                  if (e.target.value.length <= 11 && /^\d*$/.test(e.target.value)) {
-                    handleChange(e);
-                  }
-                }}
+                onChange={handleChange}
                 maxLength={11}
                 placeholder="Ej: 04141234567"
                 invalid={!!errors.telefono}
+                required
               />
               {errors.telefono && <CAlert color="danger" className="py-1 my-1">{errors.telefono}</CAlert>}
             </CCol>

@@ -8,6 +8,8 @@ import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip } from 'chart.js';
 import 'leaflet/dist/leaflet.css';
 import '@coreui/coreui/dist/css/coreui.min.css';
+import L from 'leaflet';
+import miIcono from '../../../assets/images/ubi.png'; // Ajusta la ruta si es necesario
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip);
 
@@ -34,6 +36,13 @@ const initialZones = [
 const riskToValue = { "Bajo": 1, "Moderado": 2, "Alto": 3 };
 const riskToColor = { "Bajo": "green", "Moderado": "orange", "Alto": "red" };
 
+const customIcon = new L.Icon({
+  iconUrl: miIcono,
+  iconSize: [32, 32],      // Tamaño del icono
+  iconAnchor: [16, 32],    // Punto del icono que corresponde a la posición del marcador
+  popupAnchor: [0, -32],   // Punto desde el cual se abrirá el popup respecto al icono
+});
+
 const RiskManagementModule = () => {
   const [riskZones, setRiskZones] = useState(initialZones);
   const [showModal, setShowModal] = useState(false);
@@ -45,20 +54,54 @@ const RiskManagementModule = () => {
   });
   const [errors, setErrors] = useState({});
 
-  // Validaciones simples
+  // Validaciones mejoradas: letras solo letras, números solo números, todos obligatorios
   const validate = () => {
     const newErrors = {};
-    if (!form.name.trim()) newErrors.name = "Nombre requerido";
-    if (!form.lat || isNaN(form.lat) || form.lat < -90 || form.lat > 90) newErrors.lat = "Latitud inválida";
-    if (!form.lng || isNaN(form.lng) || form.lng < -180 || form.lng > 180) newErrors.lng = "Longitud inválida";
+    // Solo letras y espacios para el nombre
+    if (!form.name.trim()) {
+      newErrors.name = "Nombre requerido";
+    } else if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(form.name)) {
+      newErrors.name = "Solo letras y espacios";
+    }
+    // Solo números (decimales permitidos) para latitud
+    if (!form.lat.trim()) {
+      newErrors.lat = "Latitud requerida";
+    } else if (!/^[-+]?\d{1,2}(\.\d+)?$/.test(form.lat) || isNaN(form.lat) || form.lat < -90 || form.lat > 90) {
+      newErrors.lat = "Latitud inválida (solo números entre -90 y 90)";
+    }
+    // Solo números (decimales permitidos) para longitud
+    if (!form.lng.trim()) {
+      newErrors.lng = "Longitud requerida";
+    } else if (!/^[-+]?\d{1,3}(\.\d+)?$/.test(form.lng) || isNaN(form.lng) || form.lng < -180 || form.lng > 180) {
+      newErrors.lng = "Longitud inválida (solo números entre -180 y 180)";
+    }
+    // Nivel de riesgo obligatorio
     if (!form.risk) newErrors.risk = "Seleccione un nivel de riesgo";
     return newErrors;
   };
 
   // Manejo de cambios en el formulario
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-    setErrors({ ...errors, [e.target.name]: undefined });
+    const { name, value } = e.target;
+    // Solo permitir letras y espacios en el nombre
+    if (name === "name") {
+      if (/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*$/.test(value)) {
+        setForm({ ...form, [name]: value });
+        setErrors({ ...errors, [name]: undefined });
+      }
+    }
+    // Solo permitir números, punto y signo en lat/lng
+    else if (name === "lat" || name === "lng") {
+      if (/^[-+]?\d*\.?\d*$/.test(value)) {
+        setForm({ ...form, [name]: value });
+        setErrors({ ...errors, [name]: undefined });
+      }
+    }
+    // Otros campos
+    else {
+      setForm({ ...form, [name]: value });
+      setErrors({ ...errors, [name]: undefined });
+    }
   };
 
   // Guardar nueva zona
@@ -234,7 +277,7 @@ const RiskManagementModule = () => {
           <MapContainer center={[7.766, -72.225]} zoom={13} style={{ height: "400px", width: "100%" }}>
             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
             {riskZones.map((zone, index) => (
-              <Marker key={index} position={[zone.lat, zone.lng]}>
+              <Marker key={index} position={[zone.lat, zone.lng]} icon={customIcon}>
                 <Popup>
                   <strong>{zone.name}</strong><br />
                   Nivel de riesgo: <span style={{ color: zone.risk === "Alto" ? "red" : zone.risk === "Moderado" ? "orange" : "green" }}>{zone.risk}</span>

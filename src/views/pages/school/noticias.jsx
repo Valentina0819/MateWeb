@@ -1,47 +1,236 @@
-import React from "react";
+import { useState, useEffect } from "react";
 import {
-  CContainer, CRow, CCol, CCard, CCardBody, CCardTitle, CCardText, CImage
+  CCard,
+  CCardBody,
+  CCardHeader,
+  CCardTitle,
+  CForm,
+  CFormLabel,
+  CFormInput,
+  CFormSelect,
+  CButton,
+  CAlert,
+  CRow,
+  CCol,
+  CContainer,
 } from "@coreui/react";
-import "@coreui/coreui/dist/css/coreui.min.css";
 
-// Importar imágenes correctamente
-import rio from "../../../assets/images/rio.jpg";
-import rio2 from "../../../assets/images/rio2.png";
-import torbes from "../../../assets/images/torbes.jpg";
-import rio3 from "../../../assets/images/rio3.png";
+const RegistroDocente = () => {
+  const [cedulas, setCedulas] = useState([]);
+  const [formulario, setFormulario] = useState({
+    fk_cedula: "",
+    titulo_academico: "",
+    especialidad: "",
+    tipo_contrato: "",
+    fecha_contratacion: "",
+    estado_laboral: "",
+    telefono: "",
+    correo_institucional: "",
+    horas_semanales: "",
+  });
+  const [mensaje, setMensaje] = useState({ tipo: "", texto: "" });
+  const [loading, setLoading] = useState(false);
 
-const newsPosts = [
-  { id: 1, title: "🌊 Desbordamiento del río Torbes", description: "Lluvias En el sector Andrés Eloy Blanco municipio san cristóbal, el río Torbes se llevó la carretera principal de la comunidad, que arrasó con tuberías de agua potable, las cloacas y postes tras el aumento del caudal en medio del aguacero.  causado el desbordamiento.", image: rio },
-  { id: 2, title: "🏠 Deslizamiento de tierra", description: "Un Al menos siete viviendas de la citada comunidad están a punto de caer al río, motivo por el cual, los residentes  ejercieron acciones de protesta y trancaron la Troncal 5 que comunica al Táchira con el estado Barinas, por varias horas, hecho que generó fuertes discusiones. (Jueves 10 de agosto del 2023)", image: rio2 },
-  { id: 3, title: "🚨 Alerta por Derrumbes", description: "Expertos evaluarán Según los vecinos, en el sector La Playa, el río Torbes se salió de su cauce, mientras que en el barrio El Río se presentó una situación similar, pero por un caño y una laguna, hecho que hizo colapsar algunas alcantarillas. Bomberos de San Cristóbal y cuadrillas de la Alcaldía atendieron la emergencia. (10 de junio del 2024)", image: torbes },
-  { id: 4, title: "🚨 Alerta en Barrio La Playa", description: "El sector la playa es una de las zonas de alto riesgo que han sido georeferenciadas por la dirección regional de protección civil pese a esto sus habitantes renuncian que con la llegada de las lluvias no han sido visitados por ningún organismo. (Martes 17 de mayo 2018)", image: rio3 },
-];
+  // 🔹 Cargar cédulas de usuarios con rol 'usuario'
+  useEffect(() => {
+    const cargarCedulas = async () => {
+      try {
+        const res = await fetch("http://localhost:4000/usuarios/cedulas");
+        const data = await res.json();
+        setCedulas(data);
+      } catch (error) {
+        console.error("Error al obtener cédulas:", error);
+      }
+    };
+    cargarCedulas();
+  }, []);
 
-const NewsModule = () => {
+  // 🔹 Manejar cambios en el formulario
+  const manejarCambio = (e) => {
+    setFormulario({ ...formulario, [e.target.name]: e.target.value });
+  };
+
+  // 🔹 Enviar el formulario al backend
+  const enviarFormulario = async (e) => {
+    e.preventDefault();
+    setMensaje({ tipo: "", texto: "" });
+    setLoading(true);
+    try {
+      const res = await fetch("http://localhost:4000/docente", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formulario),
+      });
+
+      if (res.status === 200 || res.status === 201) {
+        setMensaje({ tipo: "success", texto: "¡Docente registrado exitosamente!" });
+        setFormulario({
+          fk_cedula: "",
+          titulo_academico: "",
+          especialidad: "",
+          tipo_contrato: "",
+          fecha_contratacion: "",
+          estado_laboral: "",
+          telefono: "",
+          correo_institucional: "",
+          horas_semanales: "",
+        });
+      } else if (res.status === 404 || res.status === 500) {
+        setMensaje({ tipo: "danger", texto: "No se pudo registrar el docente." });
+      } else {
+        setMensaje({ tipo: "danger", texto: "Ocurrió un error inesperado." });
+      }
+    } catch (error) {
+      setMensaje({ tipo: "danger", texto: "No se pudo registrar el docente." });
+    }
+    setLoading(false);
+  };
+
+  // Obtener usuario y rol
+  const usuarioGuardado = localStorage.getItem("usuario");
+  const usuario = usuarioGuardado ? JSON.parse(usuarioGuardado) : null;
+
   return (
-    <CContainer className="text-center mt-5">
+    <CContainer className="py-5">
       <CRow className="justify-content-center">
-        {newsPosts.map((post) => (
-          <CCol md={5} key={post.id} className="mb-4">
-            <CCard className="p-3 shadow-lg border-0 hover-effect " style={{ maxWidth: "400px", textAlign: "justify" }}>
-              <div className="image-container">
-                <CImage
-                  src={post.image}  // ✅ Ahora carga correctamente la imagen
-                  className="d-block rounded"
-                  alt={post.title}
-                  style={{ width: "100%", height: "200px", objectFit: "cover" }}
-                />
-              </div>
-              <CCardBody>
-                <CCardTitle className="fs-5 fw-bold">{post.title}</CCardTitle>
-                <CCardText>{post.description}</CCardText>
-              </CCardBody>
-            </CCard>
-          </CCol>
-        ))}
+        <CCol xs={12} md={10} lg={9}>
+          <CCard className="shadow-sm">
+            <CCardHeader className="" style={{ backgroundColor: "#0059b3", color: "white" }}>
+              <CCardTitle >Registro de Docente</CCardTitle>
+            </CCardHeader>
+            <CCardBody>
+              {mensaje.texto && (
+                <CAlert color={mensaje.tipo} dismissible onClose={() => setMensaje({ tipo: "", texto: "" })}>
+                  {mensaje.texto}
+                </CAlert>
+              )}
+              {usuario?.rol === "admin" ? (
+                <CForm onSubmit={enviarFormulario}>
+                  <CRow className="g-3 align-items-end">
+                    <CCol md={3}>
+                      <CFormLabel>Cédula</CFormLabel>
+                      <CFormSelect
+                        name="fk_cedula"
+                        value={formulario.fk_cedula}
+                        onChange={manejarCambio}
+                        required
+                      >
+                        <option value="">Seleccione</option>
+                        {cedulas.map((usuario) => (
+                          <option key={usuario.cedula} value={usuario.cedula}>
+                            {usuario.cedula}
+                          </option>
+                        ))}
+                      </CFormSelect>
+                    </CCol>
+                    <CCol md={3}>
+                      <CFormLabel>Título Académico</CFormLabel>
+                      <CFormInput
+                        type="text"
+                        name="titulo_academico"
+                        value={formulario.titulo_academico}
+                        onChange={manejarCambio}
+                        required
+                        maxLength={30}
+                      />
+                    </CCol>
+                    <CCol md={3}>
+                      <CFormLabel>Especialidad</CFormLabel>
+                      <CFormInput
+                        type="text"
+                        name="especialidad"
+                        value={formulario.especialidad}
+                        onChange={manejarCambio}
+                        required
+                        maxLength={25}
+                      />
+                    </CCol>
+                    <CCol md={3}>
+                      <CFormLabel>Tipo Contrato</CFormLabel>
+                      <CFormInput
+                        type="text"
+                        name="tipo_contrato"
+                        value={formulario.tipo_contrato}
+                        onChange={manejarCambio}
+                        required
+                        maxLength={20}
+                      />
+                    </CCol>
+                    <CCol md={3}>
+                      <CFormLabel>Fecha Contratación</CFormLabel>
+                      <CFormInput
+                        type="date"
+                        name="fecha_contratacion"
+                        value={formulario.fecha_contratacion}
+                        onChange={manejarCambio}
+                        required
+                      />
+                    </CCol>
+                    <CCol md={3}>
+                      <CFormLabel>Estado Laboral</CFormLabel>
+                      <CFormInput
+                        type="text"
+                        name="estado_laboral"
+                        value={formulario.estado_laboral}
+                        onChange={manejarCambio}
+                        required
+                        maxLength={20}
+                      />
+                    </CCol>
+                    <CCol md={3}>
+                      <CFormLabel>Teléfono</CFormLabel>
+                      <CFormInput
+                        type="text"
+                        name="telefono"
+                        value={formulario.telefono}
+                        onChange={manejarCambio}
+                        required
+                        maxLength={15}
+                      />
+                    </CCol>
+                    <CCol md={4}>
+                      <CFormLabel>Correo Institucional</CFormLabel>
+                      <CFormInput
+                        type="email"
+                        name="correo_institucional"
+                        value={formulario.correo_institucional}
+                        onChange={manejarCambio}
+                        required
+                        maxLength={40}
+                      />
+                    </CCol>
+                    <CCol md={2}>
+                      <CFormLabel>Horas/Semana</CFormLabel>
+                      <CFormInput
+                        type="number"
+                        name="horas_semanales"
+                        value={formulario.horas_semanales}
+                        onChange={manejarCambio}
+                        required
+                        min={1}
+                        max={60}
+                      />
+                    </CCol>
+                    <CCol md={12}>
+                      <div className="d-grid">
+                        <CButton color="primary" type="submit" disabled={loading}>
+                          {loading ? "Registrando..." : "Registrar Docente"}
+                        </CButton>
+                      </div>
+                    </CCol>
+                  </CRow>
+                </CForm>
+              ) : (
+                <CAlert color="warning" className="mb-0">
+                  Solo los administradores pueden registrar docentes.
+                </CAlert>
+              )}
+            </CCardBody>
+          </CCard>
+        </CCol>
       </CRow>
     </CContainer>
   );
 };
 
-export default NewsModule;
+export default RegistroDocente;

@@ -1,194 +1,152 @@
-import React, { useState } from 'react'
+import { useState, useEffect } from "react";
 import {
-  CCard, CCardBody, CCardHeader, CForm, CFormInput, CFormSelect, CButton, CRow, CCol,
-  CTable, CTableHead, CTableRow, CTableHeaderCell, CTableBody, CTableDataCell, CAlert, CModal, CModalHeader, CModalTitle, CModalBody
-} from '@coreui/react'
+  CContainer,
+  CRow,
+  CCol,
+  CCard,
+  CCardHeader,
+  CCardBody,
+  CCardTitle,
+  CForm,
+  CFormLabel,
+  CFormSelect,
+  CButton,
+  CAlert,
+} from "@coreui/react";
 
-// Simulación de comunidades (esto debería venir de la base de datos)
-const comunidadesDB = [
-  'Comunidad 1',
-  'Comunidad 2',
-  'Comunidad 3',
-]
+const AsignarMateria = () => {
+  const [materias, setMaterias] = useState([]);
+  const [secciones, setSecciones] = useState([]);
+  const [codigoMateriaSeleccionada, setCodigoMateriaSeleccionada] = useState("");
+  const [idSeccionSeleccionada, setIdSeccionSeleccionada] = useState("");
+  const [mensaje, setMensaje] = useState("");
 
-const Victimas = () => {
-  const [form, setForm] = useState({
-    nombre: '',
-    comunidad: '',
-    nro_acta: '',
-    apoyo_familiar: '',
-  })
-  const [errors, setErrors] = useState({})
-  const [victimas, setVictimas] = useState([])
-  const [showForm, setShowForm] = useState(false)
-  const [selected, setSelected] = useState(null)
+  // Obtener usuario y rol
+  const usuarioGuardado = localStorage.getItem("usuario");
+  const usuario = usuarioGuardado ? JSON.parse(usuarioGuardado) : null;
 
-  const validate = () => {
-    const newErrors = {}
-    if (!form.nombre.trim()) newErrors.nombre = 'Nombre requerido'
-    if (!form.comunidad) newErrors.comunidad = 'Seleccione una comunidad'
-    if (!form.nro_acta.trim()) newErrors.nro_acta = 'Nro. de acta requerido'
-    if (!form.apoyo_familiar.trim()) newErrors.apoyo_familiar = 'Describa el apoyo familiar'
-    return newErrors
-  }
+  useEffect(() => {
+    obtenerMateriasYSecciones();
+  }, []);
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value })
-    setErrors({ ...errors, [e.target.name]: undefined })
-  }
+  const obtenerMateriasYSecciones = async () => {
+    try {
+      const resMaterias = await fetch("http://localhost:4000/materias");
+      const dataMaterias = await resMaterias.json();
+      setMaterias(dataMaterias.materias || []);
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    const val = validate()
-    if (Object.keys(val).length) {
-      setErrors(val)
-      return
+      const resSecciones = await fetch("http://localhost:4000/secciones");
+      const dataSecciones = await resSecciones.json();
+      setSecciones(dataSecciones.secciones || []);
+    } catch (error) {
+      console.error("Error obteniendo datos:", error);
     }
-    if (selected !== null) {
-      // Editar
-      setVictimas(victimas.map((v, idx) => idx === selected ? { ...form } : v))
-    } else {
-      // Crear
-      setVictimas([...victimas, { ...form }])
+  };
+
+  const handleAsignar = async (e) => {
+    e.preventDefault();
+
+    if (!codigoMateriaSeleccionada || !idSeccionSeleccionada) {
+      setMensaje("Selecciona una materia y una sección.");
+      return;
     }
-    setForm({ nombre: '', comunidad: '', nro_acta: '', apoyo_familiar: '' })
-    setErrors({})
-    setShowForm(false)
-    setSelected(null)
-  }
 
-  const handleEdit = (idx) => {
-    setForm({ ...victimas[idx] })
-    setShowForm(true)
-    setSelected(idx)
-    setErrors({})
-  }
+    try {
+      const res = await fetch("http://localhost:4000/asignar-seccion", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          codigo_materia: codigoMateriaSeleccionada,
+          id_seccion: idSeccionSeleccionada
+        }),
+      });
 
-  const handleDelete = (idx) => {
-    setVictimas(victimas.filter((_, i) => i !== idx))
-  }
-
-  const handleAdd = () => {
-    setForm({ nombre: '', comunidad: '', nro_acta: '', apoyo_familiar: '' })
-    setShowForm(true)
-    setSelected(null)
-    setErrors({})
-  }
+      const data = await res.json();
+      if (res.ok) {
+        setMensaje("Materia asignada correctamente.");
+        setCodigoMateriaSeleccionada("");
+        setIdSeccionSeleccionada("");
+      } else {
+        setMensaje(`Error: ${data.mensaje}`);
+      }
+    } catch (error) {
+      console.error("Error asignando materia:", error);
+      setMensaje("Error en la conexión con el servidor.");
+    }
+  };
 
   return (
-    <CCard className="p-4 shadow-lg">
-      <CCardHeader className="d-flex flex-column flex-md-row justify-content-between align-items-center bg-danger text-white">
-        <h5 className="m-0">Registro de Víctimas Fatales</h5>
-        <CButton color="danger text-black bg-white mt-2 mt-md-0" onClick={handleAdd}>+ Registrar Víctima</CButton>
-      </CCardHeader>
-      <CCardBody>
-        <CTable striped hover responsive align="middle">
-          <CTableHead color="dark">
-            <CTableRow>
-              <CTableHeaderCell>Nombre</CTableHeaderCell>
-              <CTableHeaderCell>Comunidad</CTableHeaderCell>
-              <CTableHeaderCell>Nro. Acta Defunción</CTableHeaderCell>
-              <CTableHeaderCell>Apoyo Familiar</CTableHeaderCell>
-              <CTableHeaderCell className="text-end">Acciones</CTableHeaderCell>
-            </CTableRow>
-          </CTableHead>
-          <CTableBody>
-            {victimas.length > 0 ? victimas.map((v, idx) => (
-              <CTableRow key={idx}>
-                <CTableDataCell>{v.nombre}</CTableDataCell>
-                <CTableDataCell>{v.comunidad}</CTableDataCell>
-                <CTableDataCell>{v.nro_acta}</CTableDataCell>
-                <CTableDataCell>{v.apoyo_familiar}</CTableDataCell>
-                <CTableDataCell className="text-end">
-                  <CButton color="warning" size="sm" className="me-2" onClick={() => handleEdit(idx)}>
-                    Editar
-                  </CButton>
-                  <CButton color="danger" size="sm" onClick={() => handleDelete(idx)}>
-                    Eliminar
-                  </CButton>
-                </CTableDataCell>
-              </CTableRow>
-            )) : (
-              <CTableRow>
-                <CTableDataCell colSpan={5} className="text-center text-muted">
-                  No hay víctimas registradas.
-                </CTableDataCell>
-              </CTableRow>
-            )}
-          </CTableBody>
-        </CTable>
-      </CCardBody>
+    <CContainer className="pt-2 pb-4 mb-5">
+      <CRow className="justify-content-center">
+        <CCol xs={12} md={8} lg={6}>
+          <CCard className="shadow-sm">
+            <CCardHeader className="" style={{ backgroundColor: "#0059b3", color: "white" }}>
+              <CCardTitle>Asignar Materia a Sección</CCardTitle>
+            </CCardHeader>
+            <CCardBody>
+              {mensaje && (
+                <CAlert
+                  color={mensaje.toLowerCase().includes("error") ? "danger" : "success"}
+                  dismissible
+                  onClose={() => setMensaje("")}
+                >
+                  {mensaje}
+                </CAlert>
+              )}
+              {usuario?.rol === "admin" ? (
+                <CForm onSubmit={handleAsignar}>
+                  <CRow className="g-3 align-items-end">
+                    <CCol md={12}>
+                      <CFormLabel>Materia</CFormLabel>
+                      <CFormSelect
+                        value={codigoMateriaSeleccionada}
+                        onChange={(e) => setCodigoMateriaSeleccionada(e.target.value)}
+                        required
+                      >
+                        <option value="">Selecciona una materia</option>
+                        {materias.map((materia) => (
+                          <option key={materia.codigo_materia} value={materia.codigo_materia}>
+                            {materia.nombre} - {materia.codigo_materia}
+                          </option>
+                        ))}
+                      </CFormSelect>
+                    </CCol>
+                    <CCol md={12}>
+                      <CFormLabel>Sección</CFormLabel>
+                      <CFormSelect
+                        value={idSeccionSeleccionada}
+                        onChange={(e) => setIdSeccionSeleccionada(e.target.value)}
+                        required
+                      >
+                        <option value="">Selecciona una sección</option>
+                        {secciones.map((seccion) => (
+                          <option key={seccion.id_seccion} value={seccion.id_seccion}>
+                            {seccion.id_año} Año - Sección {seccion.nombre_seccion}
+                          </option>
+                        ))}
+                      </CFormSelect>
+                    </CCol>
+                    <CCol md={12} className="d-grid mt-3">
+                      <CButton color="primary" type="submit" size="lg">
+                        Asignar Materia
+                      </CButton>
+                    </CCol>
+                  </CRow>
+                </CForm>
+              ) : (
+                <CAlert color="warning" className="mb-0">
+                  Solo los administradores pueden asignar materias a secciones.
+                </CAlert>
+              )}
+            </CCardBody>
+          </CCard>
+        </CCol>
+      </CRow>
+      <div style={{ minHeight: 120 }} />
+    </CContainer>
+  );
+};
 
-      <CModal visible={showForm} onClose={() => setShowForm(false)}>
-        <CModalHeader>
-          <CModalTitle>{selected !== null ? "Editar Víctima" : "Registrar Víctima"}</CModalTitle>
-        </CModalHeader>
-        <CModalBody>
-          <CForm onSubmit={handleSubmit} autoComplete="off">
-            <CCol className="mb-3">
-              <CFormInput
-                label="Nombre"
-                name="nombre"
-                value={form.nombre}
-                onChange={handleChange}
-                invalid={!!errors.nombre}
-                placeholder="Nombre de la víctima"
-                maxLength={40}
-              />
-              {errors.nombre && <CAlert color="danger" className="py-1 my-1">{errors.nombre}</CAlert>}
-            </CCol>
-            <CCol className="mb-3">
-              <CFormSelect
-                label="Comunidad"
-                name="comunidad"
-                value={form.comunidad}
-                onChange={handleChange}
-                invalid={!!errors.comunidad}
-              >
-                <option value="">Seleccione una comunidad...</option>
-                {comunidadesDB.map((c) => (
-                  <option key={c} value={c}>{c}</option>
-                ))}
-              </CFormSelect>
-              {errors.comunidad && <CAlert color="danger" className="py-1 my-1">{errors.comunidad}</CAlert>}
-            </CCol>
-            <CCol className="mb-3">
-              <CFormInput
-                label="Nro. Acta de Defunción"
-                name="nro_acta"
-                value={form.nro_acta}
-                onChange={handleChange}
-                invalid={!!errors.nro_acta}
-                placeholder="Número de acta"
-                maxLength={20}
-              />
-              {errors.nro_acta && <CAlert color="danger" className="py-1 my-1">{errors.nro_acta}</CAlert>}
-            </CCol>
-            <CCol className="mb-3">
-              <CFormInput
-                label="Apoyo Familiar"
-                name="apoyo_familiar"
-                value={form.apoyo_familiar}
-                onChange={handleChange}
-                invalid={!!errors.apoyo_familiar}
-                placeholder="Ej: Donación de alimentos, ayuda económica, etc."
-                maxLength={60}
-              />
-              {errors.apoyo_familiar && <CAlert color="danger" className="py-1 my-1">{errors.apoyo_familiar}</CAlert>}
-            </CCol>
-            <div className="d-flex justify-content-end gap-2 mt-4">
-              <CButton type="button" color="secondary" onClick={() => setShowForm(false)}>
-                Cancelar
-              </CButton>
-              <CButton type="submit" color="danger text-white">
-                {selected !== null ? "Actualizar" : "Registrar"}
-              </CButton>
-            </div>
-          </CForm>
-        </CModalBody>
-      </CModal>
-    </CCard>
-  )
-}
-
-export default Victimas
+export default AsignarMateria;

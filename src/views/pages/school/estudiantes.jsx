@@ -11,8 +11,7 @@ import {
   CModalTitle,
   CFormInput
 } from '@coreui/react';
-import EstudianteForm from '../../../components/EstudianteForm';
-import EstudianteList from '../../../components/EstudianteList';
+
 
 const Estudiantes = () => {
   const [showForm, setShowForm] = useState(false);

@@ -1,114 +1,353 @@
-import React from 'react'
+import { useState, useEffect } from "react";
 import {
-  CCard, CCardBody, CCardHeader, CRow, CCol, CBadge,
-  CCarousel, CCarouselItem, CCarouselCaption, CImage
-} from '@coreui/react'
+  CCard,
+  CCardBody,
+  CCardHeader,
+  CCardTitle,
+  CForm,
+  CFormLabel,
+  CFormInput,
+  CButton,
+  CRow,
+  CCol,
+  CContainer,
+  CAlert,
+  CModal,
+  CModalHeader,
+  CModalTitle,
+  CModalBody,
+  CModalFooter,
+  CTable,
+  CTableHead,
+  CTableRow,
+  CTableHeaderCell,
+  CTableBody,
+  CTableDataCell,
+  CPagination,
+  CPaginationItem,
+} from "@coreui/react";
 
-// Importa tus imágenes locales
-import img1 from 'src/assets/images/epicentro.png'
-import img2 from 'src/assets/images/rio.jpg'
+const MateriaForm = () => {
+  const [codigo_materia, setCodigoMateria] = useState("");
+  const [nombre, setNombre] = useState("");
+  const [materias, setMaterias] = useState([]);
+  const [filtro, setFiltro] = useState("");
+  const [mensaje, setMensaje] = useState("");
 
+  const [modalVisible, setModalVisible] = useState(false);
+  const [materiaSeleccionada, setMateriaSeleccionada] = useState(null);
+  const [nuevoCodigo, setNuevoCodigo] = useState("");
+  const [nuevoNombre, setNuevoNombre] = useState("");
 
-const imagenes = [
-  {
-    src: img1,
-    style: { maxHeight: 320, objectFit: 'cover' },
-  },
-  {
-    src: img2,
-  }
-]
+  // Paginación
+  const [paginaActual, setPaginaActual] = useState(1);
+  const materiasPorPagina = 5;
 
-const MovimientosTierra = () => {
+  const usuarioGuardado = localStorage.getItem("usuario");
+  const usuario = usuarioGuardado ? JSON.parse(usuarioGuardado) : null;
+
+  useEffect(() => {
+    obtenerMaterias();
+  }, []);
+
+  const obtenerMaterias = async () => {
+    try {
+      const res = await fetch("http://localhost:4000/materiasregistradas");
+      const data = await res.json();
+      setMaterias(data);
+    } catch (error) {
+      console.error("Error obteniendo materias:", error);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!codigo_materia || !nombre) {
+      setMensaje("El código y el nombre son obligatorios.");
+      return;
+    }
+
+    try {
+      const res = await fetch("http://localhost:4000/materias", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ codigo_materia, nombre }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setMensaje("Materia registrada exitosamente.");
+        setCodigoMateria("");
+        setNombre("");
+        obtenerMaterias();
+      } else {
+        setMensaje(`Error: ${data.mensaje}`);
+      }
+    } catch (error) {
+      console.error("Error al registrar materia:", error);
+      setMensaje("Error en la conexión con el servidor.");
+    }
+  };
+
+  const handleEditar = (materia) => {
+    setMateriaSeleccionada(materia);
+    setNuevoCodigo(materia.codigo_materia);
+    setNuevoNombre(materia.nombre);
+    setModalVisible(true);
+  };
+
+  const handleGuardarEdicion = async () => {
+    if (!nuevoCodigo && !nuevoNombre) {
+      setMensaje("Debes ingresar al menos un campo para actualizar.");
+      return;
+    }
+
+    try {
+      const res = await fetch(
+        `http://localhost:4000/materias/${materiaSeleccionada.codigo_materia}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            nuevo_codigo: nuevoCodigo || null,
+            nombre: nuevoNombre || null,
+          }),
+        }
+      );
+
+      const data = await res.json();
+      if (!res.ok) {
+        setMensaje(`Error: ${data.mensaje}`);
+        return;
+      }
+
+      obtenerMaterias();
+      setModalVisible(false);
+      setMensaje("Materia actualizada correctamente.");
+    } catch (error) {
+      console.error("Error editando materia:", error);
+      setMensaje("Error al editar la materia.");
+    }
+  };
+
+  const handleEliminar = async (codigo_materia) => {
+    if (!window.confirm("¿Seguro que deseas eliminar esta materia?")) return;
+
+    try {
+      await fetch(`http://localhost:4000/materias/${codigo_materia}`, {
+        method: "DELETE",
+      });
+      obtenerMaterias();
+      setMensaje("Materia eliminada correctamente.");
+    } catch (error) {
+      console.error("Error eliminando materia:", error);
+      setMensaje("Error al eliminar la materia.");
+    }
+  };
+
+  // Filtrado y paginación
+  const materiasFiltradas = materias.filter((m) =>
+    m.nombre.toLowerCase().includes(filtro.toLowerCase())
+  );
+  const totalPaginas = Math.ceil(materiasFiltradas.length / materiasPorPagina);
+  const indiceInicial = (paginaActual - 1) * materiasPorPagina;
+  const materiasPagina = materiasFiltradas.slice(
+    indiceInicial,
+    indiceInicial + materiasPorPagina
+  );
+
+  const cambiarPagina = (nuevaPagina) => {
+    if (nuevaPagina < 1 || nuevaPagina > totalPaginas) return;
+    setPaginaActual(nuevaPagina);
+  };
+
+  useEffect(() => {
+    setPaginaActual(1); // Reinicia a la página 1 al filtrar
+  }, [filtro]);
+
   return (
-    <CRow className="justify-content-center mt-4">
-      <CCol md={10} lg={8}>
-        <CCard className="shadow-lg border-0" style={{ background: 'rgba(255,255,255,0.97)' }}>
-          <CCardHeader className="bg-info text-white text-center py-4 rounded-top">
-            <h2 className="fw-bold mb-1">Movimientos de Tierra y Sismos</h2>
-            <span className="fst-italic" style={{ fontSize: 17 }}>
-              Información clave para la prevención y respuesta ante desastres geológicos
-            </span>
-          </CCardHeader>
-          <CCardBody className="p-4">
-            {/* Carrusel de fotos */}
-            <div className="mb-4">
-              <CCarousel controls indicators dark>
-                {imagenes.map((img, idx) => (
-                  <CCarouselItem key={idx}>
-                    <CImage className="d-block w-100" src={img.src} alt={img.alt} style={{ maxHeight: 320, objectFit: 'cover' }} />
-                    <CCarouselCaption className="d-none d-md-block">
-                      <h5>{img.texto}</h5>
-                    </CCarouselCaption>
-                  </CCarouselItem>
-                ))}
-              </CCarousel>
-            </div>
-            <section className="mb-4">
-              <h4 className="fw-semibold text-warning mb-2">¿Qué son los movimientos de tierra y sismos?</h4>
-              <p>
-                Los <b>movimientos de tierra</b> incluyen deslizamientos, derrumbes y aludes, causados por la inestabilidad del suelo, lluvias intensas o actividad sísmica. Un <b>sismo</b> es un movimiento brusco de la corteza terrestre, que puede provocar daños severos en infraestructuras y poner en riesgo vidas humanas.
-              </p>
-            </section>
-            <section className="mb-4">
-              <h4 className="fw-semibold text-warning mb-2">Características principales</h4>
-              <ul>
-                <li><b>Imprevisibilidad:</b> Los sismos pueden ocurrir sin previo aviso.</li>
-                <li><b>Desplazamiento de masas:</b> Los deslizamientos pueden arrastrar tierra, rocas y vegetación.</li>
-                <li><b>Daños estructurales:</b> Riesgo de colapso de viviendas, puentes y carreteras.</li>
-                <li><b>Impacto social:</b> Posibles evacuaciones, heridos y pérdidas materiales.</li>
-              </ul>
-            </section>
-            <section className="mb-4">
-              <h4 className="fw-semibold text-warning mb-2">¿Qué hacer antes, durante y después?</h4>
-              <CRow>
-                <CCol md={4} className="mb-3">
-                  <CBadge color="info" className="mb-2 px-3 py-2 fs-6">Antes</CBadge>
-                  <ul>
-                    <li>Identifica zonas de riesgo en tu comunidad.</li>
-                    <li>Refuerza estructuras y asegura objetos pesados.</li>
-                    <li>Prepara un plan de emergencia familiar.</li>
-                    <li>Participa en simulacros de evacuación.</li>
-                  </ul>
-                </CCol>
-                <CCol md={4} className="mb-3">
-                  <CBadge color="danger" className="mb-2 px-3 py-2 fs-6">Durante</CBadge>
-                  <ul>
-                    <li>Protégete bajo una mesa resistente o junto a una pared interior.</li>
-                    <li>Aléjate de ventanas y objetos que puedan caer.</li>
-                    <li>Si estás en la calle, busca un espacio abierto lejos de edificios y cables.</li>
-                    <li>Evita usar ascensores.</li>
-                  </ul>
-                </CCol>
-                <CCol md={4} className="mb-3">
-                  <CBadge color="success" className="mb-2 px-3 py-2 fs-6">Después</CBadge>
-                  <ul>
-                    <li>Verifica tu estado y el de tu familia.</li>
-                    <li>Revisa daños estructurales antes de ingresar a edificios.</li>
-                    <li>Escucha información oficial y sigue instrucciones.</li>
-                    <li>Ayuda a quienes lo necesiten y reporta emergencias.</li>
-                  </ul>
+    <CContainer className="py-4">
+      <CRow className="justify-content-center">
+        <CCol xs={12} md={10} lg={8}>
+          <CCard className="shadow-sm mb-4">
+            <CCardHeader className="" style={{ backgroundColor: "#0059b3", color: "white" }}>
+              <CCardTitle>Registrar Materia</CCardTitle>
+            </CCardHeader>
+            <CCardBody>
+              {mensaje && (
+                <CAlert
+                  color={
+                    mensaje.toLowerCase().includes("error") ? "danger" : "success"
+                  }
+                  dismissible
+                  onClose={() => setMensaje("")}
+                >
+                  {mensaje}
+                </CAlert>
+              )}
+              {usuario?.rol === "admin" ? (
+                <CForm onSubmit={handleSubmit}>
+                  <CRow className="g-3 align-items-end">
+                    <CCol md={5}>
+                      <CFormLabel>Código de Materia</CFormLabel>
+                      <CFormInput
+                        type="text"
+                        value={codigo_materia}
+                        onChange={(e) => setCodigoMateria(e.target.value)}
+                        maxLength={15}
+                        required
+                      />
+                    </CCol>
+                    <CCol md={5}>
+                      <CFormLabel>Nombre</CFormLabel>
+                      <CFormInput
+                        type="text"
+                        value={nombre}
+                        onChange={(e) => setNombre(e.target.value)}
+                        maxLength={40}
+                        required
+                      />
+                    </CCol>
+                    <CCol md={2}>
+                      <CButton color="primary" type="submit" className="w-100">
+                        Registrar
+                      </CButton>
+                    </CCol>
+                  </CRow>
+                </CForm>
+              ) : (
+                <CAlert color="warning" className="mb-0">
+                  Solo los administradores pueden registrar materias.
+                </CAlert>
+              )}
+            </CCardBody>
+          </CCard>
+
+          <CCard className="shadow-sm">
+            <CCardHeader className="bg-secondary text-white">
+              <CCardTitle>Materias Registradas</CCardTitle>
+            </CCardHeader>
+            <CCardBody>
+              <CRow className="mb-3">
+                <CCol md={6}>
+                  <CFormInput
+                    type="text"
+                    placeholder="Filtrar por nombre..."
+                    value={filtro}
+                    onChange={(e) => setFiltro(e.target.value)}
+                  />
                 </CCol>
               </CRow>
-            </section>
-            <section className="mb-4">
-              <h4 className="fw-semibold text-warning mb-2">Puntos resaltantes</h4>
-              <ul>
-                <li><b>La prevención es fundamental:</b> Infórmate y prepara tu entorno.</li>
-                <li><b>La calma salva vidas:</b> Mantén la serenidad y actúa con rapidez.</li>
-                <li><b>La solidaridad es clave:</b> Apoya a tu comunidad antes, durante y después del evento.</li>
-              </ul>
-            </section>
-            <div className="text-center mt-4">
-              <CBadge color="warning" className="fs-5 px-4 py-2 text-white">
-                ¡La información y la prevención son tus mejores aliados ante los movimientos de tierra y sismos!
-              </CBadge>
-            </div>
-          </CCardBody>
-        </CCard>
-      </CCol>
-    </CRow>
-  )
-}
+              <CTable hover responsive>
+                <CTableHead>
+                  <CTableRow>
+                    <CTableHeaderCell>Código</CTableHeaderCell>
+                    <CTableHeaderCell>Nombre</CTableHeaderCell>
+                    {usuario?.rol === "admin" && (
+                      <CTableHeaderCell>Acciones</CTableHeaderCell>
+                    )}
+                  </CTableRow>
+                </CTableHead>
+                <CTableBody>
+                  {materiasPagina.map((materia) => (
+                    <CTableRow key={materia.codigo_materia}>
+                      <CTableDataCell>{materia.codigo_materia}</CTableDataCell>
+                      <CTableDataCell>{materia.nombre}</CTableDataCell>
+                      {usuario?.rol === "admin" && (
+                        <CTableDataCell>
+                          <CButton
+                            color="warning"
+                            size="sm"
+                            className="me-2"
+                            onClick={() => handleEditar(materia)}
+                          >
+                            Editar
+                          </CButton>
+                          <CButton
+                            color="danger"
+                            size="sm"
+                            onClick={() =>
+                              handleEliminar(materia.codigo_materia)
+                            }
+                          >
+                            Eliminar
+                          </CButton>
+                        </CTableDataCell>
+                      )}
+                    </CTableRow>
+                  ))}
+                </CTableBody>
+              </CTable>
+              {/* Paginación */}
+              {totalPaginas > 1 && (
+                <CPagination align="center" className="mt-3">
+                  <CPaginationItem
+                    disabled={paginaActual === 1}
+                    onClick={() => cambiarPagina(paginaActual - 1)}
+                  >
+                    Anterior
+                  </CPaginationItem>
+                  {[...Array(totalPaginas)].map((_, idx) => (
+                    <CPaginationItem
+                      key={idx + 1}
+                      active={paginaActual === idx + 1}
+                      onClick={() => cambiarPagina(idx + 1)}
+                    >
+                      {idx + 1}
+                    </CPaginationItem>
+                  ))}
+                  <CPaginationItem
+                    disabled={paginaActual === totalPaginas}
+                    onClick={() => cambiarPagina(paginaActual + 1)}
+                  >
+                    Siguiente
+                  </CPaginationItem>
+                </CPagination>
+              )}
+            </CCardBody>
+          </CCard>
+        </CCol>
+      </CRow>
 
-export default MovimientosTierra
+      {/* MODAL DE EDICIÓN */}
+      <CModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        alignment="center"
+      >
+        <CModalHeader>
+          <CModalTitle>Editar Materia</CModalTitle>
+        </CModalHeader>
+        <CModalBody>
+          <CForm>
+            <CFormLabel>Código de Materia</CFormLabel>
+            <CFormInput
+              type="text"
+              value={nuevoCodigo}
+              onChange={(e) => setNuevoCodigo(e.target.value)}
+              maxLength={15}
+              className="mb-3"
+            />
+            <CFormLabel>Nombre</CFormLabel>
+            <CFormInput
+              type="text"
+              value={nuevoNombre}
+              onChange={(e) => setNuevoNombre(e.target.value)}
+              maxLength={40}
+            />
+          </CForm>
+        </CModalBody>
+        <CModalFooter>
+          <CButton color="primary" onClick={handleGuardarEdicion}>
+            Guardar Cambios
+          </CButton>
+          <CButton color="secondary" variant="outline" onClick={() => setModalVisible(false)}>
+            Cancelar
+          </CButton>
+        </CModalFooter>
+      </CModal>
+    </CContainer>
+  );
+};
+
+export default MateriaForm;
