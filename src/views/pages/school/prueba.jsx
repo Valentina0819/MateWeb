@@ -1,353 +1,284 @@
-import { useState, useEffect } from "react";
+import React, { useEffect, useState } from 'react';
 import {
-  CCard,
-  CCardBody,
-  CCardHeader,
-  CCardTitle,
-  CForm,
-  CFormLabel,
-  CFormInput,
-  CButton,
-  CRow,
-  CCol,
-  CContainer,
-  CAlert,
-  CModal,
-  CModalHeader,
-  CModalTitle,
-  CModalBody,
-  CModalFooter,
-  CTable,
-  CTableHead,
-  CTableRow,
-  CTableHeaderCell,
-  CTableBody,
-  CTableDataCell,
-  CPagination,
-  CPaginationItem,
-} from "@coreui/react";
+  CCard, CCardBody, CCardHeader, CForm, CButton,
+  CAlert, CRow, CCol, CTable, CTableHead, CTableRow, CTableHeaderCell, CTableBody, CTableDataCell,
+  CPagination, CPaginationItem
+} from '@coreui/react';
 
-const MateriaForm = () => {
-  const [codigo_materia, setCodigoMateria] = useState("");
-  const [nombre, setNombre] = useState("");
-  const [materias, setMaterias] = useState([]);
-  const [filtro, setFiltro] = useState("");
-  const [mensaje, setMensaje] = useState("");
+function shuffle(array) {
+  return array.map(value => ({ value, sort: Math.random() }))
+    .sort((a, b) => a.sort - b.sort)
+    .map(({ value }) => value);
+}
 
-  const [modalVisible, setModalVisible] = useState(false);
-  const [materiaSeleccionada, setMateriaSeleccionada] = useState(null);
-  const [nuevoCodigo, setNuevoCodigo] = useState("");
-  const [nuevoNombre, setNuevoNombre] = useState("");
+function formatFecha(fecha) {
+  if (!fecha) return '';
+  return fecha.split('T')[0];
+}
 
-  // Paginación
-  const [paginaActual, setPaginaActual] = useState(1);
-  const materiasPorPagina = 5;
+// Genera distractores aleatorios distintos a la respuesta correcta
+function generarDistractores(correcta) {
+  // Si la respuesta es un número, genera números aleatorios
+  if (!isNaN(Number(correcta))) {
+    const numCorrecta = Number(correcta);
+    const distractores = new Set();
+    while (distractores.size < 3) {
+      let val = numCorrecta + Math.floor(Math.random() * 10) - 5;
+      if (val !== numCorrecta && val >= 0) distractores.add(val.toString());
+    }
+    return Array.from(distractores);
+  }
+  // Si es texto, usa palabras aleatorias
+  const palabras = [
+    "Sol", "Luna", "Agua", "Fuego", "Tierra", "Viento", "Azul", "Rojo", "Verde", "Amarillo",
+    "Perro", "Gato", "Casa", "Árbol", "Libro", "Mesa", "Silla", "Cielo", "Flor", "Río"
+  ];
+  const distractores = new Set();
+  while (distractores.size < 3) {
+    let palabra = palabras[Math.floor(Math.random() * palabras.length)];
+    if (palabra.toLowerCase() !== correcta.toLowerCase()) distractores.add(palabra);
+  }
+  return Array.from(distractores);
+}
 
-  const usuarioGuardado = localStorage.getItem("usuario");
-  const usuario = usuarioGuardado ? JSON.parse(usuarioGuardado) : null;
+export default function ResponderEjercicioAlumno() {
+  const usuario = JSON.parse(localStorage.getItem("usuario"));
+  const id_usuario = usuario?.id_usuario;
+  const [ejercicios, setEjercicios] = useState([]);
+  const [form, setForm] = useState({ id_ejercicio: '', respuesta_usuario: '' });
+  const [mensaje, setMensaje] = useState('');
+  const [tipoMensaje, setTipoMensaje] = useState('success');
+  const [respondidos, setRespondidos] = useState([]);
+  const [opciones, setOpciones] = useState([]);
+  const [pagina, setPagina] = useState(1);
+  const ejerciciosPorPagina = 5;
 
   useEffect(() => {
-    obtenerMaterias();
-  }, []);
-
-  const obtenerMaterias = async () => {
-    try {
-      const res = await fetch("http://localhost:4000/materiasregistradas");
-      const data = await res.json();
-      setMaterias(data);
-    } catch (error) {
-      console.error("Error obteniendo materias:", error);
+    if (id_usuario) {
+      fetch(`http://localhost:4000/obtenerejercicios/${id_usuario}`)
+        .then(res => res.json())
+        .then(data => setEjercicios(data));
+      fetch(`http://localhost:4000/resultadosejercicios`)
+        .then(res => res.json())
+        .then(data => setRespondidos(data.filter(r => r.id_usuario === id_usuario)));
     }
+  }, [id_usuario, mensaje]);
+
+  // Filtra ejercicios no respondidos
+  const ejerciciosPendientes = ejercicios.filter(
+    ej => !respondidos.some(r => Number(r.id_ejercicio) === Number(ej.id_ejercicio))
+  );
+
+  // Cuando el usuario selecciona un ejercicio, genera opciones
+  const handleEjercicioChange = (e) => {
+    const id_ejercicio = e.target.value;
+    setForm({ id_ejercicio, respuesta_usuario: '' });
+    const ejercicio = ejerciciosPendientes.find(ej => String(ej.id_ejercicio) === String(id_ejercicio));
+    if (ejercicio) {
+      let opcionesGeneradas = [];
+      const correcta = ejercicio.respuesta_correcta?.trim();
+      // Si es verdadero/falso
+      if (
+        (correcta?.toLowerCase() === "verdadero" || correcta?.toLowerCase() === "falso") ||
+        ejercicio.enunciado.toLowerCase().includes("verdadero") ||
+        ejercicio.enunciado.toLowerCase().includes("falso")
+      ) {
+        opcionesGeneradas = shuffle(["Verdadero", "Falso"]);
+      } else {
+        // Distractores aleatorios
+        const distractores = generarDistractores(correcta);
+        opcionesGeneradas = shuffle([correcta, ...distractores]);
+      }
+      setOpciones(opcionesGeneradas);
+    } else {
+      setOpciones([]);
+    }
+  };
+
+  const handleOpcionClick = (opcion) => {
+    setForm(f => ({ ...f, respuesta_usuario: opcion }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!codigo_materia || !nombre) {
-      setMensaje("El código y el nombre son obligatorios.");
+    setMensaje('');
+    setTipoMensaje('success');
+    if (!form.id_ejercicio || !form.respuesta_usuario) {
+      setMensaje('Selecciona un ejercicio y una respuesta.');
+      setTipoMensaje('danger');
       return;
     }
-
     try {
-      const res = await fetch("http://localhost:4000/materias", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ codigo_materia, nombre }),
+      const res = await fetch('http://localhost:4000/responder-ejercicio', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...form, id_usuario })
       });
-
       const data = await res.json();
       if (res.ok) {
-        setMensaje("Materia registrada exitosamente.");
-        setCodigoMateria("");
-        setNombre("");
-        obtenerMaterias();
+        setMensaje('¡Respuesta enviada correctamente!');
+        setForm({ id_ejercicio: '', respuesta_usuario: '' });
+        setOpciones([]);
       } else {
-        setMensaje(`Error: ${data.mensaje}`);
+        setMensaje(data.mensaje || 'Error al responder el ejercicio');
+        setTipoMensaje('danger');
       }
-    } catch (error) {
-      console.error("Error al registrar materia:", error);
-      setMensaje("Error en la conexión con el servidor.");
+    } catch {
+      setMensaje('Error de conexión');
+      setTipoMensaje('danger');
     }
   };
 
-  const handleEditar = (materia) => {
-    setMateriaSeleccionada(materia);
-    setNuevoCodigo(materia.codigo_materia);
-    setNuevoNombre(materia.nombre);
-    setModalVisible(true);
-  };
-
-  const handleGuardarEdicion = async () => {
-    if (!nuevoCodigo && !nuevoNombre) {
-      setMensaje("Debes ingresar al menos un campo para actualizar.");
-      return;
-    }
-
-    try {
-      const res = await fetch(
-        `http://localhost:4000/materias/${materiaSeleccionada.codigo_materia}`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            nuevo_codigo: nuevoCodigo || null,
-            nombre: nuevoNombre || null,
-          }),
-        }
-      );
-
-      const data = await res.json();
-      if (!res.ok) {
-        setMensaje(`Error: ${data.mensaje}`);
-        return;
-      }
-
-      obtenerMaterias();
-      setModalVisible(false);
-      setMensaje("Materia actualizada correctamente.");
-    } catch (error) {
-      console.error("Error editando materia:", error);
-      setMensaje("Error al editar la materia.");
-    }
-  };
-
-  const handleEliminar = async (codigo_materia) => {
-    if (!window.confirm("¿Seguro que deseas eliminar esta materia?")) return;
-
-    try {
-      await fetch(`http://localhost:4000/materias/${codigo_materia}`, {
-        method: "DELETE",
-      });
-      obtenerMaterias();
-      setMensaje("Materia eliminada correctamente.");
-    } catch (error) {
-      console.error("Error eliminando materia:", error);
-      setMensaje("Error al eliminar la materia.");
-    }
-  };
-
-  // Filtrado y paginación
-  const materiasFiltradas = materias.filter((m) =>
-    m.nombre.toLowerCase().includes(filtro.toLowerCase())
-  );
-  const totalPaginas = Math.ceil(materiasFiltradas.length / materiasPorPagina);
-  const indiceInicial = (paginaActual - 1) * materiasPorPagina;
-  const materiasPagina = materiasFiltradas.slice(
-    indiceInicial,
-    indiceInicial + materiasPorPagina
+  // Paginación
+  const totalPaginas = Math.ceil(respondidos.length / ejerciciosPorPagina);
+  const respondidosPagina = respondidos.slice(
+    (pagina - 1) * ejerciciosPorPagina,
+    pagina * ejerciciosPorPagina
   );
 
-  const cambiarPagina = (nuevaPagina) => {
-    if (nuevaPagina < 1 || nuevaPagina > totalPaginas) return;
-    setPaginaActual(nuevaPagina);
-  };
-
-  useEffect(() => {
-    setPaginaActual(1); // Reinicia a la página 1 al filtrar
-  }, [filtro]);
+  // Muestra el ejercicio seleccionado
+  const ejercicioSeleccionado = ejerciciosPendientes.find(
+    ej => String(ej.id_ejercicio) === String(form.id_ejercicio)
+  );
 
   return (
-    <CContainer className="py-4">
-      <CRow className="justify-content-center">
-        <CCol xs={12} md={10} lg={8}>
-          <CCard className="shadow-sm mb-4">
-            <CCardHeader className="" style={{ backgroundColor: "#0059b3", color: "white" }}>
-              <CCardTitle>Registrar Materia</CCardTitle>
-            </CCardHeader>
-            <CCardBody>
-              {mensaje && (
-                <CAlert
-                  color={
-                    mensaje.toLowerCase().includes("error") ? "danger" : "success"
-                  }
-                  dismissible
-                  onClose={() => setMensaje("")}
-                >
-                  {mensaje}
-                </CAlert>
-              )}
-              {usuario?.rol === "admin" ? (
-                <CForm onSubmit={handleSubmit}>
-                  <CRow className="g-3 align-items-end">
-                    <CCol md={5}>
-                      <CFormLabel>Código de Materia</CFormLabel>
-                      <CFormInput
-                        type="text"
-                        value={codigo_materia}
-                        onChange={(e) => setCodigoMateria(e.target.value)}
-                        maxLength={15}
-                        required
-                      />
-                    </CCol>
-                    <CCol md={5}>
-                      <CFormLabel>Nombre</CFormLabel>
-                      <CFormInput
-                        type="text"
-                        value={nombre}
-                        onChange={(e) => setNombre(e.target.value)}
-                        maxLength={40}
-                        required
-                      />
-                    </CCol>
-                    <CCol md={2}>
-                      <CButton color="primary" type="submit" className="w-100">
-                        Registrar
-                      </CButton>
-                    </CCol>
-                  </CRow>
-                </CForm>
-              ) : (
-                <CAlert color="warning" className="mb-0">
-                  Solo los administradores pueden registrar materias.
-                </CAlert>
-              )}
-            </CCardBody>
-          </CCard>
-
-          <CCard className="shadow-sm">
-            <CCardHeader className="bg-secondary text-white">
-              <CCardTitle>Materias Registradas</CCardTitle>
-            </CCardHeader>
-            <CCardBody>
-              <CRow className="mb-3">
-                <CCol md={6}>
-                  <CFormInput
-                    type="text"
-                    placeholder="Filtrar por nombre..."
-                    value={filtro}
-                    onChange={(e) => setFiltro(e.target.value)}
-                  />
+    <CRow className="justify-content-center align-items-center" style={{ minHeight: '100vh', background: '#f4f8fb' }}>
+      <CCol md={8}>
+        <CCard className="mb-4 shadow-lg" style={{ borderRadius: 20 }}>
+          <CCardHeader className="bg-info text-white fw-bold text-center" style={{ fontSize: 24, borderTopLeftRadius: 20, borderTopRightRadius: 20 }}>
+            Responder Ejercicio
+          </CCardHeader>
+          <CCardBody className="d-flex flex-column align-items-center">
+            {mensaje && <CAlert color={tipoMensaje} className="w-100 text-center">{mensaje}</CAlert>}
+            <CForm onSubmit={handleSubmit} className="w-100">
+              <CRow className="mb-4 justify-content-center">
+                <CCol md={10}>
+                  <select
+                    className="form-select text-center"
+                    style={{ fontSize: 18, borderRadius: 10 }}
+                    value={form.id_ejercicio}
+                    onChange={handleEjercicioChange}
+                    required
+                  >
+                    <option value="">Seleccione un ejercicio</option>
+                    {ejerciciosPendientes.map(ej => (
+                      <option key={ej.id_ejercicio} value={ej.id_ejercicio}>
+                        {ej.enunciado} ({ej.nombre_leccion} - {ej.nombre_curso})
+                      </option>
+                    ))}
+                  </select>
                 </CCol>
               </CRow>
-              <CTable hover responsive>
-                <CTableHead>
+              {ejercicioSeleccionado && (
+                <div className="mb-4 text-center">
+                  <div className="fw-bold mb-3" style={{ fontSize: 22, color: '#114c5f' }}>
+                    {ejercicioSeleccionado.enunciado}
+                  </div>
+                  <div className="d-flex flex-wrap justify-content-center">
+                    {opciones.map((op, idx) => (
+                      <CButton
+                        key={idx}
+                        color={form.respuesta_usuario === op ? "success" : "secondary"}
+                        className="me-2 mb-2 px-4 py-2"
+                        variant="outline"
+                        style={{
+                          fontSize: 18,
+                          borderRadius: 12,
+                          minWidth: 120,
+                          boxShadow: form.respuesta_usuario === op ? '0 0 10px #198754' : 'none',
+                          fontWeight: form.respuesta_usuario === op ? 'bold' : 'normal'
+                        }}
+                        onClick={() => handleOpcionClick(op)}
+                        type="button"
+                      >
+                        {op}
+                      </CButton>
+                    ))}
+                  </div>
+                </div>
+              )}
+              <div className="text-center">
+                <CButton
+                  color="info"
+                  type="submit"
+                  className="text-white fw-bold px-5 py-2"
+                  style={{ fontSize: 18, borderRadius: 10 }}
+                  disabled={!form.id_ejercicio || !form.respuesta_usuario}
+                >
+                  Enviar Respuesta
+                </CButton>
+              </div>
+            </CForm>
+          </CCardBody>
+        </CCard>
+        <CCard className="shadow-lg" style={{ borderRadius: 20 }}>
+          <CCardHeader className="bg-success text-white fw-bold text-center" style={{ fontSize: 22, borderTopLeftRadius: 20, borderTopRightRadius: 20 }}>
+            Ejercicios Respondidos
+          </CCardHeader>
+          <CCardBody>
+            <CTable striped hover align="middle" className="text-center">
+              <CTableHead>
+                <CTableRow>
+                  <CTableHeaderCell>Enunciado</CTableHeaderCell>
+                  <CTableHeaderCell>Respuesta</CTableHeaderCell>
+                  <CTableHeaderCell>Puntaje (1-20)</CTableHeaderCell>
+                  <CTableHeaderCell>Fecha</CTableHeaderCell>
+                </CTableRow>
+              </CTableHead>
+              <CTableBody>
+                {respondidosPagina.length === 0 ? (
                   <CTableRow>
-                    <CTableHeaderCell>Código</CTableHeaderCell>
-                    <CTableHeaderCell>Nombre</CTableHeaderCell>
-                    {usuario?.rol === "admin" && (
-                      <CTableHeaderCell>Acciones</CTableHeaderCell>
-                    )}
+                    <CTableDataCell colSpan={4} className="text-center">Aún no has respondido ejercicios.</CTableDataCell>
                   </CTableRow>
-                </CTableHead>
-                <CTableBody>
-                  {materiasPagina.map((materia) => (
-                    <CTableRow key={materia.codigo_materia}>
-                      <CTableDataCell>{materia.codigo_materia}</CTableDataCell>
-                      <CTableDataCell>{materia.nombre}</CTableDataCell>
-                      {usuario?.rol === "admin" && (
-                        <CTableDataCell>
-                          <CButton
-                            color="warning"
-                            size="sm"
-                            className="me-2"
-                            onClick={() => handleEditar(materia)}
-                          >
-                            Editar
-                          </CButton>
-                          <CButton
-                            color="danger"
-                            size="sm"
-                            onClick={() =>
-                              handleEliminar(materia.codigo_materia)
-                            }
-                          >
-                            Eliminar
-                          </CButton>
-                        </CTableDataCell>
-                      )}
+                ) : (
+                  respondidosPagina.map(r => (
+                    <CTableRow key={r.id_resultado}>
+                      <CTableDataCell>{r.enunciado}</CTableDataCell>
+                      <CTableDataCell>{r.respuesta_usuario}</CTableDataCell>
+                      <CTableDataCell>
+                        <span style={{
+                          color: r.puntaje >= 15 ? '#198754' : r.puntaje >= 10 ? '#ffc107' : '#dc3545',
+                          fontWeight: 'bold'
+                        }}>
+                          {r.puntaje}
+                        </span>
+                      </CTableDataCell>
+                      <CTableDataCell>{formatFecha(r.fecha_realizacion)}</CTableDataCell>
                     </CTableRow>
-                  ))}
-                </CTableBody>
-              </CTable>
-              {/* Paginación */}
-              {totalPaginas > 1 && (
-                <CPagination align="center" className="mt-3">
+                  ))
+                )}
+              </CTableBody>
+            </CTable>
+            {totalPaginas > 1 && (
+              <div className="d-flex justify-content-center mt-3">
+                <CPagination align="center">
                   <CPaginationItem
-                    disabled={paginaActual === 1}
-                    onClick={() => cambiarPagina(paginaActual - 1)}
+                    disabled={pagina === 1}
+                    onClick={() => setPagina(pagina - 1)}
                   >
-                    Anterior
+                    &laquo;
                   </CPaginationItem>
                   {[...Array(totalPaginas)].map((_, idx) => (
                     <CPaginationItem
                       key={idx + 1}
-                      active={paginaActual === idx + 1}
-                      onClick={() => cambiarPagina(idx + 1)}
+                      active={pagina === idx + 1}
+                      onClick={() => setPagina(idx + 1)}
                     >
                       {idx + 1}
                     </CPaginationItem>
                   ))}
                   <CPaginationItem
-                    disabled={paginaActual === totalPaginas}
-                    onClick={() => cambiarPagina(paginaActual + 1)}
+                    disabled={pagina === totalPaginas}
+                    onClick={() => setPagina(pagina + 1)}
                   >
-                    Siguiente
+                    &raquo;
                   </CPaginationItem>
                 </CPagination>
-              )}
-            </CCardBody>
-          </CCard>
-        </CCol>
-      </CRow>
-
-      {/* MODAL DE EDICIÓN */}
-      <CModal
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
-        alignment="center"
-      >
-        <CModalHeader>
-          <CModalTitle>Editar Materia</CModalTitle>
-        </CModalHeader>
-        <CModalBody>
-          <CForm>
-            <CFormLabel>Código de Materia</CFormLabel>
-            <CFormInput
-              type="text"
-              value={nuevoCodigo}
-              onChange={(e) => setNuevoCodigo(e.target.value)}
-              maxLength={15}
-              className="mb-3"
-            />
-            <CFormLabel>Nombre</CFormLabel>
-            <CFormInput
-              type="text"
-              value={nuevoNombre}
-              onChange={(e) => setNuevoNombre(e.target.value)}
-              maxLength={40}
-            />
-          </CForm>
-        </CModalBody>
-        <CModalFooter>
-          <CButton color="primary" onClick={handleGuardarEdicion}>
-            Guardar Cambios
-          </CButton>
-          <CButton color="secondary" variant="outline" onClick={() => setModalVisible(false)}>
-            Cancelar
-          </CButton>
-        </CModalFooter>
-      </CModal>
-    </CContainer>
+              </div>
+            )}
+          </CCardBody>
+        </CCard>
+      </CCol>
+    </CRow>
   );
-};
-
-export default MateriaForm;
+}

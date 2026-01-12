@@ -12,6 +12,7 @@ import {
   CFormSelect,
   CButton,
   CAlert,
+  CFormInput,
 } from "@coreui/react";
 
 const AsignarMaterias = () => {
@@ -21,9 +22,12 @@ const AsignarMaterias = () => {
   const [añosEscolares, setAñosEscolares] = useState([]);
   const [idDocenteSeleccionado, setIdDocenteSeleccionado] = useState("");
   const [idAñoMateriaSeleccionado, setIdAñoMateriaSeleccionado] = useState("");
-  const [idSeccionSeleccionada, setIdSeccionSeleccionada] = useState("");
+  const [idSeccionSeleccionada, setIdSeccionSeleccionada] = useState([]);
   const [idAñoEscolarSeleccionado, setIdAñoEscolarSeleccionado] = useState("");
   const [mensaje, setMensaje] = useState("");
+  const [busquedaDocente, setBusquedaDocente] = useState(""); // Nuevo estado para búsqueda de docente
+  const [busquedaMateria, setBusquedaMateria] = useState("");
+  const [busquedaSeccion, setBusquedaSeccion] = useState("");
 
   // Obtener usuario y rol
   const usuarioGuardado = localStorage.getItem("usuario");
@@ -50,11 +54,13 @@ const AsignarMaterias = () => {
     e.preventDefault();
 
     if (
-      [idDocenteSeleccionado, idAñoMateriaSeleccionado, idSeccionSeleccionada, idAñoEscolarSeleccionado].some(
-        (field) => !field || field.trim() === ""
-      )
+      !idDocenteSeleccionado ||
+      !idAñoMateriaSeleccionado ||
+      !idSeccionSeleccionada.length ||
+      !idAñoEscolarSeleccionado
     ) {
       setMensaje("Selecciona todos los campos antes de asignar.");
+      setTimeout(() => setMensaje(""), 2500);
       return;
     }
 
@@ -68,7 +74,7 @@ const AsignarMaterias = () => {
         body: JSON.stringify({
           id_docente: idDocenteSeleccionado,
           id_año_materia: idAñoMateriaSeleccionado,
-          id_seccion: idSeccionSeleccionada,
+          id_secciones: idSeccionSeleccionada,
           fk_año_escolar: idAñoEscolarSeleccionado,
         }),
       });
@@ -78,23 +84,42 @@ const AsignarMaterias = () => {
         setMensaje("Materias asignadas correctamente.");
         setIdDocenteSeleccionado("");
         setIdAñoMateriaSeleccionado("");
-        setIdSeccionSeleccionada("");
+        setIdSeccionSeleccionada([]);
         setIdAñoEscolarSeleccionado("");
       } else {
         setMensaje(`Error: ${data.mensaje}`);
       }
+      setTimeout(() => setMensaje(""), 2500);
     } catch (error) {
       console.error("Error asignando materias:", error);
       setMensaje("Error en la conexión con el servidor.");
+      setTimeout(() => setMensaje(""), 2500);
     }
   };
+
+  // Filtrar docentes por nombre o cédula
+  const docentesFiltrados = docentes.filter((docente) =>
+    (`${docente.nombre} ${docente.cedula}`.toLowerCase().includes(busquedaDocente.toLowerCase()))
+  );
+
+  // Filtrar materias según la búsqueda
+  const materiasFiltradas = añosMateria.filter((materia) =>
+    `${materia.codigo_materia} ${materia.nombre_materia} ${materia.nombre_año}`
+      .toLowerCase()
+      .includes(busquedaMateria.toLowerCase())
+  );
+
+  // Filtrar secciones según la búsqueda por año
+  const seccionesFiltradas = secciones.filter((seccion) =>
+    seccion.nombre_año.toLowerCase().includes(busquedaSeccion.toLowerCase())
+  );
 
   return (
     <CContainer className="py-4">
       <CRow className="justify-content-center">
         <CCol xs={12} md={10} lg={8}>
           <CCard className="shadow-sm">
-            <CCardHeader className="" style={{ backgroundColor: "#0059b3", color: "white" }}>
+            <CCardHeader className="" style={{ backgroundColor: "#114c5f", color: "white" }}>
               <CCardTitle>Asignar Materias a Docentes</CCardTitle>
             </CCardHeader>
             <CCardBody>
@@ -112,6 +137,14 @@ const AsignarMaterias = () => {
                   <CForm onSubmit={handleAsignar}>
                     <CRow className="g-3 align-items-end">
                       <CCol md={6}>
+                        <CFormLabel>Buscar docente por nombre o cédula</CFormLabel>
+                        <CFormInput
+                          type="text"
+                          placeholder="Ej: Juan o 12345678"
+                          className="mb-2"
+                          value={busquedaDocente}
+                          onChange={e => setBusquedaDocente(e.target.value)}
+                        />
                         <CFormLabel>Docente</CFormLabel>
                         <CFormSelect
                           value={idDocenteSeleccionado}
@@ -119,42 +152,83 @@ const AsignarMaterias = () => {
                           required
                         >
                           <option value="">Seleccione un docente</option>
-                          {docentes.map((docente) => (
+                          {docentesFiltrados.map((docente) => (
                             <option key={docente.id_docente} value={docente.id_docente}>
-                              {docente.nombre} - {docente.cedula}
+                              Nombre: {docente.nombre}  Cedula: {docente.cedula}
                             </option>
                           ))}
                         </CFormSelect>
                       </CCol>
                       <CCol md={6}>
                         <CFormLabel>Materia</CFormLabel>
+                        <CFormInput
+                          type="text"
+                          className="mb-2"
+                          placeholder="Buscar materia por código, nombre o año..."
+                          value={busquedaMateria}
+                          onChange={(e) => setBusquedaMateria(e.target.value)}
+                        />
                         <CFormSelect
                           value={idAñoMateriaSeleccionado}
                           onChange={(e) => setIdAñoMateriaSeleccionado(e.target.value)}
                           required
                         >
                           <option value="">Seleccione una materia</option>
-                          {añosMateria.map((materia) => (
-                            <option key={materia.id_año_materia} value={materia.id_año_materia}>
-                              {materia.codigo_materia} - {materia.nombre_materia}
+                          {materiasFiltradas.map((materia) => (
+                            <option
+                              key={materia.id_año_materia}
+                              value={materia.id_año_materia}
+                            >
+                              Codigo: {materia.codigo_materia} Nombre: {materia.nombre_materia} Año: {materia.nombre_año}
                             </option>
                           ))}
                         </CFormSelect>
                       </CCol>
                       <CCol md={6}>
                         <CFormLabel>Sección</CFormLabel>
-                        <CFormSelect
-                          value={idSeccionSeleccionada}
-                          onChange={(e) => setIdSeccionSeleccionada(e.target.value)}
-                          required
+                        {/* Barra de búsqueda para filtrar sección por año */}
+                        <input
+                          type="text"
+                          className="form-control mb-2"
+                          placeholder="Buscar sección por año..."
+                          value={busquedaSeccion}
+                          onChange={(e) => setBusquedaSeccion(e.target.value)}
+                        />
+                        <div
+                          style={{
+                            border: "1px solid #ced4da",
+                            borderRadius: 4,
+                            padding: 8,
+                            maxHeight: 180,
+                            overflowY: "auto",
+                            background: "#f8f9fa"
+                          }}
                         >
-                          <option value="">Seleccione una sección</option>
-                          {secciones.map((seccion) => (
-                            <option key={seccion.id_seccion} value={seccion.id_seccion}>
-                              {seccion.nombre_seccion} - {seccion.nombre_año}
-                            </option>
+                          {seccionesFiltradas.length === 0 && (
+                            <div className="text-muted">No hay secciones para mostrar</div>
+                          )}
+                          {seccionesFiltradas.map((seccion) => (
+                            <div key={seccion.id_seccion} className="form-check">
+                              <input
+                                className="form-check-input"
+                                type="checkbox"
+                                id={`seccion-${seccion.id_seccion}`}
+                                value={seccion.id_seccion}
+                                checked={idSeccionSeleccionada.includes(seccion.id_seccion)}
+                                onChange={e => {
+                                  if (e.target.checked) {
+                                    setIdSeccionSeleccionada([...idSeccionSeleccionada, seccion.id_seccion]);
+                                  } else {
+                                    setIdSeccionSeleccionada(idSeccionSeleccionada.filter(id => id !== seccion.id_seccion));
+                                  }
+                                }}
+                              />
+                              <label className="form-check-label" htmlFor={`seccion-${seccion.id_seccion}`}>
+                                {seccion.nombre_seccion} - {seccion.nombre_año}
+                              </label>
+                            </div>
                           ))}
-                        </CFormSelect>
+                        </div>
                       </CCol>
                       <CCol md={6}>
                         <CFormLabel>Año Escolar</CFormLabel>
@@ -172,7 +246,7 @@ const AsignarMaterias = () => {
                         </CFormSelect>
                       </CCol>
                       <CCol md={12} className="d-grid mt-3">
-                        <CButton color="" type="submit" size="lg" style={{backgroundColor: '#0059b3', color: 'white'}}>
+                        <CButton color="" type="submit" size="lg" style={{ backgroundColor: '#9cd2d3', color: '#114c5f'}}>
                           Asignar Materias
                         </CButton>
                       </CCol>

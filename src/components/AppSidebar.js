@@ -1,6 +1,6 @@
 import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import logo1 from 'src/assets/images/purologo.png'
+import logo1 from 'src/assets/images/educativo.png'
 import getNav from '../_nav'
 import {
   CCloseButton,
@@ -45,7 +45,7 @@ const AppSidebar = () => {
   return (
     <CSidebar
       className="border-end"
-      style={{ background: '#FF7043' }}
+      style={{ background: '  #070145' }}
       colorScheme="dark"
       position="fixed"
       unfoldable={unfoldable}
@@ -54,18 +54,33 @@ const AppSidebar = () => {
         dispatch({ type: 'set', sidebarShow: visible })
       }}
     >
-      <CSidebarHeader style={{ background: '#114c5f' }}>
+      <CSidebarHeader style={{ background: '  #070145' }}>
         <CSidebarBrand
           to="/"
           className="logo1 d-flex justify-content-center align-items-center"
-          style={{ height: 140 }}
+          style={{
+            height: unfoldable ? 100 : 180,
+            transition: 'height 0.3s',
+            width: '100%',
+            justifyContent: 'center',
+            alignItems: 'center',
+            display: 'flex',
+          }}
         >
           <img
             src={logo1}
             alt="Logo"
-            style={{ height: 140, marginLeft: 30
-            
-             }}
+            style={{
+              width: unfoldable ? 80 : 150,
+              height: unfoldable ? 80 : 150,
+              borderRadius: '10%',
+              objectFit: 'contain',
+              display: 'block',
+              margin: '0 auto',
+              transition: 'all 0.3s',
+
+            }}
+            className="img-fluid"
           />
         </CSidebarBrand>
         <CCloseButton
@@ -75,7 +90,7 @@ const AppSidebar = () => {
         />
       </CSidebarHeader>
       <AppSidebarNav items={nav} />
-      <CSidebarFooter className="border-top d-flex flex-column align-items-center" style={{ background: '#09515f' }}>
+      <CSidebarFooter className="border-top d-flex flex-column align-items-center" style={{ background: '  #070145' }}>
         <CSidebarToggler
           onClick={() => dispatch({ type: 'set', sidebarUnfoldable: !unfoldable })}
         />

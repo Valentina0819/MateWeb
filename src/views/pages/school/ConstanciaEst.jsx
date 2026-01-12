@@ -50,7 +50,7 @@ const BuscarEstudiante = () => {
       <CRow className="justify-content-center">
         <CCol xs={12} md={8} lg={6}>
           <CCard className="shadow-sm">
-            <CCardHeader className="" style={{ backgroundColor: "#0059b3", color: "white" }}>
+            <CCardHeader className="" style={{ backgroundColor: "#114c5f", color: "white" }}>
               <CCardTitle>Búsqueda de Estudiante</CCardTitle>
             </CCardHeader>
             <CCardBody>
@@ -67,7 +67,7 @@ const BuscarEstudiante = () => {
                     </CCol>
                     <CCol xs={4}>
                       <CButton
-                        color="primary"
+                        style={{ backgroundColor: '#9cd2d3', color: '#114c5f'}}
                         className="w-100"
                         onClick={buscarEstudiante}
                         disabled={loading || !cedula}
@@ -90,7 +90,7 @@ const BuscarEstudiante = () => {
                           {noEncontrado ? "No disponible" : estudiante.cedula}
                         </CCardText>
                         <CButton
-                          color="success"
+                          style={{ backgroundColor: '#114c5f', color: 'white'}}
                           disabled={noEncontrado}
                           onClick={() =>
                             window.open(

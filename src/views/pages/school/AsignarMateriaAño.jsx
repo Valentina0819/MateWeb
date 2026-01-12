@@ -12,32 +12,34 @@ import {
   CFormSelect,
   CButton,
   CAlert,
+  CFormInput,
 } from "@coreui/react";
 
 const AsignarMateria = () => {
   const [materias, setMaterias] = useState([]);
-  const [secciones, setSecciones] = useState([]);
+  const [anios, setAnios] = useState([]);
   const [codigoMateriaSeleccionada, setCodigoMateriaSeleccionada] = useState("");
-  const [idSeccionSeleccionada, setIdSeccionSeleccionada] = useState("");
+  const [idAnioSeleccionado, setIdAnioSeleccionado] = useState("");
   const [mensaje, setMensaje] = useState("");
+  const [filtroMateria, setFiltroMateria] = useState(""); // Nuevo estado
 
   // Obtener usuario y rol
   const usuarioGuardado = localStorage.getItem("usuario");
   const usuario = usuarioGuardado ? JSON.parse(usuarioGuardado) : null;
 
   useEffect(() => {
-    obtenerMateriasYSecciones();
+    obtenerMateriasYAnios();
   }, []);
 
-  const obtenerMateriasYSecciones = async () => {
+  const obtenerMateriasYAnios = async () => {
     try {
       const resMaterias = await fetch("http://localhost:4000/materias");
       const dataMaterias = await resMaterias.json();
       setMaterias(dataMaterias.materias || []);
 
-      const resSecciones = await fetch("http://localhost:4000/secciones");
-      const dataSecciones = await resSecciones.json();
-      setSecciones(dataSecciones.secciones || []);
+      const resAnios = await fetch("http://localhost:4000/anios");
+      const dataAnios = await resAnios.json();
+      setAnios(dataAnios.anios || []);
     } catch (error) {
       console.error("Error obteniendo datos:", error);
     }
@@ -46,8 +48,9 @@ const AsignarMateria = () => {
   const handleAsignar = async (e) => {
     e.preventDefault();
 
-    if (!codigoMateriaSeleccionada || !idSeccionSeleccionada) {
-      setMensaje("Selecciona una materia y una sección.");
+    if (!codigoMateriaSeleccionada || !idAnioSeleccionado) {
+      setMensaje("Selecciona una materia y un año.");
+      setTimeout(() => setMensaje(""), 2500);
       return;
     }
 
@@ -59,7 +62,7 @@ const AsignarMateria = () => {
         },
         body: JSON.stringify({
           codigo_materia: codigoMateriaSeleccionada,
-          id_seccion: idSeccionSeleccionada
+          id_año: idAnioSeleccionado
         }),
       });
 
@@ -67,23 +70,30 @@ const AsignarMateria = () => {
       if (res.ok) {
         setMensaje("Materia asignada correctamente.");
         setCodigoMateriaSeleccionada("");
-        setIdSeccionSeleccionada("");
+        setIdAnioSeleccionado("");
       } else {
         setMensaje(`Error: ${data.mensaje}`);
       }
+      setTimeout(() => setMensaje(""), 2500); // Cierra el mensaje automáticamente
     } catch (error) {
-      console.error("Error asignando materia:", error);
       setMensaje("Error en la conexión con el servidor.");
+      setTimeout(() => setMensaje(""), 2500);
     }
   };
+
+  // Filtrado de materias por nombre o código
+  const materiasFiltradas = materias.filter(m =>
+    m.nombre.toLowerCase().includes(filtroMateria.toLowerCase()) ||
+    m.codigo_materia.toLowerCase().includes(filtroMateria.toLowerCase())
+  );
 
   return (
     <CContainer className="pt-2 pb-4 mb-5">
       <CRow className="justify-content-center">
         <CCol xs={12} md={8} lg={6}>
           <CCard className="shadow-sm">
-            <CCardHeader className="" style={{ backgroundColor: "#0059b3", color: "white" }}>
-              <CCardTitle>Asignar Materia a Sección</CCardTitle>
+            <CCardHeader className="" style={{ backgroundColor: "#114c5f", color: "white" }}>
+              <CCardTitle>Asignar Materia a Año</CCardTitle>
             </CCardHeader>
             <CCardBody>
               {mensaje && (
@@ -99,6 +109,15 @@ const AsignarMateria = () => {
                 <CForm onSubmit={handleAsignar}>
                   <CRow className="g-3 align-items-end">
                     <CCol md={12}>
+                      {/* Barra de filtrado */}
+                      <CFormLabel>Buscar materia por nombre o código</CFormLabel>
+                      <CFormInput
+                        type="text"
+                        placeholder="Ej: Matemática o MAT101"
+                        value={filtroMateria}
+                        onChange={e => setFiltroMateria(e.target.value)}
+                        className="mb-2"
+                      />
                       <CFormLabel>Materia</CFormLabel>
                       <CFormSelect
                         value={codigoMateriaSeleccionada}
@@ -106,30 +125,30 @@ const AsignarMateria = () => {
                         required
                       >
                         <option value="">Selecciona una materia</option>
-                        {materias.map((materia) => (
+                        {materiasFiltradas.map((materia) => (
                           <option key={materia.codigo_materia} value={materia.codigo_materia}>
-                            {materia.nombre} - {materia.codigo_materia}
+                            {materia.codigo_materia} - {materia.nombre}
                           </option>
                         ))}
                       </CFormSelect>
                     </CCol>
                     <CCol md={12}>
-                      <CFormLabel>Sección</CFormLabel>
+                      <CFormLabel>Año</CFormLabel>
                       <CFormSelect
-                        value={idSeccionSeleccionada}
-                        onChange={(e) => setIdSeccionSeleccionada(e.target.value)}
+                        value={idAnioSeleccionado}
+                        onChange={(e) => setIdAnioSeleccionado(e.target.value)}
                         required
                       >
-                        <option value="">Selecciona una sección</option>
-                        {secciones.map((seccion) => (
-                          <option key={seccion.id_seccion} value={seccion.id_seccion}>
-                            {seccion.id_año} Año - Sección {seccion.nombre_seccion}
+                        <option value="">Selecciona un año</option>
+                        {anios.map((anio) => (
+                          <option key={anio.id_año} value={anio.id_año}>
+                            {anio.nombre_año}
                           </option>
                         ))}
                       </CFormSelect>
                     </CCol>
                     <CCol md={12} className="d-grid mt-3">
-                      <CButton color="primary" type="submit" size="lg">
+                      <CButton color="" type="submit" size="lg" style={{ backgroundColor: '#9cd2d3', color: '#114c5f'}}>
                         Asignar Materia
                       </CButton>
                     </CCol>
@@ -137,7 +156,7 @@ const AsignarMateria = () => {
                 </CForm>
               ) : (
                 <CAlert color="warning" className="mb-0">
-                  Solo los administradores pueden asignar materias a secciones.
+                  Solo los administradores pueden asignar materias a años.
                 </CAlert>
               )}
             </CCardBody>

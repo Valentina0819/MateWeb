@@ -1,7 +1,8 @@
 import React, { Suspense, useEffect } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { CSpinner, useColorModes } from '@coreui/react'
-import { Navigate } from 'react-router-dom'
+import RestablecerContrasena from "src/components/RestablecerContrasena.js";
+import SolicitarRecuperacion from './views/pages/school/lista';
 import './scss/style.scss'
 import './scss/examples.scss'
 
@@ -29,7 +30,7 @@ const App = () => {
     }
     const resetTimer = () => {
       clearTimeout(timeout)
-      timeout = setTimeout(logout, 300 * 1000) // 1 minuto
+      timeout = setTimeout(logout, 3600 * 1000) // 1 minuto
     }
     window.addEventListener('mousemove', resetTimer)
     window.addEventListener('keydown', resetTimer)
@@ -51,6 +52,8 @@ const App = () => {
           <Route path="/register" element={<Register />} />
           <Route path="/404" element={<Page404 />} />
           <Route path="/500" element={<Page500 />} />
+          <Route path="/restablecer/:token" element={<RestablecerContrasena />} />
+          <Route path="/lista" element={<SolicitarRecuperacion />} />
 
           {/* Rutas privadas: todo lo demás va dentro del layout */}
           <Route path="*" element={<DefaultLayout />} />

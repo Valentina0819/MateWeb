@@ -1,24 +1,12 @@
 import React from 'react'
 import CIcon from '@coreui/icons-react'
 import {
-  cilSpeedometer,
-  cilUserPlus,
-  cilUser,
-  cilUserX,
-  cilRain,
-  cilBook,
-  cilClipboard,
-  cilHome,
-  cilBuilding,
-  cilBullhorn,
-  cilGift,
-  cilInstitution,
-  cilList,
-  cilWarning,
-  cilCloudUpload,
-  cilHeart,
+  cilSpeedometer, cilUserPlus, cilUser, cilUserX, cilRain, cilBook, cilClipboard, cilHome,
+  cilBuilding, cilBullhorn, cilGift, cilInstitution, cilList, cilWarning, cilCloudUpload,
+  cilHeart, cilEducation, cilPeople, cilUserFemale, cilPen, cilCalendar, cilCheckCircle,
+  cilAddressBook, cilLibrary,cilLibraryAdd,cilPlaylistAdd,cilWindowRestore, cilPencil, cilPaperclip, cilNotes, cilHappy, cilCopy,cilExternalLink,cilNoteAdd,cilLockLocked,cilApplications,cilBraille,cilFolderOpen,cilLayers,cilLan,cilStar,cilDataTransferDown,cilDialpad,cilCut
 } from '@coreui/icons'
-import { CNavItem, CNavTitle } from '@coreui/react'
+import { CNavItem, CNavTitle, CNavGroup } from '@coreui/react'
 
 export default function getNav() {
   const usuarioGuardado = localStorage.getItem('usuario');
@@ -26,111 +14,270 @@ export default function getNav() {
     ? (JSON.parse(usuarioGuardado).rol || 'usuario').toLowerCase().trim()
     : 'usuario';
 
-  console.log('ROL ACTUAL:', rol);
-
   return [
-    {
-      component: CNavItem,
-      name: 'Dashboard',
-      to: '/dashboard',
-      icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
-      badge: { color: 'info', text: 'NEW' },
-    },
+    ...(rol === 'usuario'
+      ? [{
+        component: CNavItem,
+        name: 'Dashboard',
+        to: '/docente/dashboard',
+        icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
+      }]
+      : []),
+    ...(rol === 'alumno'
+      ? [{
+        component: CNavItem,
+        name: 'Dashboard',
+        to: '/AlumnoDashboard',
+        icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
+      }]
+      : []),
+          ...(rol === 'docente'
+      ? [{
+        component: CNavItem,
+        name: 'Dashboard',
+        to: '/docente/dashboard',
+        icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
+      }]
+      : []),
     {
       component: CNavTitle,
-      name: 'GESTIÓN',
+      name: 'GESTIÓN ACADÉMICA',
     },
-// Solo admin puede registrar estudiante
-    ...(rol === 'admin'
+       ...(rol === 'admin' || rol === 'alumno'
       ? [{
-          component: CNavItem,
-          name: 'Registrar Estudiante',
-          to: '/docents',
-          icon: <CIcon icon={cilClipboard} customClassName="nav-icon" />,
-        }]
-      : []),
-    // Solo admin puede registrar docente
-    ...(rol === 'admin'
-      ? [{
-          component: CNavItem,
-          name: 'Registrar Docente',
-          to: '/noticias',
-          icon: <CIcon icon={cilUserPlus} customClassName="nav-icon" />,
-        }]
-      : []),
-    // Solo admin puede registrar materia
-    ...(rol === 'admin'
-      ? [{
-          component: CNavItem,
-          name: 'Registrar Materia',
-          to: '/prueba',
-          icon: <CIcon icon={cilBook} customClassName="nav-icon" />,
-        }]
-      : []),
-    // Solo admin puede asignar materias a docente
-    ...(rol === 'admin'
-      ? [{
-          component: CNavItem,
-          name: 'Asignar Materias a Docente',
-          to: '/damnificados',
-          icon: <CIcon icon={cilBullhorn} customClassName="nav-icon" />,
-        }]
-      : []),
-    // Solo admin puede asignar sección a materia
-    ...(rol === 'admin'
-      ? [{
-          component: CNavItem,
-          name: 'Asignar seccion a Materia',
-          to: '/victimas',
-          icon: <CIcon icon={cilBuilding} customClassName="nav-icon" />,
-        }]
+        component: CNavGroup,
+        name: 'Contenidos',
+        to: '/contenidos',
+        icon: <CIcon icon={cilWindowRestore} customClassName="nav-icon" />,
+        
+        items: [
+          {
+            component: CNavItem,
+            name: 'Sistemas de numeración',
+            to: '/contenidos/leccion1',
+          },
+          {
+            component: CNavItem,
+            name: 'Los múltiplos y los divisores',
+            to: '/contenidos/leccion2',
+          },
+          {
+            component: CNavItem,
+            name: 'Operaciones con números naturales y decimales',
+            to: '/contenidos/leccion3',
+          },
+          {
+            component: CNavItem,
+            name: 'Ecuaciones de primer grado',
+            to: '/contenidos/leccion4',
+          },
+
+          
+        ]
+      }]
       : []),
 
-      ...(rol === 'admin'
+
+
+
+  // Agrupación de módulos de docentes
+    ...(rol === 'alumno'
       ? [{
-          component: CNavItem,
-          name: 'Generar Constancia',
-          to: '/desbordes',
-          icon: <CIcon icon={cilBuilding} customClassName="nav-icon" />,
-        }]
+        component: CNavGroup,
+        name: 'Pruebas',
+        icon: <CIcon  icon={cilPencil} customClassName="nav-icon" />,
+        items: [
+
+           {
+            component: CNavItem,
+            name: 'Examen',
+            to: '/prueba',
+            icon: <CIcon icon={cilExternalLink} customClassName="nav-icon" />,
+          },
+        ]
+        
+      }]
       : []),
-    // Estos módulos los ve cualquier usuario
-    {
-      component: CNavItem,
-      name: 'prueba',
-      to: '/donaciones',
-      icon: <CIcon icon={cilGift} customClassName="nav-icon" />,
-    },
-    {
-      component: CNavItem,
-      name: 'prueba',
-      to: '/donantes',
-      icon: <CIcon icon={cilHeart} customClassName="nav-icon" />,
-    },
-    {
-      component: CNavItem,
-      name: 'prueba',
-      to: '/comunidad',
-      icon: <CIcon icon={cilInstitution} customClassName="nav-icon" />,
-    },
-   
-    {
-      component: CNavItem,
-      name: 'prueba',
-      to: '/zonas',
-      icon: <CIcon icon={cilWarning} customClassName="nav-icon" />,
-    },
-    {
-      component: CNavItem,
-      name: 'prueba',
-      to: '/suceso',
-      icon: <CIcon icon={cilCloudUpload} customClassName="nav-icon" />,
-    },
-    {
-      component: CNavItem,
-      name: 'prueba',
-      to: '/perdidas',
-      icon: <CIcon icon={cilRain} customClassName="nav-icon" />,
-    },
+
+
+
+
+    // Agrupación de módulos de estudiantes
+    ...(rol === 'admin'
+      ? [{
+        component: CNavGroup,
+        name: 'Estudiantes',
+        icon: <CIcon icon={cilPeople} customClassName="nav-icon" />,
+        items: [
+
+           {
+            component: CNavItem,
+            name: 'inscribir',
+            to: '/inscripcion',
+            icon: <CIcon icon={cilFolderOpen} customClassName="nav-icon" />,
+            
+          },
+          {
+            component: CNavItem,
+            name: 'cursos',
+            to: '/cursosymodulos',
+            icon: <CIcon icon={cilLayers} customClassName="nav-icon" />,
+            
+          },
+          {
+            component: CNavItem,
+            name: 'lecciones',
+            to: '/recursosylecciones',
+            icon: <CIcon icon={cilLan} customClassName="nav-icon" />,
+            
+          },
+          {
+            component: CNavItem,
+            name: 'Recursos',
+            to: '/Recursos',
+            icon: <CIcon icon={cilDataTransferDown} customClassName="nav-icon" />,
+            
+          },
+           {
+            component: CNavItem,
+            name: 'ejercicios',
+            to: '/ejerciciodocente',
+            icon: <CIcon icon={cilPencil} customClassName="nav-icon" />,
+            
+          },
+            {
+            component: CNavItem,
+            name: 'puntaje',
+            to: '/puntaje',
+            icon: <CIcon icon={cilStar} customClassName="nav-icon" />,
+            
+          },
+
+        ]
+      }]
+      : []),
+
+      
+    // Agrupación de módulos de estudiantes
+    ...(rol === 'docente'
+      ? [{
+        component: CNavGroup,
+        name: 'Estudiantes',
+        icon: <CIcon icon={cilPeople} customClassName="nav-icon" />,
+        items: [
+
+
+          {
+            component: CNavItem,
+            name: 'cursos',
+            to: '/cursosymodulos',
+            icon: <CIcon icon={cilLayers} customClassName="nav-icon" />,
+            
+          },
+          {
+            component: CNavItem,
+            name: 'lecciones',
+            to: '/recursosylecciones',
+            icon: <CIcon icon={cilLan} customClassName="nav-icon" />,
+            
+          },
+                    {
+            component: CNavItem,
+            name: 'Recursos',
+            to: '/Recursos',
+            icon: <CIcon icon={cilDataTransferDown} customClassName="nav-icon" />,
+            
+          },
+
+           {
+            component: CNavItem,
+            name: 'ejercicios',
+            to: '/ejerciciodocente',
+            icon: <CIcon icon={cilPencil} customClassName="nav-icon" />,
+            
+          },
+            {
+            component: CNavItem,
+            name: 'puntaje',
+            to: '/puntaje',
+            icon: <CIcon icon={cilStar} customClassName="nav-icon" />,
+            
+          },
+
+
+          
+          
+         /* {
+            component: CNavItem,
+            name: 'Listado de Estudiantes',
+            to: '/EditarEstudiante',
+            icon: <CIcon icon={cilNotes} customClassName="nav-icon" />,
+          },*/
+        ]
+      }]
+      : []),
+
+
+
+      
+    ...(rol === 'admin' || rol === 'alumno'
+      ? [{
+        component: CNavGroup,
+        name: 'Diviertete',
+        icon: <CIcon icon={cilBraille} customClassName="nav-icon" />,
+        items: [
+          {
+          component: CNavItem,
+          name: 'Sopa de Números',
+          to: '/Sabana',
+          icon: <CIcon icon={cilClipboard} customClassName="nav-icon" />,
+        },
+        {
+          component: CNavItem,
+          name: 'Arrastra las Formas',
+          to: '/usuario',
+          icon: <CIcon icon={cilHappy} customClassName="nav-icon" />,
+        },
+        {
+          component: CNavItem,
+          name: 'Quiz de Operaciones',
+          to: '/administrador',
+          icon: <CIcon icon={cilApplications} customClassName="nav-icon" />,
+        },
+        ]
+      }]
+      : []),
+
+          ...(rol === 'admin'
+      ? [{
+        component: CNavGroup,
+        name: 'Gestionar',
+        icon: <CIcon icon={cilCut} customClassName="nav-icon" />,
+        items: [
+          {
+          component: CNavItem,
+          name: 'Usuarios',
+          to: '/usuarios',
+          icon: <CIcon icon={cilClipboard} customClassName="nav-icon" />,
+        },
+
+        {
+            component: CNavItem,
+            name: 'Editar puntaje',
+            to: '/noticas',
+            icon: <CIcon icon={cilDialpad} customClassName="nav-icon" />,
+            
+          },
+
+
+        ]
+      }]
+      : []),
+
+
+
+
+
+
   ]
 }

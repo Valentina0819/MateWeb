@@ -1,53 +1,73 @@
-import { useState } from "react";
-import InscriptionForm from "./estudiantes";
-import { CTable, CTableHead, CTableRow, CTableHeaderCell, CTableBody, CTableDataCell, CButton } from "@coreui/react";
+import  { React, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { CForm, CFormInput, CButton, CAlert, CContainer, CRow, CCol, CCard, CCardBody, CCardTitle } from "@coreui/react";
+  
 
-const InscriptionList = () => {
-  const [inscriptions, setInscriptions] = useState([]);
+const SolicitarRecuperacion = () => {
+  const [email, setEmail] = useState("");
+  const [mensaje, setMensaje] = useState("");
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
-  const addInscription = (data) => {
-    setInscriptions([...inscriptions, { id: Date.now(), ...data }]);
-  };
+  useEffect(() => {
+    const original = document.body.style.background;
+    document.body.style.background = 'url("src/assets/images/fondomat.jpg") center center / cover no-repeat fixed';
+    return () => { document.body.style.background = original; };
+  }, []);
 
-  const deleteInscription = (id) => {
-    setInscriptions(inscriptions.filter((inscription) => inscription.id !== id));
+  const handleSubmit = async e => {
+    e.preventDefault();
+    setMensaje(""); setError("");
+    try {
+      const res = await fetch("http://localhost:4000/solicitar-recuperacion", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email })
+      });
+      const data = await res.json();
+      if (res.ok) setMensaje(data.mensaje);
+      else setError(data.mensaje);
+    } catch {
+      setError("Error en la conexión");
+    }
   };
 
   return (
-    <div>
-      <h2 style={{ textAlign: "center", marginBottom: "20px" }}>Inscripciones</h2>
-      <InscriptionForm onSubmit={addInscription} />
-      
-      <CTable striped hover borderless responsive  style={{marginTop: "30px"}}>
-        <CTableHead>
-          <CTableRow color="primary">
-            <CTableHeaderCell>Nombre</CTableHeaderCell>
-            <CTableHeaderCell>Apellido</CTableHeaderCell>
-            <CTableHeaderCell>Cédula</CTableHeaderCell>
-            <CTableHeaderCell>Grado</CTableHeaderCell>
-            <CTableHeaderCell>Sección</CTableHeaderCell>
-            <CTableHeaderCell>Acciones</CTableHeaderCell>
-          </CTableRow>
-        </CTableHead>
-        <CTableBody>
-          {inscriptions.map((student) => (
-            <CTableRow key={student.id}>
-              <CTableDataCell>{student.nombre}</CTableDataCell>
-              <CTableDataCell>{student.apellido}</CTableDataCell>
-              <CTableDataCell>{student.cedula}</CTableDataCell>
-              <CTableDataCell>{student.grado}</CTableDataCell>
-              <CTableDataCell>{student.seccion}</CTableDataCell>
-              <CTableDataCell>
-                <CButton color="danger" variant="outline" size="sm" onClick={() => deleteInscription(student.id)}>
-                  Eliminar
+    <CContainer className="py-4" style={{marginTop:'170px'}}>
+      <CRow className="justify-content-center">
+        <CCol xs={12} md={6}>
+          <CCard>
+            <CCardBody>
+              <CCardTitle>¿Olvidaste tu usuario o contraseña?</CCardTitle>
+              <CForm onSubmit={handleSubmit}>
+                <CFormInput
+                  type="email"
+                  placeholder="Correo registrado"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  required
+                  className="mb-3"
+                />
+                <CButton type="submit" style={{backgroundColor:'#114c5f', color:'white'}} className="w-100 mb-2">
+                  Enviar enlace de recuperación
                 </CButton>
-              </CTableDataCell>
-            </CTableRow>
-          ))}
-        </CTableBody>
-      </CTable>
-    </div>
+              </CForm>
+              <CButton
+                color="secondary"
+                variant="outline"
+                className="w-100"
+                onClick={() => navigate("/login")}
+              >
+                Volver al Login
+              </CButton>
+              {mensaje && <CAlert color="success" className="mt-3">{mensaje}</CAlert>}
+              {error && <CAlert color="danger" className="mt-3">{error}</CAlert>}
+            </CCardBody>
+          </CCard>
+        </CCol>
+      </CRow>
+    </CContainer>
   );
 };
 
-export default InscriptionList;
+export default SolicitarRecuperacion;

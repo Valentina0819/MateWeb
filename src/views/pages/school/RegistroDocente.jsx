@@ -75,6 +75,9 @@ const RegistroDocente = () => {
           correo_institucional: "",
           horas_semanales: "",
         });
+      } else if (res.status === 409) {
+        const data = await res.json();
+        setMensaje({ tipo: "danger", texto: data.mensaje || "Ya existe un docente con esa cédula." });
       } else if (res.status === 404 || res.status === 500) {
         setMensaje({ tipo: "danger", texto: "No se pudo registrar el docente." });
       } else {
@@ -95,7 +98,7 @@ const RegistroDocente = () => {
       <CRow className="justify-content-center">
         <CCol xs={12} md={10} lg={9}>
           <CCard className="shadow-sm">
-            <CCardHeader className="" style={{ backgroundColor: "#0059b3", color: "white" }}>
+            <CCardHeader className="" style={{ backgroundColor: "#114c5f", color: "white" }}>
               <CCardTitle >Registro de Docente</CCardTitle>
             </CCardHeader>
             <CCardBody>
@@ -118,7 +121,7 @@ const RegistroDocente = () => {
                         <option value="">Seleccione</option>
                         {cedulas.map((usuario) => (
                           <option key={usuario.cedula} value={usuario.cedula}>
-                            {usuario.cedula}
+                            {usuario.cedula} - {usuario.nombres} {usuario.apellidos}
                           </option>
                         ))}
                       </CFormSelect>
@@ -128,6 +131,7 @@ const RegistroDocente = () => {
                       <CFormInput
                         type="text"
                         name="titulo_academico"
+                        placeholder="Ejm Licenciado, Ingeniero"
                         value={formulario.titulo_academico}
                         onChange={manejarCambio}
                         required
@@ -139,6 +143,7 @@ const RegistroDocente = () => {
                       <CFormInput
                         type="text"
                         name="especialidad"
+                        placeholder="Ejm Matemáticas"
                         value={formulario.especialidad}
                         onChange={manejarCambio}
                         required
@@ -150,6 +155,7 @@ const RegistroDocente = () => {
                       <CFormInput
                         type="text"
                         name="tipo_contrato"
+                        placeholder="Ejm Fijo, Temporal"
                         value={formulario.tipo_contrato}
                         onChange={manejarCambio}
                         required
@@ -171,6 +177,7 @@ const RegistroDocente = () => {
                       <CFormInput
                         type="text"
                         name="estado_laboral"
+                        placeholder="Ejm Activo, Inactivo"
                         value={formulario.estado_laboral}
                         onChange={manejarCambio}
                         required
@@ -182,6 +189,7 @@ const RegistroDocente = () => {
                       <CFormInput
                         type="text"
                         name="telefono"
+                        placeholder="Ejm 0414-1234567"
                         value={formulario.telefono}
                         onChange={manejarCambio}
                         required
@@ -193,6 +201,7 @@ const RegistroDocente = () => {
                       <CFormInput
                         type="email"
                         name="correo_institucional"
+                        placeholder="Ejm correo@gmail.com"
                         value={formulario.correo_institucional}
                         onChange={manejarCambio}
                         required
@@ -204,6 +213,7 @@ const RegistroDocente = () => {
                       <CFormInput
                         type="number"
                         name="horas_semanales"
+                        placeholder="Ejm 40"
                         value={formulario.horas_semanales}
                         onChange={manejarCambio}
                         required
@@ -213,7 +223,7 @@ const RegistroDocente = () => {
                     </CCol>
                     <CCol md={12}>
                       <div className="d-grid">
-                        <CButton color="primary" type="submit" disabled={loading}>
+                        <CButton style={{ backgroundColor: '#9cd2d3', color: '#114c5f'}} type="submit" disabled={loading}>
                           {loading ? "Registrando..." : "Registrar Docente"}
                         </CButton>
                       </div>

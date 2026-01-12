@@ -1,30 +1,22 @@
 import React, { useEffect, useRef } from 'react'
-import { NavLink, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import {
   CContainer,
   CHeader,
   CHeaderNav,
   CHeaderToggler,
-  CNavLink,
   CNavItem,
-  useColorModes,
   CButton,
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import {
   cilMenu,
-  cilMoon,
-  cilSun,
   cilAccountLogout,
 } from '@coreui/icons'
 
-import { AppBreadcrumb } from './index'
-import { AppHeaderDropdown } from './header/index'
-
 const AppHeader = () => {
   const headerRef = useRef()
-  const { colorMode, setColorMode } = useColorModes('coreui-free-react-admin-template-theme')
   const dispatch = useDispatch()
   const sidebarShow = useSelector((state) => state.sidebarShow)
   const navigate = useNavigate()
@@ -36,26 +28,23 @@ const AppHeader = () => {
     })
   }, [])
 
+  const usuario = localStorage.getItem('usuario')
 
-   const usuario = localStorage.getItem('usuario')
- 
-   const handleLogout = () => {
-     localStorage.clear()
-     localStorage.removeItem('usuario')
-     localStorage.removeItem("usuario");
-     localStorage.removeItem("token");
-     navigate('/login')
-   }
- 
-   const handleLogin = () => {
-     navigate('/login')
-   }
+  const handleLogout = () => {
+    localStorage.clear()
+    localStorage.removeItem("usuario");
+    localStorage.removeItem("token");
+    navigate('/login')
+  }
+
+  const handleLogin = () => {
+    navigate('/login')
+  }
 
   return (
     <CHeader position="sticky" className="mb-4 p-0" ref={headerRef} style={{
-      background: '#114c5f',
+      background: ' #070145',
       color:'white',
-     
     }}>
       <CContainer className="border-bottom px-4" fluid>
         <CHeaderToggler
@@ -67,34 +56,21 @@ const AppHeader = () => {
         <div className="text-secondary " style={{ fontStyle: 'italic', fontSize: 15 }}>
           <span style={{
             color:'white'
-          }}>"Comprometidos con la excelencia, formando líderes del mañana"</span>
+          }}>"Sumamos diversión, restamos aburrimiento"</span>
         </div>
         <CHeaderNav className="ms-auto" style={{ gap: 12 }}>
           <CNavItem>
-            <CNavLink
-              href="#"
-              style={{ cursor: 'pointer',color: 'white', marginBottom: '0' }}
-              onClick={() => setColorMode(colorMode === 'dark' ? 'light' : 'dark')}
-              title="Cambiar modo claro/oscuro"
-            >
-              <CIcon icon={colorMode === 'dark' ? cilSun : cilMoon} size="lg" />
-            </CNavLink>
-          </CNavItem>
-          <CNavItem>
             {usuario ? (
-                      <CButton color="danger" variant="outline" onClick={handleLogout} style={{marginTop:'0'}}>
-                        <CIcon icon={cilAccountLogout} className="me-2" />
-                        Cerrar sesión
-                      </CButton>
-            
-                      
-                    ) : (
-                      <CButton color="primary" variant="outline" onClick={handleLogin}>
-                        <CIcon icon={cilAccountLogout} className="me-2" />
-                        Iniciar sesión
-                      </CButton>
-                     )}
-           
+              <CButton color="danger" variant="outline" onClick={handleLogout} style={{marginTop:'0'}}>
+                <CIcon icon={cilAccountLogout} className="me-2" />
+                Cerrar sesión
+              </CButton>
+            ) : (
+              <CButton color="primary" variant="outline" onClick={handleLogin}>
+                <CIcon icon={cilAccountLogout} className="me-2" />
+                Iniciar sesión
+              </CButton>
+            )}
           </CNavItem>
         </CHeaderNav>
       </CContainer>
