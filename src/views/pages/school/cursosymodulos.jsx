@@ -1,598 +1,444 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react'
 import {
-  CCard, CCardBody, CCardHeader, CForm, CFormInput, CFormSelect, CButton,
-  CRow, CCol, CTable, CTableHead, CTableRow, CTableHeaderCell, CTableBody, CTableDataCell,
-  CContainer, CAlert, CPagination, CPaginationItem, CModal, CModalHeader, CModalBody, CModalFooter
-} from '@coreui/react';
+  CCard,
+  CCardBody,
+  CCardHeader,
+  CForm,
+  CFormInput,
+  CFormSelect,
+  CButton,
+  CRow,
+  CCol,
+  CTable,
+  CTableHead,
+  CTableRow,
+  CTableHeaderCell,
+  CTableBody,
+  CTableDataCell,
+  CContainer,
+  CAlert,
+  CPagination,
+  CPaginationItem,
+  CModal,
+  CModalHeader,
+  CModalBody,
+  CModalFooter,
+  CBadge,
+  CTooltip,
+} from '@coreui/react'
+import CIcon from '@coreui/icons-react'
+import { cilPencil, cilTrash, cilPlus, cilLibrary, cilLayers, cilSave, cilX } from '@coreui/icons'
 
 export default function CrudCursosModulos() {
-  // Cursos
-  const [cursos, setCursos] = useState([]);
-  const [cursoForm, setCursoForm] = useState({ nombre_curso: '', descripcion: '' });
-  const [cursoErrors, setCursoErrors] = useState({ nombre_curso: '', descripcion: '' });
+  // --- ESTADOS ---
+  const [cursos, setCursos] = useState([])
+  const [cursoForm, setCursoForm] = useState({ nombre_curso: '', descripcion: '' })
+  const [cursoErrors, setCursoErrors] = useState({})
 
-  // Modal de edición de curso
-  const [modalEditCurso, setModalEditCurso] = useState(false);
-  const [cursoEditForm, setCursoEditForm] = useState({ nombre_curso: '', descripcion: '' });
-  const [editCursoId, setEditCursoId] = useState(null);
-  const [cursoEditErrors, setCursoEditErrors] = useState({ nombre_curso: '', descripcion: '' });
-  const [permitCloseCursoEdit, setPermitCloseCursoEdit] = useState(false);
+  const [modalEditCurso, setModalEditCurso] = useState(false)
+  const [cursoEditForm, setCursoEditForm] = useState({ nombre_curso: '', descripcion: '' })
+  const [editCursoId, setEditCursoId] = useState(null)
+  const [cursoEditErrors, setCursoEditErrors] = useState({})
 
-  // Módulos
-  const [modulos, setModulos] = useState([]);
-  const [moduloForm, setModuloForm] = useState({ id_curso: '', nombre_modulo: '', descripcion: '' });
-  const [editModuloId, setEditModuloId] = useState(null);
-  const [moduloErrors, setModuloErrors] = useState({ id_curso: '', nombre_modulo: '', descripcion: '' });
+  const [modulos, setModulos] = useState([])
+  const [moduloForm, setModuloForm] = useState({ id_curso: '', nombre_modulo: '', descripcion: '' })
+  const [moduloErrors, setModuloErrors] = useState({})
 
-  // Modal de edición de módulo
-  const [modalEditModulo, setModalEditModulo] = useState(false);
-  const [moduloEditForm, setModuloEditForm] = useState({ id_curso: '', nombre_modulo: '', descripcion: '' });
-  const [editModuloModalId, setEditModuloModalId] = useState(null);
-  const [moduloEditErrors, setModuloEditErrors] = useState({ id_curso: '', nombre_modulo: '', descripcion: '' });
-  const [permitCloseModuloEdit, setPermitCloseModuloEdit] = useState(false);
+  const [modalEditModulo, setModalEditModulo] = useState(false)
+  const [moduloEditForm, setModuloEditForm] = useState({
+    id_curso: '',
+    nombre_modulo: '',
+    descripcion: '',
+  })
+  const [editModuloModalId, setEditModuloModalId] = useState(null)
+  const [moduloEditErrors, setModuloEditErrors] = useState({})
 
-  // Mensajes
-  const [alert, setAlert] = useState({ color: '', text: '' });
+  const [alert, setAlert] = useState({ color: '', text: '' })
+  const [cursoPage, setCursoPage] = useState(1)
+  const [moduloPage, setModuloPage] = useState(1)
+  const itemsPerPage = 4
 
-  // Paginación
-  const [cursoPage, setCursoPage] = useState(1);
-  const [moduloPage, setModuloPage] = useState(1);
-  const itemsPerPage = 4;
+  const [modalConfirmCurso, setModalConfirmCurso] = useState(false)
+  const [cursoAEliminar, setCursoAEliminar] = useState(null)
+  const [modalConfirmModulo, setModalConfirmModulo] = useState(false)
+  const [moduloAEliminar, setModuloAEliminar] = useState(null)
 
-  // Modales de confirmación
-  const [modalConfirmCurso, setModalConfirmCurso] = useState(false);
-  const [cursoAEliminar, setCursoAEliminar] = useState(null);
-  const [modalConfirmModulo, setModalConfirmModulo] = useState(false);
-  const [moduloAEliminar, setModuloAEliminar] = useState(null);
+  const azulProfundo = '#070145'
 
-  // bloqueo boton atrás
-  const popstateHandlerRef = useRef(null);
-  const pushedRef = useRef(false);
-  const [permitCloseCursoConfirm, setPermitCloseCursoConfirm] = useState(false);
-  const [permitCloseModuloConfirm, setPermitCloseModuloConfirm] = useState(false);
+  // --- CARGA DE DATOS ---
+  const fetchCursos = useCallback(async () => {
+    const res = await fetch('http://localhost:4000/obtenercursos')
+    const data = await res.json()
+    setCursos(data)
+  }, [])
+
+  const fetchModulos = useCallback(async () => {
+    const res = await fetch('http://localhost:4000/obtenermodulos')
+    const data = await res.json()
+    setModulos(data)
+  }, [])
 
   useEffect(() => {
-    fetchCursos();
-    fetchModulos();
-  }, []);
+    fetchCursos()
+    fetchModulos()
+  }, [fetchCursos, fetchModulos])
 
-  const fetchCursos = async () => {
-    const res = await fetch('http://localhost:4000/obtenercursos');
-    const data = await res.json();
-    setCursos(data);
-  };
+  // --- VALIDACIONES ---
+  const validarCurso = (form) => {
+    let errs = {}
+    if (!form.nombre_curso || form.nombre_curso.trim().length < 3)
+      errs.nombre_curso = 'Mínimo 3 caracteres.'
+    if (!form.descripcion || form.descripcion.trim().length < 5)
+      errs.descripcion = 'Mínimo 5 caracteres.'
+    return errs
+  }
 
-  const fetchModulos = async () => {
-    const res = await fetch('http://localhost:4000/obtenermodulos');
-    const data = await res.json();
-    setModulos(data);
-  };
+  const validarModulo = (form) => {
+    let errs = {}
+    if (!form.id_curso) errs.id_curso = 'Seleccione un curso.'
+    if (!form.nombre_modulo || form.nombre_modulo.trim().length < 3)
+      errs.nombre_modulo = 'Mínimo 3 caracteres.'
+    return errs
+  }
 
-  // VALIDADORES CURSO
-  const validarNombreCurso = (val) => {
-    if (!val || val.trim() === '') return 'El nombre del curso es obligatorio.';
-    if (val.length < 3) return 'El nombre debe tener al menos 3 caracteres.';
-    if (!/^[a-zA-Z0-9\s]+$/.test(val)) return 'Solo se permiten letras, números y espacios.';
-    return '';
-  };
-
-  const validarDescripcionCurso = (val) => {
-    if (!val || val.trim() === '') return 'La descripción es obligatoria.';
-    if (val.length < 5) return 'La descripción debe tener al menos 5 caracteres.';
-    return '';
-  };
-
-  // VALIDADORES MÓDULO
-  const validarCursoSeleccionado = (val) => {
-    if (!val || val === '') return 'Seleccione un curso.';
-    return '';
-  };
-
-  const validarNombreModulo = (val) => {
-    if (!val || val.trim() === '') return 'El nombre del módulo es obligatorio.';
-    if (val.length < 3) return 'El nombre debe tener al menos 3 caracteres.';
-    if (!/^[a-zA-Z0-9\s]+$/.test(val)) return 'Solo se permiten letras, números y espacios.';
-    return '';
-  };
-
-  const validarDescripcionModulo = (val) => {
-    if (!val || val.trim() === '') return 'La descripción es obligatoria.';
-    if (val.length < 5) return 'La descripción debe tener al menos 5 caracteres.';
-    return '';
-  };
-
-  // validación en tiempo real curso
-  useEffect(() => {
-    setCursoErrors({
-      nombre_curso: validarNombreCurso(cursoForm.nombre_curso),
-      descripcion: validarDescripcionCurso(cursoForm.descripcion),
-    });
-  }, [cursoForm]);
-
-  // validación en tiempo real curso editar
-  useEffect(() => {
-    setCursoEditErrors({
-      nombre_curso: validarNombreCurso(cursoEditForm.nombre_curso),
-      descripcion: validarDescripcionCurso(cursoEditForm.descripcion),
-    });
-  }, [cursoEditForm]);
-
-  // validación en tiempo real módulo
-  useEffect(() => {
-    setModuloErrors({
-      id_curso: validarCursoSeleccionado(moduloForm.id_curso),
-      nombre_modulo: validarNombreModulo(moduloForm.nombre_modulo),
-      descripcion: validarDescripcionModulo(moduloForm.descripcion),
-    });
-  }, [moduloForm]);
-
-  // validación en tiempo real módulo editar
-  useEffect(() => {
-    setModuloEditErrors({
-      id_curso: validarCursoSeleccionado(moduloEditForm.id_curso),
-      nombre_modulo: validarNombreModulo(moduloEditForm.nombre_modulo),
-      descripcion: validarDescripcionModulo(moduloEditForm.descripcion),
-    });
-  }, [moduloEditForm]);
-
-  // BLOQUEO BACK BUTTON
-  useEffect(() => {
-    const anyOpen = modalConfirmCurso || modalConfirmModulo || modalEditCurso || modalEditModulo;
-    if (anyOpen) {
-      if (!pushedRef.current) {
-        try {
-          window.history.pushState({ modalOpen: true }, '');
-          pushedRef.current = true;
-        } catch {}
-      }
-      const handler = () => {
-        try { window.history.pushState({ modalOpen: true }, ''); } catch {}
-      };
-      popstateHandlerRef.current = handler;
-      window.addEventListener('popstate', handler);
-    } else {
-      if (popstateHandlerRef.current) {
-        window.removeEventListener('popstate', popstateHandlerRef.current);
-        popstateHandlerRef.current = null;
-      }
-      if (pushedRef.current) {
-        try { window.history.back(); } catch {}
-        pushedRef.current = false;
-      }
-    }
-    return () => {
-      if (popstateHandlerRef.current) {
-        window.removeEventListener('popstate', popstateHandlerRef.current);
-        popstateHandlerRef.current = null;
-      }
-    };
-  }, [modalConfirmCurso, modalConfirmModulo, modalEditCurso, modalEditModulo]);
-
-  // CURSO HANDLERS
+  // --- HANDLERS CURSOS ---
   const handleCursoSubmit = async (e) => {
-    e.preventDefault();
-    const errNombre = validarNombreCurso(cursoForm.nombre_curso);
-    const errDesc = validarDescripcionCurso(cursoForm.descripcion);
-    setCursoErrors({ nombre_curso: errNombre, descripcion: errDesc });
-    
-    if (errNombre || errDesc) {
-      setAlert({ color: 'danger', text: 'Corrija los errores del formulario.' });
-      return;
+    e.preventDefault()
+    const errs = validarCurso(cursoForm)
+    if (Object.keys(errs).length > 0) {
+      setCursoErrors(errs)
+      return
     }
-
     try {
-      const { nombre_curso, descripcion } = cursoForm;
       await fetch('http://localhost:4000/crearcurso', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nombre_curso, descripcion })
-      });
-      setAlert({ color: 'success', text: 'Curso creado correctamente.' });
-      setCursoForm({ nombre_curso: '', descripcion: '' });
-      fetchCursos();
+        body: JSON.stringify(cursoForm),
+      })
+      setAlert({ color: 'success', text: 'Curso creado con éxito' })
+      setCursoForm({ nombre_curso: '', descripcion: '' })
+      setCursoErrors({})
+      fetchCursos()
     } catch {
-      setAlert({ color: 'danger', text: 'Error al guardar el curso.' });
+      setAlert({ color: 'danger', text: 'Error al guardar' })
     }
-  };
+  }
 
-  const handleEditCurso = (curso) => {
-    setCursoEditForm({ nombre_curso: curso.nombre_curso, descripcion: curso.descripcion });
-    setEditCursoId(curso.id_curso);
-    setModalEditCurso(true);
-    setPermitCloseCursoEdit(false);
-  };
-
-  const handleGuardarEdicionCurso = async (e) => {
-    e.preventDefault();
-    const errNombre = validarNombreCurso(cursoEditForm.nombre_curso);
-    const errDesc = validarDescripcionCurso(cursoEditForm.descripcion);
-    setCursoEditErrors({ nombre_curso: errNombre, descripcion: errDesc });
-    
-    if (errNombre || errDesc) {
-      setAlert({ color: 'danger', text: 'Corrija los errores del formulario.' });
-      return;
-    }
-
+  const handleGuardarEdicionCurso = async () => {
     try {
       await fetch(`http://localhost:4000/editarcurso/${editCursoId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(cursoEditForm)
-      });
-      setAlert({ color: 'info', text: 'Curso actualizado correctamente.' });
-      setPermitCloseCursoEdit(true);
-      setModalEditCurso(false);
-      fetchCursos();
+        body: JSON.stringify(cursoEditForm),
+      })
+      setModalEditCurso(false)
+      setAlert({ color: 'info', text: 'Curso actualizado' })
+      fetchCursos()
     } catch {
-      setAlert({ color: 'danger', text: 'Error al actualizar el curso.' });
+      setAlert({ color: 'danger', text: 'Error al actualizar' })
     }
-  };
-
-  const solicitarEliminarCurso = (id) => {
-    setCursoAEliminar(id);
-    setModalConfirmCurso(true);
-    setPermitCloseCursoConfirm(false);
-  };
+  }
 
   const handleDeleteCurso = async () => {
     try {
-      const res = await fetch(`http://localhost:4000/eliminarcurso/${cursoAEliminar}`, { method: 'DELETE' });
+      const res = await fetch(`http://localhost:4000/eliminarcurso/${cursoAEliminar}`, {
+        method: 'DELETE',
+      })
       if (res.ok) {
-        setAlert({ color: 'warning', text: 'Curso eliminado.' });
-        setPermitCloseCursoConfirm(true);
-        setModalConfirmCurso(false);
-        fetchCursos();
-        fetchModulos();
-      } else {
-        const data = await res.json();
-        setAlert({ color: 'danger', text: data.mensaje || 'Error al eliminar el curso.' });
+        setAlert({ color: 'warning', text: 'Curso y módulos eliminados' })
+        setModalConfirmCurso(false)
+        fetchCursos()
+        fetchModulos()
       }
     } catch {
-      setAlert({ color: 'danger', text: 'Error al eliminar el curso.' });
+      setAlert({ color: 'danger', text: 'Error al eliminar' })
     }
-  };
+  }
 
-  // MODULO HANDLERS
+  // --- HANDLERS MÓDULOS ---
   const handleModuloSubmit = async (e) => {
-    e.preventDefault();
-    const errCurso = validarCursoSeleccionado(moduloForm.id_curso);
-    const errNombre = validarNombreModulo(moduloForm.nombre_modulo);
-    const errDesc = validarDescripcionModulo(moduloForm.descripcion);
-    setModuloErrors({ id_curso: errCurso, nombre_modulo: errNombre, descripcion: errDesc });
-    
-    if (errCurso || errNombre || errDesc) {
-      setAlert({ color: 'danger', text: 'Corrija los errores del formulario.' });
-      return;
+    e.preventDefault()
+    const errs = validarModulo(moduloForm)
+    if (Object.keys(errs).length > 0) {
+      setModuloErrors(errs)
+      return
     }
-
     try {
       await fetch('http://localhost:4000/crearmodulo', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(moduloForm)
-      });
-      setAlert({ color: 'success', text: 'Módulo creado correctamente.' });
-      setModuloForm({ id_curso: '', nombre_modulo: '', descripcion: '' });
-      fetchModulos();
+        body: JSON.stringify(moduloForm),
+      })
+      setAlert({ color: 'success', text: 'Módulo creado con éxito' })
+      setModuloForm({ id_curso: '', nombre_modulo: '', descripcion: '' })
+      setModuloErrors({})
+      fetchModulos()
     } catch {
-      setAlert({ color: 'danger', text: 'Error al guardar el módulo.' });
+      setAlert({ color: 'danger', text: 'Error al guardar' })
     }
-  };
-
-  const handleEditModulo = (modulo) => {
-    setModuloEditForm({
-      id_curso: modulo.id_curso,
-      nombre_modulo: modulo.nombre_modulo,
-      descripcion: modulo.descripcion
-    });
-    setEditModuloModalId(modulo.id_modulo);
-    setModalEditModulo(true);
-    setPermitCloseModuloEdit(false);
-  };
-
-  const handleGuardarEdicionModulo = async (e) => {
-    e.preventDefault();
-    const errCurso = validarCursoSeleccionado(moduloEditForm.id_curso);
-    const errNombre = validarNombreModulo(moduloEditForm.nombre_modulo);
-    const errDesc = validarDescripcionModulo(moduloEditForm.descripcion);
-    setModuloEditErrors({ id_curso: errCurso, nombre_modulo: errNombre, descripcion: errDesc });
-    
-    if (errCurso || errNombre || errDesc) {
-      setAlert({ color: 'danger', text: 'Corrija los errores del formulario.' });
-      return;
-    }
-
-    try {
-      await fetch(`http://localhost:4000/editarmodulo/${editModuloModalId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(moduloEditForm)
-      });
-      setAlert({ color: 'info', text: 'Módulo actualizado correctamente.' });
-      setPermitCloseModuloEdit(true);
-      setModalEditModulo(false);
-      fetchModulos();
-    } catch {
-      setAlert({ color: 'danger', text: 'Error al actualizar el módulo.' });
-    }
-  };
-
-  const solicitarEliminarModulo = (id) => {
-    setModuloAEliminar(id);
-    setModalConfirmModulo(true);
-    setPermitCloseModuloConfirm(false);
-  };
+  }
 
   const handleDeleteModulo = async () => {
     try {
-      const res = await fetch(`http://localhost:4000/eliminarmodulo/${moduloAEliminar}`, { method: 'DELETE' });
-      const data = await res.json();
-      if (res.ok) {
-        setAlert({ color: 'warning', text: 'Módulo eliminado.' });
-        setPermitCloseModuloConfirm(true);
-        setModalConfirmModulo(false);
-        fetchModulos();
-      } else {
-        setAlert({ color: 'danger', text: data.mensaje || 'Error al eliminar el módulo.' });
-      }
+      await fetch(`http://localhost:4000/eliminarmodulo/${moduloAEliminar}`, { method: 'DELETE' })
+      setAlert({ color: 'warning', text: 'Módulo eliminado' })
+      setModalConfirmModulo(false)
+      fetchModulos()
     } catch {
-      setAlert({ color: 'danger', text: 'Error al eliminar el módulo.' });
+      setAlert({ color: 'danger', text: 'Error al eliminar' })
     }
-  };
+  }
 
-  // Paginación lógica
-  const cursosTotalPages = Math.ceil(cursos.length / itemsPerPage);
-  const cursosToShow = cursos.slice((cursoPage - 1) * itemsPerPage, cursoPage * itemsPerPage);
-
-  const modulosTotalPages = Math.ceil(modulos.length / itemsPerPage);
-  const modulosToShow = modulos.slice((moduloPage - 1) * itemsPerPage, moduloPage * itemsPerPage);
+  // --- PAGINACIÓN ---
+  const cursosToShow = cursos.slice((cursoPage - 1) * itemsPerPage, cursoPage * itemsPerPage)
+  const modulosToShow = modulos.slice((moduloPage - 1) * itemsPerPage, moduloPage * itemsPerPage)
 
   return (
-    <CContainer className="py-4">
-      <CRow className="justify-content-center">
-        <CCol md={7} lg={6} xl={7}>
-          <CCard className="mb-4 shadow" style={{ minWidth: 420, borderRadius: 10 }}>
-            <CCardHeader style={{ background: '#070145', color: 'white', borderTopLeftRadius: 10, borderTopRightRadius: 10 }}>
-              <strong>Nuevo Curso</strong>
+    <CContainer className="py-5">
+      <style>
+        {`
+          .custom-card { border: none; border-radius: 16px; box-shadow: 0 8px 30px rgba(0,0,0,0.05); transition: 0.3s; }
+          .header-dark { background: ${azulProfundo}; color: white; border-radius: 16px 16px 0 0 !important; font-weight: 700; letter-spacing: 0.5px; }
+          .header-green { background: #101bb9ff; color: white; border-radius: 16px 16px 0 0 !important; }
+          .input-modern { border: 2px solid #f1f3f5; border-radius: 10px; padding: 10px 15px; transition: all 0.3s; }
+          .input-modern:focus { border-color: ${azulProfundo}; box-shadow: 0 0 0 4px rgba(7, 1, 69, 0.08); }
+          .btn-main { border-radius: 10px; font-weight: 600; padding: 10px 20px; transition: 0.3s; }
+          .btn-main:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+          .badge-soft { background-color: #eef2ff; color: #4338ca; border: 1px solid #c7d2fe; padding: 6px 12px; font-weight: 700; }
+          .table-modern thead { background-color: #f8fafc; }
+          .table-modern tr:hover { background-color: #fcfdfe !important; }
+          .form-label-custom { font-size: 0.75rem; font-weight: 800; color: #64748b; text-transform: uppercase; margin-bottom: 6px; display: block; }
+        `}
+      </style>
+
+      {alert.text && (
+        <CAlert color={alert.color} className="mb-4 border-0 shadow-sm">
+          {alert.text}
+        </CAlert>
+      )}
+
+      <CRow className="g-4">
+        {/* --- SECCIÓN CURSOS --- */}
+        <CCol lg={5}>
+          <CCard className="custom-card">
+            <CCardHeader className="header-dark p-3">
+              <CIcon icon={cilPlus} className="me-2" />
+              NUEVO CURSO
             </CCardHeader>
-            <CCardBody>
+            <CCardBody className="p-4">
               <CForm onSubmit={handleCursoSubmit}>
-                <CFormInput
-                  className="mb-2"
-                  type="text"
-                  label="Nombre del curso"
-                  placeholder="Nombre del curso"
-                  value={cursoForm.nombre_curso}
-                  onChange={e => setCursoForm({ ...cursoForm, nombre_curso: e.target.value })}
-                  style={{ borderRadius: 8 }}
-                />
-                {cursoErrors.nombre_curso && <div style={{ color: 'red', fontSize: 13, marginBottom: 8 }}>{cursoErrors.nombre_curso}</div>}
-
-                <CFormInput
-                  className="mb-2"
-                  type="text"
-                  label="Descripción"
-                  placeholder="Descripción"
-                  value={cursoForm.descripcion}
-                  onChange={e => setCursoForm({ ...cursoForm, descripcion: e.target.value })}
-                  style={{ borderRadius: 8 }}
-                />
-                {cursoErrors.descripcion && <div style={{ color: 'red', fontSize: 13, marginBottom: 8 }}>{cursoErrors.descripcion}</div>}
-
-                <div className="d-flex gap-2">
-                  <CButton type="submit" color="info" className="text-white" style={{ backgroundColor: "#070145", minWidth: 100, borderRadius: 6 }}>
-                    Crear
-                  </CButton>
+                <div className="mb-3">
+                  <span className="form-label-custom">Nombre del curso</span>
+                  <CFormInput
+                    className="input-modern"
+                    value={cursoForm.nombre_curso}
+                    onChange={(e) => setCursoForm({ ...cursoForm, nombre_curso: e.target.value })}
+                    placeholder="Ej: React Avanzado"
+                  />
+                  {cursoErrors.nombre_curso && (
+                    <small className="text-danger fw-bold">{cursoErrors.nombre_curso}</small>
+                  )}
                 </div>
+                <div className="mb-4">
+                  <span className="form-label-custom">Descripción</span>
+                  <CFormInput
+                    className="input-modern"
+                    value={cursoForm.descripcion}
+                    onChange={(e) => setCursoForm({ ...cursoForm, descripcion: e.target.value })}
+                    placeholder="Breve detalle del curso"
+                  />
+                  {cursoErrors.descripcion && (
+                    <small className="text-danger fw-bold">{cursoErrors.descripcion}</small>
+                  )}
+                </div>
+                <CButton
+                  type="submit"
+                  className="btn-main w-100 text-white"
+                  style={{ background: azulProfundo }}
+                >
+                  CREAR CURSO
+                </CButton>
               </CForm>
             </CCardBody>
           </CCard>
         </CCol>
-        <CCol md={7} lg={6} xl={7}>
-          <CCard className="mb-4 shadow" style={{ minWidth: 420, borderRadius: 10 }}>
-            <CCardHeader style={{ background: '#070145', color: 'white', borderTopLeftRadius: 10, borderTopRightRadius: 10 }}>
-              <strong>Cursos</strong>
+
+        <CCol lg={7}>
+          <CCard className="custom-card">
+            <CCardHeader className="bg-white border-0 p-3">
+              <h5 className="mb-0 fw-bold">
+                <CIcon icon={cilLibrary} className="text-primary me-2" />
+                Cursos Activos
+              </h5>
             </CCardHeader>
-            <CCardBody>
-              <CTable hover responsive className="align-middle text-center">
-                <CTableHead style={{ background: '#f5f7fb' }}>
-                  <CTableRow>
-                    <CTableHeaderCell>Nombre</CTableHeaderCell>
-                    <CTableHeaderCell>Descripción</CTableHeaderCell>
-                    <CTableHeaderCell>Acciones</CTableHeaderCell>
-                  </CTableRow>
-                </CTableHead>
-                <CTableBody>
-                  {cursosToShow.map(curso => (
-                    <CTableRow key={curso.id_curso}>
-                      <CTableDataCell style={{ fontWeight: 600 }}>{curso.nombre_curso}</CTableDataCell>
-                      <CTableDataCell>{curso.descripcion}</CTableDataCell>
-                      <CTableDataCell>
-                        <div className="d-flex justify-content-center gap-2">
-                          <CButton
-                            size="sm"
-                            style={{ backgroundColor: '#0d6efd', color: 'white', minWidth: 80, borderRadius: 6 }}
-                            onClick={() => handleEditCurso(curso)}
-                          >
-                            Editar
-                          </CButton>
-                          <CButton
-                            size="sm"
-                            style={{ backgroundColor: '#dc3545', color: 'white', minWidth: 80, borderRadius: 6 }}
-                            onClick={() => solicitarEliminarCurso(curso.id_curso)}
-                          >
-                            Eliminar
-                          </CButton>
-                        </div>
-                      </CTableDataCell>
-                    </CTableRow>
+            <CCardBody className="p-0">
+              <CTable responsive align="middle" className="table-modern mb-0">
+                <thead>
+                  <tr>
+                    <th className="ps-4 py-3">CURSO</th>
+                    <th>DESCRIPCIÓN</th>
+                    <th className="text-center">ACCIONES</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {cursosToShow.map((c) => (
+                    <tr key={c.id_curso}>
+                      <td className="ps-4 fw-bold text-dark">{c.nombre_curso}</td>
+                      <td className="text-muted small">{c.descripcion}</td>
+                      <td className="text-center">
+                        <CButton
+                          color="light"
+                          size="sm"
+                          className="me-2 border"
+                          onClick={() => {
+                            setEditCursoId(c.id_curso)
+                            setCursoEditForm(c)
+                            setModalEditCurso(true)
+                          }}
+                        >
+                          <CIcon icon={cilPencil} className="text-info" />
+                        </CButton>
+                        <CButton
+                          color="light"
+                          size="sm"
+                          className="border"
+                          onClick={() => {
+                            setCursoAEliminar(c.id_curso)
+                            setModalConfirmCurso(true)
+                          }}
+                        >
+                          <CIcon icon={cilTrash} className="text-danger" />
+                        </CButton>
+                      </td>
+                    </tr>
                   ))}
-                  {cursosToShow.length === 0 && (
-                    <CTableRow>
-                      <CTableDataCell colSpan="3">No hay cursos registrados.</CTableDataCell>
-                    </CTableRow>
-                  )}
-                </CTableBody>
+                </tbody>
               </CTable>
-              <div className="d-flex justify-content-center mt-3">
-                <CPagination align="center" aria-label="Paginación cursos">
+              <div className="p-3 d-flex justify-content-center">
+                <CPagination size="sm">
                   <CPaginationItem
                     disabled={cursoPage === 1}
                     onClick={() => setCursoPage(cursoPage - 1)}
                   >
-                    &laquo;
+                    Anterior
                   </CPaginationItem>
-                  {[...Array(cursosTotalPages)].map((_, idx) => (
-                    <CPaginationItem
-                      key={idx + 1}
-                      active={cursoPage === idx + 1}
-                      onClick={() => setCursoPage(idx + 1)}
-                    >
-                      {idx + 1}
-                    </CPaginationItem>
-                  ))}
-                  <CPaginationItem
-                    disabled={cursoPage === cursosTotalPages || cursosTotalPages === 0}
-                    onClick={() => setCursoPage(cursoPage + 1)}
-                  >
-                    &raquo;
+                  <CPaginationItem active>{cursoPage}</CPaginationItem>
+                  <CPaginationItem onClick={() => setCursoPage(cursoPage + 1)}>
+                    Siguiente
                   </CPaginationItem>
                 </CPagination>
               </div>
             </CCardBody>
           </CCard>
         </CCol>
-      </CRow>
 
-      <CRow className="justify-content-center">
-        <CCol md={7} lg={6} xl={7}>
-          <CCard className="mb-4 shadow" style={{ minWidth: 420, borderRadius: 10 }}>
-            <CCardHeader style={{ background: '#070145', color: 'white', borderTopLeftRadius: 10, borderTopRightRadius: 10 }}>
-              <strong>Nuevo Módulo</strong>
+        {/* --- SECCIÓN MÓDULOS --- */}
+        <CCol lg={5}>
+          <CCard className="custom-card">
+            <CCardHeader className="header-green p-3">
+              <CIcon icon={cilPlus} className="me-2" />
+              NUEVO MÓDULO
             </CCardHeader>
-            <CCardBody>
+            <CCardBody className="p-4">
               <CForm onSubmit={handleModuloSubmit}>
-                <CFormSelect
-                  className="mb-2"
-                  label="Curso"
-                  value={moduloForm.id_curso}
-                  onChange={e => setModuloForm({ ...moduloForm, id_curso: e.target.value })}
-                  style={{ borderRadius: 8 }}
-                >
-                  <option value="">Seleccione un curso</option>
-                  {cursos.map(curso => (
-                    <option key={curso.id_curso} value={curso.id_curso}>
-                      {curso.nombre_curso}
-                    </option>
-                  ))}
-                </CFormSelect>
-                {moduloErrors.id_curso && <div style={{ color: 'red', fontSize: 13, marginBottom: 8 }}>{moduloErrors.id_curso}</div>}
-
-                <CFormInput
-                  className="mb-2"
-                  type="text"
-                  label="Nombre del módulo"
-                  placeholder="Nombre del módulo"
-                  value={moduloForm.nombre_modulo}
-                  onChange={e => setModuloForm({ ...moduloForm, nombre_modulo: e.target.value })}
-                  style={{ borderRadius: 8 }}
-                />
-                {moduloErrors.nombre_modulo && <div style={{ color: 'red', fontSize: 13, marginBottom: 8 }}>{moduloErrors.nombre_modulo}</div>}
-
-                <CFormInput
-                  className="mb-2"
-                  type="text"
-                  label="Descripción"
-                  placeholder="Descripción"
-                  value={moduloForm.descripcion}
-                  onChange={e => setModuloForm({ ...moduloForm, descripcion: e.target.value })}
-                  style={{ borderRadius: 8 }}
-                />
-                {moduloErrors.descripcion && <div style={{ color: 'red', fontSize: 13, marginBottom: 8 }}>{moduloErrors.descripcion}</div>}
-
-                <div className="d-flex gap-2">
-                  <CButton type="submit" color="info" className="text-white" style={{ backgroundColor: "#070145", minWidth: 100, borderRadius: 6 }}>
-                    Crear
-                  </CButton>
+                <div className="mb-3">
+                  <span className="form-label-custom">Asignar a Curso</span>
+                  <CFormSelect
+                    className="input-modern"
+                    value={moduloForm.id_curso}
+                    onChange={(e) => setModuloForm({ ...moduloForm, id_curso: e.target.value })}
+                  >
+                    <option value="">Seleccione...</option>
+                    {cursos.map((c) => (
+                      <option key={c.id_curso} value={c.id_curso}>
+                        {c.nombre_curso}
+                      </option>
+                    ))}
+                  </CFormSelect>
+                  {moduloErrors.id_curso && (
+                    <small className="text-danger fw-bold">{moduloErrors.id_curso}</small>
+                  )}
                 </div>
+                <div className="mb-3">
+                  <span className="form-label-custom">Nombre del Módulo</span>
+                  <CFormInput
+                    className="input-modern"
+                    value={moduloForm.nombre_modulo}
+                    onChange={(e) =>
+                      setModuloForm({ ...moduloForm, nombre_modulo: e.target.value })
+                    }
+                    placeholder="Ej: Hooks Básicos"
+                  />
+                  {moduloErrors.nombre_modulo && (
+                    <small className="text-danger fw-bold">{moduloErrors.nombre_modulo}</small>
+                  )}
+                </div>
+                <CButton
+                  type="submit"
+                  className="btn-main w-100 text-white"
+                  style={{ background: '#101bb9ff', border: 'none' }}
+                >
+                  GUARDAR MÓDULO
+                </CButton>
               </CForm>
             </CCardBody>
           </CCard>
         </CCol>
-        <CCol md={7} lg={6} xl={7}>
-          <CCard className="mb-4 shadow" style={{ minWidth: 420, borderRadius: 10 }}>
-            <CCardHeader style={{ background: '#070145', color: 'white', borderTopLeftRadius: 10, borderTopRightRadius: 10 }}>
-              <strong>Módulos</strong>
+
+        <CCol lg={7}>
+          <CCard className="custom-card">
+            <CCardHeader className="bg-white border-0 p-3">
+              <h5 className="mb-0 fw-bold">
+                <CIcon icon={cilLayers} className="text-success me-2" />
+                Estructura de Módulos
+              </h5>
             </CCardHeader>
-            <CCardBody>
-              <CTable hover responsive className="align-middle text-center">
-                <CTableHead style={{ background: '#f5f7fb' }}>
-                  <CTableRow>
-                    <CTableHeaderCell>Curso</CTableHeaderCell>
-                    <CTableHeaderCell>Nombre</CTableHeaderCell>
-                    <CTableHeaderCell>Descripción</CTableHeaderCell>
-                    <CTableHeaderCell>Acciones</CTableHeaderCell>
-                  </CTableRow>
-                </CTableHead>
-                <CTableBody>
-                  {modulosToShow.map(modulo => (
-                    <CTableRow key={modulo.id_modulo}>
-                      <CTableDataCell>
-                        {modulo.nombre_curso ||
-                          cursos.find(c => c.id_curso === modulo.id_curso)?.nombre_curso ||
-                          'Sin curso'}
-                      </CTableDataCell>
-                      <CTableDataCell style={{ fontWeight: 600 }}>{modulo.nombre_modulo}</CTableDataCell>
-                      <CTableDataCell>{modulo.descripcion}</CTableDataCell>
-                      <CTableDataCell>
-                        <div className="d-flex justify-content-center gap-2">
-                          <CButton
-                            size="sm"
-                            style={{ backgroundColor: '#0d6efd', color: 'white', minWidth: 80, borderRadius: 6 }}
-                            onClick={() => handleEditModulo(modulo)}
-                          >
-                            Editar
-                          </CButton>
-                          <CButton
-                            size="sm"
-                            style={{ backgroundColor: '#dc3545', color: 'white', minWidth: 80, borderRadius: 6 }}
-                            onClick={() => solicitarEliminarModulo(modulo.id_modulo)}
-                          >
-                            Eliminar
-                          </CButton>
-                        </div>
-                      </CTableDataCell>
-                    </CTableRow>
+            <CCardBody className="p-0">
+              <CTable responsive align="middle" className="table-modern mb-0">
+                <thead>
+                  <tr>
+                    <th className="ps-4 py-3">MÓDULO</th>
+                    <th>CURSO RELACIONADO</th>
+                    <th className="text-center">ACCIONES</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {modulosToShow.map((m) => (
+                    <tr key={m.id_modulo}>
+                      <td className="ps-4 fw-bold">{m.nombre_modulo}</td>
+                      <td>
+                        <CBadge shape="rounded-pill" className="badge-soft">
+                          {m.nombre_curso || 'Asignando...'}
+                        </CBadge>
+                      </td>
+                      <td className="text-center">
+                        <CButton
+                          color="light"
+                          size="sm"
+                          className="border"
+                          onClick={() => {
+                            setModuloAEliminar(m.id_modulo)
+                            setModalConfirmModulo(true)
+                          }}
+                        >
+                          <CIcon icon={cilTrash} className="text-danger" />
+                        </CButton>
+                      </td>
+                    </tr>
                   ))}
-                  {modulosToShow.length === 0 && (
-                    <CTableRow>
-                      <CTableDataCell colSpan="4">No hay módulos registrados.</CTableDataCell>
-                    </CTableRow>
-                  )}
-                </CTableBody>
+                </tbody>
               </CTable>
-              <div className="d-flex justify-content-center mt-3">
-                <CPagination align="center" aria-label="Paginación módulos">
+              <div className="p-3 d-flex justify-content-center">
+                <CPagination size="sm">
                   <CPaginationItem
                     disabled={moduloPage === 1}
                     onClick={() => setModuloPage(moduloPage - 1)}
                   >
-                    &laquo;
+                    Anterior
                   </CPaginationItem>
-                  {[...Array(modulosTotalPages)].map((_, idx) => (
-                    <CPaginationItem
-                      key={idx + 1}
-                      active={moduloPage === idx + 1}
-                      onClick={() => setModuloPage(idx + 1)}
-                    >
-                      {idx + 1}
-                    </CPaginationItem>
-                  ))}
-                  <CPaginationItem
-                    disabled={moduloPage === modulosTotalPages || modulosTotalPages === 0}
-                    onClick={() => setModuloPage(moduloPage + 1)}
-                  >
-                    &raquo;
+                  <CPaginationItem active>{moduloPage}</CPaginationItem>
+                  <CPaginationItem onClick={() => setModuloPage(moduloPage + 1)}>
+                    Siguiente
                   </CPaginationItem>
                 </CPagination>
               </div>
@@ -601,127 +447,188 @@ export default function CrudCursosModulos() {
         </CCol>
       </CRow>
 
-      {/* Modal Editar Curso */}
-      <CModal visible={modalEditCurso} backdrop="static" keyboard={false} onClose={() => { if (permitCloseCursoEdit) setModalEditCurso(false); }}>
-        <CModalHeader>
-          <strong>Editar Curso</strong>
+      {/* --- MODALES --- */}
+      <CModal
+        visible={modalEditCurso}
+        onClose={() => setModalEditCurso(false)}
+        alignment="center"
+        backdrop="static" // Evita cierres accidentales
+        size="lg"
+      >
+        <CModalHeader
+          className="border-0 p-4"
+          style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}
+        >
+          <div className="d-flex align-items-center">
+            <div className="p-2 bg-primary rounded-3 me-3">
+              <CIcon icon={cilPencil} className="text-white" size="lg" />
+            </div>
+            <h5 className="mb-0 fw-bold" style={{ color: azulProfundo }}>
+              Actualizar Información del Curso
+            </h5>
+          </div>
         </CModalHeader>
-        <CModalBody>
-          <CForm onSubmit={handleGuardarEdicionCurso}>
-            <CFormInput
-              className="mb-2"
-              type="text"
-              label="Nombre del curso"
-              placeholder="Nombre del curso"
-              value={cursoEditForm.nombre_curso}
-              onChange={e => setCursoEditForm({ ...cursoEditForm, nombre_curso: e.target.value })}
-              style={{ borderRadius: 8 }}
-            />
-            {cursoEditErrors.nombre_curso && <div style={{ color: 'red', fontSize: 13, marginBottom: 8 }}>{cursoEditErrors.nombre_curso}</div>}
 
-            <CFormInput
-              className="mb-2"
-              type="text"
-              label="Descripción"
-              placeholder="Descripción"
-              value={cursoEditForm.descripcion}
-              onChange={e => setCursoEditForm({ ...cursoEditForm, descripcion: e.target.value })}
-              style={{ borderRadius: 8 }}
-            />
-            {cursoEditErrors.descripcion && <div style={{ color: 'red', fontSize: 13, marginBottom: 8 }}>{cursoEditErrors.descripcion}</div>}
-          </CForm>
+        <CModalBody className="p-4" style={{ backgroundColor: '#ffffff' }}>
+          <CRow>
+            <CCol md={12} className="mb-4">
+              <div
+                className="p-3 rounded-4"
+                style={{
+                  backgroundColor: '#f1f5f9',
+                  border: '1px solid #e2e8f0',
+                  transition: '0.3s',
+                }}
+              >
+                <label
+                  className="form-label-custom mb-2"
+                  style={{ color: azulProfundo, letterSpacing: '1px' }}
+                >
+                  NOMBRE DEL CURSO
+                </label>
+                <CFormInput
+                  className="input-modern shadow-sm"
+                  style={{
+                    backgroundColor: '#fff',
+                    fontSize: '1.1rem',
+                    padding: '12px',
+                    border: '2px solid #cbd5e1',
+                  }}
+                  placeholder="Introduce el nombre"
+                  value={cursoEditForm.nombre_curso}
+                  onChange={(e) =>
+                    setCursoEditForm({ ...cursoEditForm, nombre_curso: e.target.value })
+                  }
+                />
+              </div>
+            </CCol>
+
+            <CCol md={12}>
+              <div
+                className="p-3 rounded-4"
+                style={{
+                  backgroundColor: '#f1f5f9',
+                  border: '1px solid #e2e8f0',
+                }}
+              >
+                <label
+                  className="form-label-custom mb-2"
+                  style={{ color: azulProfundo, letterSpacing: '1px' }}
+                >
+                  DESCRIPCIÓN DETALLADA
+                </label>
+                <CFormInput
+                  className="input-modern shadow-sm"
+                  style={{
+                    backgroundColor: '#fff',
+                    fontSize: '1rem',
+                    padding: '12px',
+                    border: '2px solid #cbd5e1',
+                  }}
+                  placeholder="¿Qué aprenderán los alumnos?"
+                  value={cursoEditForm.descripcion}
+                  onChange={(e) =>
+                    setCursoEditForm({ ...cursoEditForm, descripcion: e.target.value })
+                  }
+                />
+              </div>
+            </CCol>
+          </CRow>
         </CModalBody>
-        <CModalFooter>
-          <CButton color="secondary" onClick={() => { setPermitCloseCursoEdit(true); setModalEditCurso(false); }}>Cancelar</CButton>
-          <CButton color="info" onClick={handleGuardarEdicionCurso}>Guardar</CButton>
+
+        <CModalFooter
+          className="border-0 p-4 justify-content-between"
+          style={{ background: '#f8fafc' }}
+        >
+          <CButton
+            color="secondary"
+            variant="ghost"
+            className="fw-bold text-uppercase"
+            onClick={() => setModalEditCurso(false)}
+          >
+            Descartar
+          </CButton>
+          <CButton
+            className="btn-main px-5 text-white shadow-lg"
+            style={{
+              background: `linear-gradient(45deg, ${azulProfundo}, #1e1b4b)`,
+              border: 'none',
+              borderRadius: '12px',
+            }}
+            onClick={handleGuardarEdicionCurso}
+          >
+            <CIcon icon={cilSave} className="me-2" />
+            GUARDAR CAMBIOS
+          </CButton>
         </CModalFooter>
       </CModal>
 
-      {/* Modal Editar Módulo */}
-      <CModal visible={modalEditModulo} backdrop="static" keyboard={false} onClose={() => { if (permitCloseModuloEdit) setModalEditModulo(false); }}>
-        <CModalHeader>
-          <strong>Editar Módulo</strong>
+      <CModal
+        visible={modalConfirmCurso}
+        onClose={() => setModalConfirmCurso(false)}
+        alignment="center"
+      >
+        <CModalHeader
+          className="border-0 p-4"
+          style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}
+        >
+          <div className="d-flex align-items-center">
+            <div className="p-3 bg-danger rounded-circle me-3 shadow-sm">
+              <CIcon icon={cilTrash} className="text-white" size="xl" />
+            </div>
+            <div>
+              <h5 className="mb-0 fw-bold" style={{ color: azulProfundo }}>
+                Confirmar Eliminacion del Curso
+              </h5>
+            </div>
+          </div>
         </CModalHeader>
-        <CModalBody>
-          <CForm onSubmit={handleGuardarEdicionModulo}>
-            <CFormSelect
-              className="mb-2"
-              label="Curso"
-              value={moduloEditForm.id_curso}
-              onChange={e => setModuloEditForm({ ...moduloEditForm, id_curso: e.target.value })}
-              style={{ borderRadius: 8 }}
-            >
-              <option value="">Seleccione un curso</option>
-              {cursos.map(curso => (
-                <option key={curso.id_curso} value={curso.id_curso}>
-                  {curso.nombre_curso}
-                </option>
-              ))}
-            </CFormSelect>
-            {moduloEditErrors.id_curso && <div style={{ color: 'red', fontSize: 13, marginBottom: 8 }}>{moduloEditErrors.id_curso}</div>}
-
-            <CFormInput
-              className="mb-2"
-              type="text"
-              label="Nombre del módulo"
-              placeholder="Nombre del módulo"
-              value={moduloEditForm.nombre_modulo}
-              onChange={e => setModuloEditForm({ ...moduloEditForm, nombre_modulo: e.target.value })}
-              style={{ borderRadius: 8 }}
-            />
-            {moduloEditErrors.nombre_modulo && <div style={{ color: 'red', fontSize: 13, marginBottom: 8 }}>{moduloEditErrors.nombre_modulo}</div>}
-
-            <CFormInput
-              className="mb-2"
-              type="text"
-              label="Descripción"
-              placeholder="Descripción"
-              value={moduloEditForm.descripcion}
-              onChange={e => setModuloEditForm({ ...moduloEditForm, descripcion: e.target.value })}
-              style={{ borderRadius: 8 }}
-            />
-            {moduloEditErrors.descripcion && <div style={{ color: 'red', fontSize: 13, marginBottom: 8 }}>{moduloEditErrors.descripcion}</div>}
-          </CForm>
+        <CModalBody className="py-4 text-center">
+          <CIcon icon={cilTrash} size="3xl" className="text-danger mb-3" />
+          <p className="mb-0 fw-bold">
+            Esta acción eliminará el curso y todos sus módulos asociados de forma permanente.
+          </p>
         </CModalBody>
-        <CModalFooter>
-          <CButton color="secondary" onClick={() => { setPermitCloseModuloEdit(true); setModalEditModulo(false); }}>Cancelar</CButton>
-          <CButton color="info" onClick={handleGuardarEdicionModulo}>Guardar</CButton>
+        <CModalFooter className="border-0 justify-content-center">
+          <CButton color="light" className="px-4" onClick={() => setModalConfirmCurso(false)}>
+            No, Volver
+          </CButton>
+          <CButton color="danger" className="text-white px-4" onClick={handleDeleteCurso}>
+            Sí, Eliminar Todo
+          </CButton>
         </CModalFooter>
       </CModal>
 
-      {/* Modal Confirmación Eliminar Curso */}
-      <CModal visible={modalConfirmCurso} backdrop="static" keyboard={false} onClose={() => { if (permitCloseCursoConfirm) setModalConfirmCurso(false); }}>
-        <CModalHeader>
-          <strong>Confirmar Eliminación</strong>
+      <CModal
+        visible={modalConfirmModulo}
+        onClose={() => setModalConfirmModulo(false)}
+        alignment="center"
+      >
+        <CModalHeader
+          className="border-0 p-4"
+          style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}
+        >
+          <div className="d-flex align-items-center">
+            <div className="p-3 bg-danger rounded-circle me-3 shadow-sm">
+              <CIcon icon={cilTrash} className="text-white" size="xl" />
+            </div>
+            <div>
+              <h5 className="mb-0 fw-bold" style={{ color: azulProfundo }}>
+                Eliminar Módulo
+              </h5>
+            </div>
+          </div>
         </CModalHeader>
-        <CModalBody>
-          ¿Seguro que deseas eliminar este curso? Si lo eliminas, también se eliminarán todos los módulos asociados a este curso.
-        </CModalBody>
-        <CModalFooter>
-          <CButton color="secondary" onClick={() => { setPermitCloseCursoConfirm(true); setModalConfirmCurso(false); }}>Cancelar</CButton>
-          <CButton color="danger" onClick={handleDeleteCurso}>Eliminar</CButton>
+        <CModalBody>¿Estás seguro de que deseas eliminar este módulo?</CModalBody>
+        <CModalFooter className="border-0">
+          <CButton color="light" onClick={() => setModalConfirmModulo(false)}>
+            Cancelar
+          </CButton>
+          <CButton color="danger" className="text-white" onClick={handleDeleteModulo}>
+            Eliminar
+          </CButton>
         </CModalFooter>
       </CModal>
-
-      {/* Modal Confirmación Eliminar Módulo */}
-      <CModal visible={modalConfirmModulo} backdrop="static" keyboard={false} onClose={() => { if (permitCloseModuloConfirm) setModalConfirmModulo(false); }}>
-        <CModalHeader>
-          <strong>Confirmar Eliminación</strong>
-        </CModalHeader>
-        <CModalBody>
-          ¿Seguro que deseas eliminar este módulo?
-        </CModalBody>
-        <CModalFooter>
-          <CButton color="secondary" onClick={() => { setPermitCloseModuloConfirm(true); setModalConfirmModulo(false); }}>Cancelar</CButton>
-          <CButton color="danger" onClick={handleDeleteModulo}>Eliminar</CButton>
-        </CModalFooter>
-      </CModal>
-
-      {alert.text && (
-        <CAlert color={alert.color} className="mt-3" dismissible onClose={() => setAlert({ color: '', text: '' })}>
-          {alert.text}
-        </CAlert>
-      )}
     </CContainer>
-  );
+  )
 }

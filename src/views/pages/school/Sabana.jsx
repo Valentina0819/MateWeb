@@ -1,20 +1,31 @@
 import React, { useState, useEffect } from 'react'
-import { CCard, CCardBody, CButton, CRow, CCol, CAlert, CBadge } from '@coreui/react'
-
+import {
+  CCard,
+  CCardBody,
+  CButton,
+  CRow,
+  CCol,
+  CAlert,
+  CBadge,
+  CContainer,
+  CCardHeader,
+} from '@coreui/react'
+import { CIcon } from '@coreui/icons-react'
+import { cilSave } from '@coreui/icons'
 // --- Lógica de la sopa de números ---
 
 function generarMatriz(n = 10) {
   return Array.from({ length: n }, () =>
-    Array.from({ length: n }, () => Math.floor(Math.random() * 10))
+    Array.from({ length: n }, () => Math.floor(Math.random() * 10)),
   )
 }
 
 function insertarObjetivos(matriz, objetivos) {
   const n = matriz.length
-  const nuevaMatriz = matriz.map(row => [...row])
+  const nuevaMatriz = matriz.map((row) => [...row])
   const posiciones = []
 
-  objetivos.forEach(objetivo => {
+  objetivos.forEach((objetivo) => {
     const str = objetivo.toString()
     let colocado = false
     let intentos = 0
@@ -27,7 +38,7 @@ function insertarObjetivos(matriz, objetivos) {
 
       if (direccion === 'H' && col + str.length <= n) {
         for (let i = 0; i < str.length; i++) {
-          if (posiciones.some(p => p.fila === fila && p.col === col + i)) {
+          if (posiciones.some((p) => p.fila === fila && p.col === col + i)) {
             cabe = false
             break
           }
@@ -41,7 +52,7 @@ function insertarObjetivos(matriz, objetivos) {
         }
       } else if (direccion === 'V' && fila + str.length <= n) {
         for (let i = 0; i < str.length; i++) {
-          if (posiciones.some(p => p.fila === fila + i && p.col === col)) {
+          if (posiciones.some((p) => p.fila === fila + i && p.col === col)) {
             cabe = false
             break
           }
@@ -55,7 +66,7 @@ function insertarObjetivos(matriz, objetivos) {
         }
       } else if (direccion === 'D' && fila + str.length <= n && col + str.length <= n) {
         for (let i = 0; i < str.length; i++) {
-          if (posiciones.some(p => p.fila === fila + i && p.col === col + i)) {
+          if (posiciones.some((p) => p.fila === fila + i && p.col === col + i)) {
             cabe = false
             break
           }
@@ -77,16 +88,16 @@ function insertarObjetivos(matriz, objetivos) {
 
 // Paleta de colores para los números encontrados
 const colores = [
-  '#f87171', // rojo
-  '#60a5fa', // azul
-  '#34d399', // verde
-  '#fbbf24', // amarillo
-  '#a78bfa', // violeta
-  '#fb7185', // rosa
-  '#38bdf8', // celeste
-  '#f472b6', // fucsia
-  '#facc15', // dorado
-  '#4ade80', // verde claro
+  '#f52222ff', // rojo
+  '#016becff', // azul
+  '#0ef19eff', // verde
+  '#e9aa0cff', // amarillo
+  '#5c2af3ff', // violeta
+  '#fb7185ff', // rosa
+  '#38bdf8ff', // celeste
+  '#f472b6ff', // fucsia
+  '#facc15ff', // dorado
+  '#4ade80ff', // verde claro
 ]
 
 // Configuración de niveles
@@ -143,9 +154,11 @@ const SopaNumerosInteractiva = () => {
     return false
   }
 
+  const azulProfundo = '#070145'
+
   // Permite seleccionar celdas ya encontradas si coinciden con el número buscado
   const handleSeleccion = (fila, col) => {
-    const yaSeleccionada = seleccion.some(cell => cell.fila === fila && cell.col === col)
+    const yaSeleccionada = seleccion.some((cell) => cell.fila === fila && cell.col === col)
     if (yaSeleccionada) {
       // Permitir deseleccionar la última seleccionada
       if (
@@ -172,7 +185,10 @@ const SopaNumerosInteractiva = () => {
     }
     // Asigna color según el orden de guardado
     const color = colores[respuestas.length % colores.length]
-    setRespuestas([...respuestas, { celdas: [...seleccion], valor: seleccion.map(c => c.valor).join(''), color }])
+    setRespuestas([
+      ...respuestas,
+      { celdas: [...seleccion], valor: seleccion.map((c) => c.valor).join(''), color },
+    ])
     setSeleccion([])
     setMensaje('')
   }
@@ -184,7 +200,7 @@ const SopaNumerosInteractiva = () => {
     const usados = new Set()
     respuestas.forEach((resp, idx) => {
       const idxObjetivo = objetivos.findIndex(
-        (obj, i) => obj.toString() === resp.valor && !usados.has(i)
+        (obj, i) => obj.toString() === resp.valor && !usados.has(i),
       )
       if (idxObjetivo !== -1) {
         aciertos++
@@ -210,12 +226,12 @@ const SopaNumerosInteractiva = () => {
     setPuntos(puntos + puntosNivel)
     if (nivel + 1 < NIVELES.length) {
       setMensaje(
-        `Nivel completado. Aciertos: ${aciertos}/${objetivos.length}. Puntuación: ${puntosNivel}/10. Haz clic en "Siguiente Nivel".`
+        `Nivel completado. Aciertos: ${aciertos}/${objetivos.length}. Puntuación: ${puntosNivel}/10. Haz clic en "Siguiente Nivel".`,
       )
     } else {
       setFinalizado(true)
       setMensaje(
-        `¡Felicidades! Completaste todos los niveles. Puntuación final: ${puntos + puntosNivel}`
+        `¡Felicidades! Completaste todos los niveles. Puntuación final: ${puntos + puntosNivel}`,
       )
     }
   }
@@ -241,14 +257,14 @@ const SopaNumerosInteractiva = () => {
           <tr key={i}>
             {fila.map((num, j) => {
               // ¿Esta celda está seleccionada?
-              const estaSeleccionada = seleccion.some(cell => cell.fila === i && cell.col === j)
+              const estaSeleccionada = seleccion.some((cell) => cell.fila === i && cell.col === j)
               // ¿Esta celda ya fue marcada como parte de una respuesta guardada?
               let colorFondo = '#fff'
               let colorTexto = '#222'
               let correcto = false
               // Busca en respuestas guardadas (antes de evaluar)
-              const respIdx = respuestas.findIndex(r =>
-                r.celdas.some(cell => cell.fila === i && cell.col === j)
+              const respIdx = respuestas.findIndex((r) =>
+                r.celdas.some((cell) => cell.fila === i && cell.col === j),
               )
               if (respIdx !== -1) {
                 colorFondo = respuestas[respIdx].color
@@ -256,8 +272,8 @@ const SopaNumerosInteractiva = () => {
               }
               // Busca en encontrados (después de evaluar)
               if (evaluado) {
-                const encontradoIdx = encontrados.findIndex(e =>
-                  e.celdas.some(cell => cell.fila === i && cell.col === j)
+                const encontradoIdx = encontrados.findIndex((e) =>
+                  e.celdas.some((cell) => cell.fila === i && cell.col === j),
                 )
                 if (encontradoIdx !== -1) {
                   colorFondo = encontrados[encontradoIdx].color
@@ -301,114 +317,215 @@ const SopaNumerosInteractiva = () => {
   )
 
   return (
-    <CRow className="justify-content-center">
-      <CCol xs={12} sm={11} md={9} lg={7} xl={6}>
-        <CCard className="shadow-lg p-2 mt-2" style={{ background: '#f0f9ff', minHeight: 0 }}>
-          <CCardBody style={{ padding: 12 }}>
-            <h5 className="fw-bold mb-2 text-center" style={{ color: '#0ea5e9', fontSize: 22 }}>
-              Sopa de Números
-            </h5>
-            <div className="mb-1 text-center" style={{ fontSize: 15 }}>
-              <CBadge color="primary" className="px-2 py-1 fs-6">
-                Puntos: {puntos}
-              </CBadge>
-              <CBadge color="info" className="px-2 py-1 fs-6 ms-2">
-                Nivel {nivel + 1} / {NIVELES.length}
-              </CBadge>
-            </div>
-            <div className="mb-2 text-center" style={{ fontSize: 14 }}>
-              <span className="fw-bold">Números a encontrar:</span>{' '}
-              {objetivos.map((n, i) => {
-                const idx = encontrados.findIndex(e => e.objetivo === n && e.correcto)
-                return (
-                  <CBadge
-                    key={i}
-                    style={{
-                      background: idx !== -1 ? encontrados[idx].color : '#e5e7eb',
-                      color: idx !== -1 ? '#fff' : '#222',
-                      marginRight: 4,
-                      fontSize: 14,
-                      border: '1px solid #bbb',
-                    }}
-                  >
-                    {n}
+    <CContainer fluid className="py-4">
+      <CRow className="justify-content-center">
+        <CCol xs={12} sm={11} md={9} lg={7} xl={6}>
+          <CCard
+            className="custom-card border-0 shadow-lg"
+            style={{ borderRadius: '24px', overflow: 'hidden' }}
+          >
+            {/* Cabecera con Degradado */}
+            <CCardHeader className="text-white border-0 py-4" style={{ background: azulProfundo }}>
+              <h3 className="fw-bold text-center mb-0" style={{ letterSpacing: '1px' }}>
+                SOPA DE NÚMEROS
+              </h3>
+            </CCardHeader>
+
+            <CCardBody className="p-4" style={{ backgroundColor: '#ffffff' }}>
+              {/* Status Bar: Puntos y Nivel */}
+              <div
+                className="d-flex justify-content-between align-items-center mb-4 p-3"
+                style={{ backgroundColor: '#ffffffff', borderRadius: '16px' }}
+              >
+                <div className="d-flex align-items-center">
+                  <span className="fw-bold text-primary me-2">PUNTOS:</span>
+                  <CBadge color="primary" shape="rounded-pill" className="px-3 py-2 fs-6 shadow-sm">
+                    {puntos}
                   </CBadge>
-                )
-              })}
-            </div>
-            <div className="mb-2" style={{ overflowX: 'auto', textAlign: 'center' }}>
-              {renderMatriz()}
-            </div>
-            <div className="d-flex justify-content-center mb-2" style={{ gap: 6 }}>
-              <CButton
-                color="success"
-                size="sm"
-                disabled={seleccion.length === 0 || finalizado || evaluado}
-                onClick={guardarRespuesta}
-                style={{ minWidth: 90, fontWeight: 'bold', fontSize: 13 }}
-              >
-                Guardar Número
-              </CButton>
-              <CButton
-                color="secondary"
-                size="sm"
-                variant="outline"
-                disabled={seleccion.length === 0 || finalizado || evaluado}
-                onClick={limpiarSeleccion}
-                style={{ minWidth: 70, fontSize: 13 }}
-              >
-                Limpiar
-              </CButton>
-              <CButton
-                color="info"
-                size="sm"
-                disabled={respuestas.length === 0 || finalizado || evaluado}
-                onClick={evaluarActividad}
-                style={{ minWidth: 90, fontWeight: 'bold', fontSize: 13 }}
-              >
-                Completar
-              </CButton>
-              <CButton
-                color="dark"
-                size="sm"
-                variant="outline"
-                onClick={() => window.location.reload()}
-                style={{ minWidth: 70, fontSize: 13 }}
-              >
-                Reiniciar
-              </CButton>
-              {evaluado && !finalizado && (
-                <CButton
-                  color="primary"
-                  size="sm"
-                  onClick={siguienteNivel}
-                  style={{ minWidth: 110, fontWeight: 'bold', fontSize: 13 }}
-                >
-                  Siguiente Nivel
-                </CButton>
-              )}
-            </div>
-            {mensaje && (
-              <CAlert color={finalizado ? 'success' : mensaje.startsWith('Nivel') ? 'info' : 'warning'} className="text-center mt-2 py-2" style={{ fontSize: 14 }}>
-                {mensaje}
-              </CAlert>
-            )}
-            {evaluado && (
-              <div className="mt-2" style={{ fontSize: 13 }}>
-                <b>Respuestas:</b>
-                <ul style={{ paddingLeft: 18 }}>
-                  {encontrados.map((e, idx) => (
-                    <li key={idx} style={{ color: e.correcto ? e.color : '#888' }}>
-                      {e.celdas.map(c => c.valor).join('')} {e.correcto ? '✓' : '✗'}
-                    </li>
-                  ))}
-                </ul>
+                </div>
+                <div className="d-flex align-items-center">
+                  <span className="fw-bold text-info me-2">NIVEL:</span>
+                  <CBadge
+                    color="info"
+                    shape="rounded-pill"
+                    className="text-white px-3 py-2 fs-6 shadow-sm"
+                  >
+                    {nivel + 1} / {NIVELES.length}
+                  </CBadge>
+                </div>
               </div>
-            )}
-          </CCardBody>
-        </CCard>
-      </CCol>
-    </CRow>
+
+              {/* Números a encontrar - Estilo Chips */}
+              <div className="text-center mb-2 small fw-bold text-muted text-uppercase">
+                Objetivos:
+              </div>
+              <div className="d-flex justify-content-center flex-wrap gap-2 mb-4">
+                {objetivos.map((n, i) => {
+                  const idx = encontrados.findIndex((e) => e.objetivo === n && e.correcto)
+                  return (
+                    <CBadge
+                      key={i}
+                      style={{
+                        background: idx !== -1 ? encontrados[idx].color : '#f1f5f9',
+                        color: idx !== -1 ? '#fff' : '#64748b',
+                        borderRadius: '8px',
+                        padding: '10px 15px',
+                        fontSize: '1rem',
+                        fontWeight: 'bold',
+                        transition: '0.3s',
+                        border: idx !== -1 ? 'none' : '1px solid #e2e8f0',
+                      }}
+                    >
+                      {n}
+                    </CBadge>
+                  )
+                })}
+              </div>
+
+              {/* Matriz de números - Estilo Game Board */}
+              <div className="mb-4 d-flex justify-content-center overflow-auto py-2">
+                <table style={{ borderCollapse: 'separate', borderSpacing: '6px' }}>
+                  <tbody>
+                    {matriz.map((fila, i) => (
+                      <tr key={i}>
+                        {fila.map((num, j) => {
+                          const estaSeleccionada = seleccion.some(
+                            (cell) => cell.fila === i && cell.col === j,
+                          )
+                          let colorFondo = '#ffffff'
+                          let colorTexto = '#1e293b'
+                          let bColor = '#e2e8f0'
+
+                          const respIdx = respuestas.findIndex((r) =>
+                            r.celdas.some((cell) => cell.fila === i && cell.col === j),
+                          )
+                          if (respIdx !== -1) {
+                            colorFondo = respuestas[respIdx].color
+                            colorTexto = '#fff'
+                            bColor = 'transparent'
+                          }
+
+                          if (evaluado) {
+                            const encontradoIdx = encontrados.findIndex((e) =>
+                              e.celdas.some((cell) => cell.fila === i && cell.col === j),
+                            )
+                            if (encontradoIdx !== -1) {
+                              colorFondo = encontrados[encontradoIdx].color
+                              colorTexto = encontrados[encontradoIdx].correcto ? '#fff' : '#1e293b'
+                              bColor = 'transparent'
+                            }
+                          }
+
+                          if (estaSeleccionada) {
+                            colorFondo = '#38bdf8'
+                            colorTexto = '#fff'
+                            bColor = '#0ea5e9'
+                          }
+
+                          return (
+                            <td key={j}>
+                              <CButton
+                                onClick={() => handleSeleccion(i, j)}
+                                disabled={finalizado}
+                                style={{
+                                  width: '40px',
+                                  height: '40px',
+                                  fontSize: '1.1rem',
+                                  fontWeight: '800',
+                                  borderRadius: '10px',
+                                  backgroundColor: colorFondo,
+                                  color: colorTexto,
+                                  border: `2px solid ${bColor}`,
+                                  boxShadow: estaSeleccionada
+                                    ? '0 0 12px rgba(56, 189, 248, 0.5)'
+                                    : 'none',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  padding: 0,
+                                  transition: 'all 0.1s ease',
+                                }}
+                              >
+                                {num}
+                              </CButton>
+                            </td>
+                          )
+                        })}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Controles Principales */}
+              <div className="d-grid gap-3 d-md-flex justify-content-center mb-4">
+                <CButton
+                  className="text-white px-4 py-2 fw-bold shadow-sm"
+                  disabled={seleccion.length === 0 || finalizado || evaluado}
+                  onClick={guardarRespuesta}
+                  style={{ borderRadius: '12px', backgroundColor: '#5900ffff' }}
+                >
+                  <CIcon icon={cilSave} className="me-2" /> Guardar
+                </CButton>
+
+                <CButton
+                  color="dark"
+                  variant="outline"
+                  className="px-4 py-2"
+                  disabled={seleccion.length === 0 || finalizado || evaluado}
+                  onClick={limpiarSeleccion}
+                >
+                  Limpiar
+                </CButton>
+
+                <CButton
+                  className="text-white px-4 py-2 fw-bold shadow-sm"
+                  disabled={respuestas.length === 0 || finalizado || evaluado}
+                  onClick={evaluarActividad}
+                  style={{ borderRadius: '12px', backgroundColor: ' #0011ffff' }}
+                >
+                  Completar
+                </CButton>
+              </div>
+
+              {/* Botones de Acción Secundaria */}
+              <div className="d-flex justify-content-center gap-2 mb-3">
+                <CButton
+                  variant="ghost"
+                  color="dark"
+                  size="sm"
+                  onClick={() => window.location.reload()}
+                >
+                  Reiniciar Juego
+                </CButton>
+                {evaluado && !finalizado && (
+                  <CButton
+                    color="primary"
+                    size="sm"
+                    className="fw-bold px-4"
+                    onClick={siguienteNivel}
+                    style={{ borderRadius: '10px', backgroundColor: '#070145', color: 'white' }}
+                  >
+                    Siguiente Nivel ➔
+                  </CButton>
+                )}
+              </div>
+
+              {/* Mensajes de Alerta */}
+              {mensaje && (
+                <CAlert
+                  color={finalizado ? 'success' : mensaje.startsWith('Nivel') ? 'info' : 'warning'}
+                  className="text-center fw-bold border-0 shadow-sm mb-0"
+                  style={{ borderRadius: '12px' }}
+                >
+                  {mensaje}
+                </CAlert>
+              )}
+            </CCardBody>
+          </CCard>
+        </CCol>
+      </CRow>
+    </CContainer>
   )
 }
 

@@ -1,5 +1,4 @@
-// filepath: c:\Users\USUARIO\OneDrive\Documentos\PaginasDiseño\DISEÑOARREGLADOVALENTINA\DISEÑOARREGLADOVALENTINA\FRONTEND\src\views\pages\school\inscripcion.jsx
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useCallback } from 'react'
 import {
   CCard,
   CCardBody,
@@ -25,477 +24,343 @@ import {
   CModalBody,
   CModalFooter,
   CPagination,
-  CPaginationItem
-} from '@coreui/react';
+  CPaginationItem,
+  CBadge,
+  CAvatar,
+} from '@coreui/react'
+import { useNavigate } from 'react-router-dom'
+import CIcon from '@coreui/icons-react'
+import {
+  cilUserPlus,
+  cilPencil,
+  cilTrash,
+  cilSearch,
+  cilUser,
+  cilEducation,
+  cilArrowLeft,
+} from '@coreui/icons'
 
 export default function InscripcionEstudiante() {
-  const [estudiantes, setEstudiantes] = useState([]);
-  const [cursos, setCursos] = useState([]);
-  const [id_usuario, setIdUsuario] = useState('');
-  const [id_curso, setIdCurso] = useState('');
-  const [mensaje, setMensaje] = useState('');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [enviando, setEnviando] = useState(false);
-  const [filtro, setFiltro] = useState('');
-  const [filtroCurso, setFiltroCurso] = useState('');
+  const [estudiantes, setEstudiantes] = useState([])
+  const [cursos, setCursos] = useState([])
+  const [inscripciones, setInscripciones] = useState([])
+  const [id_usuario, setIdUsuario] = useState('')
+  const [id_curso, setIdCurso] = useState('')
+  const [filtro, setFiltro] = useState('')
+  const [loading, setLoading] = useState(true)
+  const [enviando, setEnviando] = useState(false)
+  const [mensaje, setMensaje] = useState({ texto: '', tipo: '' })
+  const [modalDelete, setModalDelete] = useState({ visible: false, data: null })
+  const [modalEdit, setModalEdit] = useState({ visible: false, data: null })
+  const [pagina, setPagina] = useState(1)
+  const porPagina = 5
 
-  // Para inscripciones y paginación
-  const [inscripciones, setInscripciones] = useState([]);
-  const [usuarios, setUsuarios] = useState([]);
-  const [cursosAll, setCursosAll] = useState([]);
-  const [modal, setModal] = useState(false);
-  const [modalEliminar, setModalEliminar] = useState(false);
-  const [inscripcionEdit, setInscripcionEdit] = useState(null);
-  const [inscripcionEliminar, setInscripcionEliminar] = useState(null);
-  const [mensajeTabla, setMensajeTabla] = useState('');
-  const [tipoMensaje, setTipoMensaje] = useState('success');
-  const [pagina, setPagina] = useState(1);
-  const porPagina = 5;
+  const azulProfundo = '#070145'
+  const celesteSuave = '#eef2ff'
 
-  // VALIDACIONES en tiempo real
-  const [errors, setErrors] = useState({ usuario: '', curso: '' });
-  const [modalEditErrors, setModalEditErrors] = useState({ usuario: '', curso: '' });
-  const [modalEliminarError, setModalEliminarError] = useState('');
-  const [searchErrors, setSearchErrors] = useState({ estudiante: '', curso: '' });
-
-  // impedir cierre por click fuera hasta confirmar con botones
-  const [permitCloseModal, setPermitCloseModal] = useState(false);
-  const [permitCloseEliminar, setPermitCloseEliminar] = useState(false);
-
-  // bloqueo boton atrás
-  const popstateHandlerRef = useRef(null);
-  const pushedRef = useRef(false);
-
-  // Cargar estudiantes y cursos para el formulario
-  useEffect(() => {
-    fetch('http://localhost:4000/estudiantes-cursos')
-      .then(res => {
-        if (!res.ok) throw new Error('No se pudo obtener datos');
-        return res.json();
-      })
-      .then(data => {
-        setEstudiantes(data.estudiantes || []);
-        setCursos(data.cursos || []);
-        setLoading(false);
-      })
-      .catch(err => {
-        setError('Error al cargar datos: ' + err.message);
-        setLoading(false);
-      });
-  }, []);
-
-  // Cargar inscripciones, usuarios y cursos para la tabla
-  const cargarDatos = () => {
-    fetch('http://localhost:4000/inscripciones')
-      .then(res => res.json())
-      .then(setInscripciones)
-      .catch(() => setInscripciones([]));
-    fetch('http://localhost:4000/usuarios')
-      .then(res => res.json())
-      .then(setUsuarios)
-      .catch(() => setUsuarios([]));
-    fetch('http://localhost:4000/obtenercursos')
-      .then(res => res.json())
-      .then(setCursosAll)
-      .catch(() => setCursosAll([]));
-  };
-
-  useEffect(() => {
-    cargarDatos();
-  }, []);
-
-  // VALIDADORES
-  const validarUsuario = (val) => {
-    if (!val || val === '') return 'Seleccione un estudiante.';
-    return '';
-  };
-  const validarCurso = (val) => {
-    if (!val || val === '') return 'Seleccione un curso.';
-    return '';
-  };
-
-  // validación en tiempo real del formulario principal
-  useEffect(() => {
-    setErrors({
-      usuario: validarUsuario(id_usuario),
-      curso: validarCurso(id_curso),
-    });
-  }, [id_usuario, id_curso]);
-
-  // validación en tiempo real de las barras de búsqueda
-  useEffect(() => {
-    if (!filtro) {
-      setSearchErrors(prev => ({ ...prev, estudiante: '' }));
-      return;
+  const cargarDatos = useCallback(async () => {
+    try {
+      const [resEstCursos, resInsc] = await Promise.all([
+        fetch('http://localhost:4000/estudiantes-cursos'),
+        fetch('http://localhost:4000/inscripciones'),
+      ])
+      const dataEst = await resEstCursos.json()
+      const dataInsc = await resInsc.json()
+      setEstudiantes(dataEst.estudiantes || [])
+      setCursos(dataEst.cursos || [])
+      setInscripciones(dataInsc || [])
+    } catch (err) {
+      setMensaje({ texto: 'Error de conexión con el servidor', tipo: 'danger' })
+    } finally {
+      setLoading(false)
     }
-    const matches = estudiantes.filter(e =>
-      `${e.nombre} ${e.apellido}`.toLowerCase().includes(filtro.toLowerCase())
-    );
-    setSearchErrors(prev => ({ ...prev, estudiante: matches.length === 0 ? 'No se encontró ningún estudiante válido.' : '' }));
-  }, [filtro, estudiantes]);
+  }, [])
 
   useEffect(() => {
-    if (!filtroCurso) {
-      setSearchErrors(prev => ({ ...prev, curso: '' }));
-      return;
-    }
-    const matches = cursos.filter(c =>
-      c.nombre_curso.toLowerCase().includes(filtroCurso.toLowerCase())
-    );
-    setSearchErrors(prev => ({ ...prev, curso: matches.length === 0 ? 'No se encontró ningún curso válido.' : '' }));
-  }, [filtroCurso, cursos]);
+    cargarDatos()
+  }, [cargarDatos])
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setMensaje('');
-    setError('');
-    // validar antes de enviar
-    const eUsuario = validarUsuario(id_usuario);
-    const eCurso = validarCurso(id_curso);
-    setErrors({ usuario: eUsuario, curso: eCurso });
-    if (eUsuario || eCurso) {
-      setError('Corrija los errores antes de enviar.');
-      return;
-    }
-
-    setEnviando(true);
+    e.preventDefault()
+    setEnviando(true)
     try {
       const res = await fetch('http://localhost:4000/inscribir', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id_usuario, id_curso })
-      });
-      const data = await res.json();
+        body: JSON.stringify({ id_usuario, id_curso }),
+      })
       if (res.ok) {
-        setMensaje(data.mensaje);
-        setIdUsuario('');
-        setIdCurso('');
-        cargarDatos();
+        setMensaje({ texto: '¡Inscripción exitosa!', tipo: 'success' })
+        setIdUsuario('')
+        setIdCurso('')
+        cargarDatos()
+      }
+    } catch (error) {
+      setMensaje({ texto: 'No se pudo completar la acción', tipo: 'danger' })
+    }
+    setEnviando(false)
+  }
+
+  const estudiantesFiltrados = estudiantes.filter((e) =>
+    `${e.nombre} ${e.apellido}`.toLowerCase().includes(filtro.toLowerCase()),
+  )
+
+  const datosPaginados = inscripciones.slice((pagina - 1) * porPagina, pagina * porPagina)
+
+  // Función para ELIMINAR
+  const eliminarInscripcion = async (id) => {
+    try {
+      const res = await fetch(`http://localhost:4000/inscripciones/${id}`, {
+        method: 'DELETE',
+      })
+      if (res.ok) {
+        setMensaje({ texto: 'Inscripción eliminada correctamente', tipo: 'success' })
+        setInscripciones(inscripciones.filter((i) => i.id_inscripcion !== id))
       } else {
-        setError(data.mensaje || 'Error al inscribir');
+        throw new Error()
+      }
+    } catch (error) {
+      setMensaje({ texto: 'Error al eliminar la inscripción', tipo: 'danger' })
+    } finally {
+      setModalDelete({ visible: false, data: null })
+    }
+  }
+
+  // Función para EDITAR (Actualizar curso)
+  const guardarCambiosEdicion = async () => {
+    if (!modalEdit.data?.id_curso) return
+
+    try {
+      const res = await fetch(
+        `http://localhost:4000/inscripciones/${modalEdit.data.id_inscripcion}`,
+        {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id_curso: modalEdit.data.id_curso }),
+        },
+      )
+
+      if (res.ok) {
+        setMensaje({ texto: '¡Actualizado con éxito!', tipo: 'success' })
+        await cargarDatos() // Refresca la tabla
+        setModalEdit({ visible: false, data: null })
       }
     } catch (err) {
-      setError('Error de conexión');
+      setMensaje({ texto: 'Error al actualizar', tipo: 'danger' })
     }
-    setEnviando(false);
-  };
-
-  // Filtrado de estudiantes por nombre o apellido
-  const estudiantesFiltrados = estudiantes.filter(e =>
-    `${e.nombre} ${e.apellido}`.toLowerCase().includes(filtro.toLowerCase())
-  );
-
-  // Filtrado de cursos por nombre
-  const cursosFiltrados = cursos.filter(c =>
-    c.nombre_curso.toLowerCase().includes(filtroCurso.toLowerCase())
-  );
-
-  // --- Tabla Inscripciones con paginación ---
-  const totalPaginas = Math.ceil(inscripciones.length / porPagina);
-  const inscripcionesPagina = inscripciones.slice((pagina - 1) * porPagina, pagina * porPagina);
-
-  // Editar inscripción
-  const handleEditar = (inscripcion) => {
-    setInscripcionEdit({ ...inscripcion }); // clonar para edición
-    setModal(true);
-    setPermitCloseModal(false);
-    setMensajeTabla('');
-    setModalEditErrors({
-      usuario: validarUsuario(inscripcion?.id_usuario),
-      curso: validarCurso(inscripcion?.id_curso),
-    });
-  };
-
-  // validación en tiempo real modal editar
-  useEffect(() => {
-    if (!modal) return;
-    setModalEditErrors({
-      usuario: validarUsuario(inscripcionEdit?.id_usuario),
-      curso: validarCurso(inscripcionEdit?.id_curso),
-    });
-    // eslint-disable-next-line
-  }, [inscripcionEdit, modal]);
-
-  // Guardar edición
-  const handleGuardar = async (e) => {
-    e.preventDefault();
-    const errUsuario = validarUsuario(inscripcionEdit?.id_usuario);
-    const errCurso = validarCurso(inscripcionEdit?.id_curso);
-    setModalEditErrors({ usuario: errUsuario, curso: errCurso });
-    if (errUsuario || errCurso) {
-      setMensajeTabla('Corrija los errores en la edición.');
-      setTipoMensaje('danger');
-      return;
-    }
-
-    try {
-      const res = await fetch(`http://localhost:4000/inscripciones/${inscripcionEdit.id_inscripcion}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          id_usuario: inscripcionEdit.id_usuario,
-          id_curso: inscripcionEdit.id_curso
-        })
-      });
-      const data = await res.json();
-      if (res.ok) {
-        setMensajeTabla('Inscripción actualizada correctamente');
-        setTipoMensaje('success');
-        setPermitCloseModal(true);
-        setModal(false);
-        cargarDatos();
-      } else {
-        setMensajeTabla(data.mensaje || 'Error al actualizar');
-        setTipoMensaje('danger');
-      }
-    } catch {
-      setMensajeTabla('Error de conexión');
-      setTipoMensaje('danger');
-    }
-  };
-
-  // Eliminar inscripción
-  const handleEliminar = async () => {
-    if (!inscripcionEliminar?.id_inscripcion) {
-      setModalEliminarError('No se ha seleccionado una inscripción válida.');
-      return;
-    }
-    try {
-      const res = await fetch(`http://localhost:4000/inscripciones/${inscripcionEliminar.id_inscripcion}`, {
-        method: 'DELETE'
-      });
-      const data = await res.json();
-      if (res.ok) {
-        setMensajeTabla('Inscripción eliminada correctamente');
-        setTipoMensaje('success');
-        setPermitCloseEliminar(true);
-        setModalEliminar(false);
-        cargarDatos();
-      } else {
-        setMensajeTabla(data.mensaje || 'Error al eliminar');
-        setTipoMensaje('danger');
-      }
-    } catch {
-      setMensajeTabla('Error de conexión');
-      setTipoMensaje('danger');
-    }
-  };
-
-  // Solicitar eliminar
-  const solicitarEliminar = (insc) => {
-    setInscripcionEliminar({ ...insc });
-    setModalEliminar(true);
-    setPermitCloseEliminar(false);
-    setModalEliminarError('');
-  };
-
-  // BLOQUEO BACK BUTTON mientras modales abiertos (cualquiera)
-  useEffect(() => {
-    const anyOpen = modal || modalEliminar;
-    if (anyOpen) {
-      if (!pushedRef.current) {
-        try {
-          window.history.pushState({ modalOpen: true }, '');
-          pushedRef.current = true;
-        } catch {}
-      }
-      const handler = () => {
-        try { window.history.pushState({ modalOpen: true }, ''); } catch {}
-      };
-      popstateHandlerRef.current = handler;
-      window.addEventListener('popstate', handler);
-    } else {
-      if (popstateHandlerRef.current) {
-        window.removeEventListener('popstate', popstateHandlerRef.current);
-        popstateHandlerRef.current = null;
-      }
-      if (pushedRef.current) {
-        try { window.history.back(); } catch {}
-        pushedRef.current = false;
-      }
-    }
-    return () => {
-      if (popstateHandlerRef.current) {
-        window.removeEventListener('popstate', popstateHandlerRef.current);
-        popstateHandlerRef.current = null;
-      }
-    };
-  }, [modal, modalEliminar]);
+  }
 
   return (
-    <CContainer className="py-5">
-      <CRow className="justify-content-center">
-        <CCol md={7} lg={6}>
-          <CCard className="shadow" style={{ borderRadius: 10 }}>
-            <CCardHeader className="text-center" style={{ background: '#070145', color: 'white', borderTopLeftRadius: 10, borderTopRightRadius: 10 }}>
-              <h4 className="mb-0">Inscribir Estudiante en Curso</h4>
-            </CCardHeader>
-            <CCardBody>
-              {loading ? (
-                <div className="text-center my-4">
-                  <CSpinner color="info" />
-                </div>
-              ) : (
-                <CForm onSubmit={handleSubmit}>
-                  {error && <CAlert color="danger">{error}</CAlert>}
-                  {mensaje && <CAlert color="success">{mensaje}</CAlert>}
+    <CContainer className="py-5 animate__animated animate__fadeIn">
+      <style>
+        {`
+          .custom-card { border: none; border-radius: 20px; box-shadow: 0 12px 40px rgba(0,0,0,0.08); overflow: hidden; }
+          .form-control-custom { 
+            border: 2px solid #f0f0f0; 
+            border-radius: 12px; 
+            padding: 12px; 
+            transition: all 0.3s; 
+          }
+          .form-control-custom:focus { 
+            border-color: ${azulProfundo}; 
+            box-shadow: 0 0 0 4px rgba(7, 1, 69, 0.1); 
+          }
+          .btn-inscribir { 
+            background: ${azulProfundo}; 
+            border: none; 
+            border-radius: 12px; 
+            padding: 14px; 
+            font-weight: 700; 
+            letter-spacing: 1px;
+            transition: transform 0.2s;
+          }
+          .btn-inscribir:hover { transform: translateY(-2px); background: #0a0263; }
+          .row-hover:hover { background-color: ${celesteSuave} !important; transition: 0.3s; }
+          .action-btn { border-radius: 8px; transition: 0.2s; }
+          .action-btn:hover { background: #fff; transform: scale(1.1); }
+        `}
+      </style>
 
-                  <CFormLabel htmlFor="filtroEstudiante" className="fw-bold">Buscar estudiante</CFormLabel>
+      <CRow className="g-4">
+        {/* Panel Izquierdo: Formulario Llamativo */}
+        <CCol lg={4}>
+          <CCard className="custom-card h-100">
+            <div className="p-4 text-white text-center" style={{ background: azulProfundo }}>
+              <CIcon icon={cilUserPlus} size="xl" className="mb-2" />
+              <h4 className="fw-bold mb-0">Registro Rápido</h4>
+              <p className="small opacity-75">Asigna estudiantes a cursos fácilmente</p>
+            </div>
+            <CCardBody className="p-4">
+              {mensaje.texto && (
+                <CAlert color={mensaje.tipo} className="rounded-3">
+                  {mensaje.texto}
+                </CAlert>
+              )}
+
+              <CForm onSubmit={handleSubmit}>
+                <div className="mb-4">
+                  <CFormLabel className="fw-bold text-dark small">
+                    <CIcon icon={cilSearch} className="me-1" /> BUSCAR ALUMNO
+                  </CFormLabel>
                   <CFormInput
-                    id="filtroEstudiante"
-                    placeholder="Escribe el nombre o apellido"
-                    className="mb-2"
+                    className="form-control-custom mb-2"
+                    placeholder="Ej: Juan Pérez"
                     value={filtro}
-                    onChange={e => setFiltro(e.target.value)}
-                    style={{ borderRadius: 8 }}
+                    onChange={(e) => setFiltro(e.target.value)}
                   />
-                  {searchErrors.estudiante && <div style={{ color: 'red', fontSize: 13, marginBottom: 8 }}>{searchErrors.estudiante}</div>}
-
-                  <CFormLabel htmlFor="estudianteSelect" className="fw-bold mt-2">Estudiante</CFormLabel>
                   <CFormSelect
-                    id="estudianteSelect"
+                    className="form-control-custom"
                     value={id_usuario}
-                    onChange={e => setIdUsuario(e.target.value)}
-                    aria-describedby="errorUsuario"
+                    onChange={(e) => setIdUsuario(e.target.value)}
                     required
-                    className="mb-2"
-                    style={{ borderRadius: 8 }}
                   >
-                    <option value="">Seleccione...</option>
-                    {estudiantesFiltrados.map(e => (
+                    <option value="">Selecciona al estudiante</option>
+                    {estudiantesFiltrados.map((e) => (
                       <option key={e.id_usuario} value={e.id_usuario}>
-                        {e.nombre} {e.apellido} ({e.email})
+                        {e.nombre} {e.apellido}
                       </option>
                     ))}
                   </CFormSelect>
-                  {errors.usuario && <div id="errorUsuario" style={{ color: 'red', fontSize: 13, marginBottom: 8 }}>{errors.usuario}</div>}
+                </div>
 
-                  <CFormLabel htmlFor="filtroCurso" className="fw-bold">Buscar curso</CFormLabel>
-                  <CFormInput
-                    id="filtroCurso"
-                    placeholder="Escribe el nombre del curso"
-                    className="mb-2"
-                    value={filtroCurso}
-                    onChange={e => setFiltroCurso(e.target.value)}
-                    style={{ borderRadius: 8 }}
-                  />
-                  {searchErrors.curso && <div style={{ color: 'red', fontSize: 13, marginBottom: 8 }}>{searchErrors.curso}</div>}
-
-                  <CFormLabel htmlFor="cursoSelect" className="fw-bold mt-2">Curso</CFormLabel>
+                <div className="mb-4">
+                  <CFormLabel className="fw-bold text-dark small">
+                    <CIcon icon={cilEducation} className="me-1" /> SELECCIONAR CURSO
+                  </CFormLabel>
                   <CFormSelect
-                    id="cursoSelect"
+                    className="form-control-custom"
                     value={id_curso}
-                    onChange={e => setIdCurso(e.target.value)}
-                    aria-describedby="errorCurso"
+                    onChange={(e) => setIdCurso(e.target.value)}
                     required
-                    className="mb-3"
-                    style={{ borderRadius: 8 }}
                   >
-                    <option value="">Seleccione...</option>
-                    {cursosFiltrados.map(c => (
+                    <option value="">Lista de cursos disponibles</option>
+                    {cursos.map((c) => (
                       <option key={c.id_curso} value={c.id_curso}>
                         {c.nombre_curso}
                       </option>
                     ))}
                   </CFormSelect>
-                  {errors.curso && <div id="errorCurso" style={{ color: 'red', fontSize: 13, marginBottom: 8 }}>{errors.curso}</div>}
+                </div>
 
-                  <div className="text-center">
-                    <CButton
-                      type="submit"
-                      style={{ backgroundColor: '#070145', color: 'white', borderRadius: 8 }}
-                      className="px-5 text-white fw-bold"
-                      disabled={enviando}
-                    >
-                      {enviando ? <CSpinner size="sm" /> : 'Inscribir'}
-                    </CButton>
-                  </div>
-                </CForm>
-              )}
+                <CButton
+                  type="submit"
+                  disabled={enviando}
+                  className="btn-inscribir w-100 text-white shadow"
+                >
+                  {enviando ? <CSpinner size="sm" /> : 'REGISTRAR AHORA'}
+                </CButton>
+              </CForm>
             </CCardBody>
           </CCard>
         </CCol>
-      </CRow>
 
-      {/* Tabla de inscripciones con diseño mejorado y botones acomodados */}
-      <CRow className="justify-content-center mt-4">
-        <CCol md={10} lg={8}>
-          <CCard>
-            <CCardHeader style={{ backgroundColor: '#070145', color: 'white' }}>
-              Gestión de Inscripciones
+        {/* Panel Derecho: Lista Interactiva */}
+        <CCol lg={8}>
+          <CCard className="custom-card">
+            <CCardHeader className="bg-white p-4 border-0 d-flex justify-content-between align-items-center">
+              <div>
+                <h4 className="fw-bold mb-0 text-dark">Control de Inscripciones</h4>
+                <span className="text-muted small">Total: {inscripciones.length} registros</span>
+              </div>
             </CCardHeader>
-            <CCardBody>
-              {mensajeTabla && <CAlert color={tipoMensaje}>{mensajeTabla}</CAlert>}
-              <div className="d-flex justify-content-center">
-                <CTable hover className="w-100 text-center align-middle" responsive>
-                  <CTableHead style={{ background: '#f5f7fb' }}>
+            <CCardBody className="p-0">
+              <CTable align="middle" responsive borderless className="mb-0">
+                <CTableHead style={{ background: '#f8fafc' }}>
+                  <CTableRow>
+                    <CTableHeaderCell className="ps-4 py-3">ESTUDIANTE</CTableHeaderCell>
+                    <CTableHeaderCell className="py-3">CURSO ASIGNADO</CTableHeaderCell>
+                    <CTableHeaderCell className="text-center py-3">ACCIONES</CTableHeaderCell>
+                  </CTableRow>
+                </CTableHead>
+                <CTableBody>
+                  {loading ? (
                     <CTableRow>
-                      <CTableHeaderCell style={{ width: '50%', textAlign: 'left', paddingLeft: 20 }}>Estudiante</CTableHeaderCell>
-                      <CTableHeaderCell style={{ width: '35%' }}>Curso</CTableHeaderCell>
-                      <CTableHeaderCell style={{ width: '15%' }}>Acciones</CTableHeaderCell>
+                      <CTableDataCell colSpan="3" className="text-center py-5">
+                        <CSpinner color="primary" />
+                      </CTableDataCell>
                     </CTableRow>
-                  </CTableHead>
-                  <CTableBody>
-                    {inscripcionesPagina.map(i => (
-                      <CTableRow key={i.id_inscripcion}>
-                        <CTableDataCell className="text-start ps-4">
-                          <div style={{ fontWeight: 600 }}>{i.nombre} {i.apellido}</div>
-                          <small className="text-muted">{i.email}</small>
+                  ) : (
+                    datosPaginados.map((i) => (
+                      <CTableRow
+                        key={i.id_inscripcion}
+                        className="row-hover border-bottom border-light"
+                      >
+                        <CTableDataCell className="ps-4 py-3">
+                          <div className="d-flex align-items-center">
+                            <CAvatar color="primary" textColor="white" className="me-3 fw-bold">
+                              {i.nombre.charAt(0)}
+                            </CAvatar>
+                            <div>
+                              <div className="fw-bold text-dark">
+                                {i.nombre} {i.apellido}
+                              </div>
+                              <div className="text-muted small" style={{ fontSize: '11px' }}>
+                                {i.email}
+                              </div>
+                            </div>
+                          </div>
                         </CTableDataCell>
-                        <CTableDataCell>{i.nombre_curso}</CTableDataCell>
                         <CTableDataCell>
-                          <div style={{ display: 'flex', justifyContent: 'center', gap: 8 }}>
+                          <CBadge
+                            style={{
+                              backgroundColor: '#eef2ff', // Fondo suave (celeste/purpura muy claro)
+                              color: '#4338ca', // Texto en azul vibrante (Indigo)
+                              border: '1px solid #c7d2fe', // Borde sutil para dar definición
+                              padding: '8px 14px',
+                              fontSize: '0.85rem',
+                              fontWeight: '700',
+                              letterSpacing: '0.3px',
+                              boxShadow: '0 2px 4px rgba(0,0,0,0.05)', // Pequeña sombra para profundidad
+                            }}
+                            shape="rounded-pill"
+                          >
+                            <CIcon icon={cilEducation} className="me-1" size="sm" />
+                            {i.nombre_curso.toUpperCase()}
+                          </CBadge>
+                        </CTableDataCell>
+                        <CTableDataCell className="text-center">
+                          <div className="d-flex justify-content-center gap-2">
                             <CButton
+                              color="light"
                               size="sm"
-                              style={{ backgroundColor: '#0d6efd', color: 'white', minWidth: 70 }}
-                              onClick={() => handleEditar(i)}
+                              className="action-btn text-primary shadow-sm border"
+                              onClick={() => setModalEdit({ visible: true, data: i })} // <-- Agregado
                             >
-                              Editar
+                              <CIcon icon={cilPencil} />
                             </CButton>
+
                             <CButton
+                              color="light"
                               size="sm"
-                              style={{ backgroundColor: '#dc3545', color: 'white', minWidth: 70 }}
-                              onClick={() => solicitarEliminar(i)}
+                              className="action-btn text-danger shadow-sm border"
+                              onClick={() => setModalDelete({ visible: true, data: i })}
                             >
-                              Eliminar
+                              <CIcon icon={cilTrash} />
                             </CButton>
                           </div>
                         </CTableDataCell>
                       </CTableRow>
-                    ))}
-                    {inscripcionesPagina.length === 0 && (
-                      <CTableRow>
-                        <CTableDataCell colSpan="3">No hay inscripciones registradas.</CTableDataCell>
-                      </CTableRow>
-                    )}
-                  </CTableBody>
-                </CTable>
-              </div>
+                    ))
+                  )}
+                </CTableBody>
+              </CTable>
 
-              {/* Paginación */}
-              <div className="d-flex justify-content-center mt-3">
-                <CPagination align="center" aria-label="Paginación inscripciones">
-                  <CPaginationItem
-                    disabled={pagina === 1}
-                    onClick={() => setPagina(pagina - 1)}
-                  >
-                    &laquo;
+              <div className="p-4 d-flex justify-content-center">
+                <CPagination className="mb-0 shadow-sm">
+                  <CPaginationItem disabled={pagina === 1} onClick={() => setPagina((p) => p - 1)}>
+                    Anterior
                   </CPaginationItem>
-                  {[...Array(totalPaginas)].map((_, idx) => (
+                  {[...Array(Math.ceil(inscripciones.length / porPagina))].map((_, i) => (
                     <CPaginationItem
-                      key={idx + 1}
-                      active={pagina === idx + 1}
-                      onClick={() => setPagina(idx + 1)}
+                      key={i + 1}
+                      active={pagina === i + 1}
+                      onClick={() => setPagina(i + 1)}
                     >
-                      {idx + 1}
+                      {i + 1}
                     </CPaginationItem>
                   ))}
-                  <CPaginationItem
-                    disabled={pagina === totalPaginas || totalPaginas === 0}
-                    onClick={() => setPagina(pagina + 1)}
-                  >
-                    &raquo;
+                  <CPaginationItem onClick={() => setPagina((p) => p + 1)}>
+                    Siguiente
                   </CPaginationItem>
                 </CPagination>
               </div>
@@ -504,68 +369,201 @@ export default function InscripcionEstudiante() {
         </CCol>
       </CRow>
 
-      {/* Modal Editar (NO se cierra por click fuera ni con ESC) */}
-      <CModal visible={modal} backdrop="static" keyboard={false} onClose={() => { if (permitCloseModal) setModal(false); }}>
-        <CModalHeader>
-          <strong>Editar Inscripción</strong>
+      {/* MODAL DE EDICIÓN ESTILIZADA */}
+      <CModal
+        visible={modalEdit.visible}
+        onClose={() => setModalEdit({ visible: false, data: null })}
+        alignment="center"
+        backdrop="static"
+        size="lg"
+      >
+        <CModalHeader className="border-0 p-4" style={{ background: celesteSuave }}>
+          <div className="d-flex align-items-center">
+            <div className="p-3 bg-white rounded-circle me-3 shadow-sm">
+              <CIcon icon={cilPencil} size="xl" style={{ color: azulProfundo }} />
+            </div>
+            <h5 className="mb-0 fw-bold" style={{ color: azulProfundo }}>
+              Editar Inscripción
+            </h5>
+          </div>
         </CModalHeader>
-        <CModalBody>
-          {mensajeTabla && <CAlert color={tipoMensaje}>{mensajeTabla}</CAlert>}
-          {inscripcionEdit && (
-            <CForm onSubmit={handleGuardar}>
-              <CFormLabel className="fw-bold">Estudiante</CFormLabel>
-              <CFormSelect
-                className="mb-2"
-                value={inscripcionEdit.id_usuario}
-                onChange={e => setInscripcionEdit({ ...inscripcionEdit, id_usuario: e.target.value })}
-                aria-describedby="modalErrorUsuario"
-              >
-                <option value="">Seleccione un estudiante</option>
-                {usuarios.map(u => (
-                  <option key={u.id_usuario} value={u.id_usuario}>
-                    {u.nombre} {u.apellido} ({u.email})
-                  </option>
-                ))}
-              </CFormSelect>
-              {modalEditErrors.usuario && <div id="modalErrorUsuario" style={{ color: 'red', fontSize: 13, marginBottom: 8 }}>{modalEditErrors.usuario}</div>}
 
-              <CFormLabel className="fw-bold mt-2">Curso</CFormLabel>
-              <CFormSelect
-                className="mb-2"
-                value={inscripcionEdit.id_curso}
-                onChange={e => setInscripcionEdit({ ...inscripcionEdit, id_curso: e.target.value })}
-                aria-describedby="modalErrorCurso"
-              >
-                <option value="">Seleccione un curso</option>
-                {cursosAll.map(c => (
-                  <option key={c.id_curso} value={c.id_curso}>{c.nombre_curso}</option>
-                ))}
-              </CFormSelect>
-              {modalEditErrors.curso && <div id="modalErrorCurso" style={{ color: 'red', fontSize: 13, marginBottom: 8 }}>{modalEditErrors.curso}</div>}
+        <CModalBody className="p-4">
+          <CForm onSubmit={(e) => e.preventDefault()}>
+            {' '}
+            {/* Evita el refresco accidental */}
+            <CRow className="g-3">
+              <CCol md={12}>
+                <CFormLabel className="fw-bold">Estudiante</CFormLabel>
+                <CFormInput
+                  value={`${modalEdit.data?.nombre || ''} ${modalEdit.data?.apellido || ''}`}
+                  disabled
+                  className="form-control-custom bg-light"
+                />
+                <small className="text-muted">
+                  El estudiante no se puede cambiar, solo el curso.
+                </small>
+              </CCol>
 
-              <div className="d-flex justify-content-end mt-3" style={{ gap: 8 }}>
-                <CButton color="secondary" onClick={() => { setPermitCloseModal(true); setModal(false); }}>Cancelar</CButton>
-                <CButton color="info" type="submit" className="text-white fw-bold">Guardar</CButton>
-              </div>
-            </CForm>
-          )}
+              <CCol md={12} className="mt-4">
+                <CFormLabel className="fw-bold text-primary">
+                  <CIcon icon={cilEducation} className="me-1" /> Nuevo Curso
+                </CFormLabel>
+                <CFormSelect
+                  className="form-control-custom"
+                  value={modalEdit.data?.id_curso || ''} // Usar value en lugar de defaultValue para control total
+                  onChange={(e) =>
+                    setModalEdit({
+                      ...modalEdit,
+                      data: { ...modalEdit.data, id_curso: e.target.value },
+                    })
+                  }
+                >
+                  <option value="">Seleccione un curso</option>
+                  {cursos.map((c) => (
+                    <option key={c.id_curso} value={c.id_curso}>
+                      {c.nombre_curso}
+                    </option>
+                  ))}
+                </CFormSelect>
+              </CCol>
+            </CRow>
+          </CForm>
         </CModalBody>
+
+        <CModalFooter className="border-0 p-4">
+          <CButton
+            color="secondary"
+            variant="ghost"
+            onClick={() => setModalEdit({ visible: false, data: null })}
+          >
+            Cancelar
+          </CButton>
+          <CButton
+            type="button" // IMPORTANTE: Define tipo button para que no dispare el submit del form
+            className="btn-inscribir text-white px-5"
+            style={{ background: azulProfundo }}
+            onClick={guardarCambiosEdicion}
+          >
+            GUARDAR CAMBIOS
+          </CButton>
+        </CModalFooter>
       </CModal>
 
-      {/* Modal Eliminar (NO se cierra por click fuera ni con ESC) */}
-      <CModal visible={modalEliminar} backdrop="static" keyboard={false} onClose={() => { if (permitCloseEliminar) setModalEliminar(false); }}>
-        <CModalHeader>
-          <strong>Eliminar Inscripción</strong>
+      {/* Modal de Confirmación / Edición Estilizado */}
+      {/* MODAL DE ELIMINACIÓN (ÚNICA Y OPTIMIZADA) */}
+      <CModal
+        visible={modalDelete.visible}
+        onClose={() => setModalDelete({ visible: false, data: null })}
+        alignment="center"
+        backdrop="static"
+        size="lg"
+      >
+        <CModalHeader
+          className="border-0 p-4"
+          style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}
+        >
+          <div className="d-flex align-items-center">
+            <div className="p-3 bg-danger rounded-circle me-3 shadow-sm">
+              <CIcon icon={cilTrash} className="text-white" size="xl" />
+            </div>
+            <div>
+              <h5 className="mb-0 fw-bold" style={{ color: azulProfundo }}>
+                Confirmar Baja de Inscripción
+              </h5>
+              <small className="text-muted">
+                ID Registro: #{modalDelete.data?.id_inscripcion || '---'}
+              </small>
+            </div>
+          </div>
         </CModalHeader>
-        <CModalBody>
-          {modalEliminarError && <div style={{ color: 'red', marginBottom: 8 }}>{modalEliminarError}</div>}
-          ¿Seguro que deseas eliminar la inscripción de <b>{inscripcionEliminar?.nombre} {inscripcionEliminar?.apellido}</b> en el curso <b>{inscripcionEliminar?.nombre_curso}</b>?
+
+        <CModalBody className="p-4">
+          <div className="text-center mb-4">
+            <p className="text-muted">
+              Estás a punto de dar de baja la siguiente relación académica:
+            </p>
+          </div>
+
+          <CRow className="g-3">
+            {/* Bloque del Estudiante */}
+            <CCol md={6}>
+              <div
+                className="p-3 h-100 rounded-4 border-start border-4 border-primary"
+                style={{ backgroundColor: '#f1f5f9' }}
+              >
+                <label
+                  className="fw-bold small text-uppercase opacity-50 d-block mb-2"
+                  style={{ letterSpacing: '1px' }}
+                >
+                  Estudiante
+                </label>
+                <div className="d-flex align-items-center">
+                  <CAvatar color="primary" textColor="white" className="me-2 fw-bold">
+                    {modalDelete.data?.nombre?.charAt(0) || '?'}
+                  </CAvatar>
+                  <span className="fs-5 fw-bold text-dark">
+                    {modalDelete.data?.nombre} {modalDelete.data?.apellido}
+                  </span>
+                </div>
+              </div>
+            </CCol>
+
+            {/* Bloque del Curso */}
+            <CCol md={6}>
+              <div
+                className="p-3 h-100 rounded-4 border-start border-4 border-warning"
+                style={{ backgroundColor: '#fffbeb' }}
+              >
+                <label
+                  className="fw-bold small text-uppercase opacity-50 d-block mb-2"
+                  style={{ letterSpacing: '1px' }}
+                >
+                  Curso Asignado
+                </label>
+                <div className="d-flex align-items-center">
+                  <div className="p-2 bg-warning rounded-2 me-2">
+                    <CIcon icon={cilEducation} className="text-dark" />
+                  </div>
+                  <span className="fs-5 fw-bold text-dark">{modalDelete.data?.nombre_curso}</span>
+                </div>
+              </div>
+            </CCol>
+          </CRow>
+
+          <div className="mt-4 p-3 rounded-3 bg-light border text-center">
+            <p className="mb-0 text-secondary italic" style={{ fontSize: '0.9rem' }}>
+              "Esta acción retirará al alumno permanentemente de este curso."
+            </p>
+          </div>
         </CModalBody>
-        <CModalFooter>
-          <CButton color="secondary" onClick={() => { setPermitCloseEliminar(true); setModalEliminar(false); }}>Cancelar</CButton>
-          <CButton color="danger" onClick={handleEliminar}>Eliminar</CButton>
+
+        <CModalFooter
+          className="border-0 p-4 justify-content-between"
+          style={{ background: '#f8fafc' }}
+        >
+          <CButton
+            color="secondary"
+            variant="ghost"
+            className="fw-bold text-uppercase"
+            onClick={() => setModalDelete({ visible: false, data: null })}
+          >
+            Cancelar
+          </CButton>
+          <CButton
+            className="px-5 text-white shadow"
+            style={{
+              background: '#dc3545',
+              border: 'none',
+              borderRadius: '12px',
+              fontWeight: 'bold',
+            }}
+            onClick={() => eliminarInscripcion(modalDelete.data.id_inscripcion)} // <--- Vinculado
+          >
+            SÍ, ELIMINAR
+          </CButton>
         </CModalFooter>
       </CModal>
     </CContainer>
-  );
+  )
 }
