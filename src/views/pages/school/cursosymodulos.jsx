@@ -27,7 +27,15 @@ import {
   CTooltip,
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
-import { cilPencil, cilTrash, cilPlus, cilLibrary, cilLayers, cilSave, cilX } from '@coreui/icons'
+import {
+  cilPencil,
+  cilTrash,
+  cilPlus,
+  cilLibrary,
+  cilLayers,
+  cilSave,
+  cilEducation,
+} from '@coreui/icons'
 
 export default function CrudCursosModulos() {
   // --- ESTADOS ---
@@ -563,11 +571,15 @@ export default function CrudCursosModulos() {
         </CModalFooter>
       </CModal>
 
+      {/* Modal de confirmación para eliminar curso */}
       <CModal
         visible={modalConfirmCurso}
         onClose={() => setModalConfirmCurso(false)}
         alignment="center"
+        backdrop="static"
+        size="lg"
       >
+        {/* HEADER */}
         <CModalHeader
           className="border-0 p-4"
           style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}
@@ -578,23 +590,82 @@ export default function CrudCursosModulos() {
             </div>
             <div>
               <h5 className="mb-0 fw-bold" style={{ color: azulProfundo }}>
-                Confirmar Eliminacion del Curso
+                Confirmar Eliminación de Curso
               </h5>
+              <small className="text-muted">Esta acción no se puede deshacer</small>
             </div>
           </div>
         </CModalHeader>
-        <CModalBody className="py-4 text-center">
-          <CIcon icon={cilTrash} size="3xl" className="text-danger mb-3" />
-          <p className="mb-0 fw-bold">
-            Esta acción eliminará el curso y todos sus módulos asociados de forma permanente.
-          </p>
+
+        {/* BODY */}
+        <CModalBody className="p-4">
+          <div className="text-center mb-4">
+            <p className="text-muted">Estás a punto de eliminar el siguiente curso del sistema:</p>
+          </div>
+
+          <CRow className="g-3">
+            {/* Bloque del Curso */}
+            <CCol md={12}>
+              <div
+                className="p-4 rounded-4 border-start border-4 border-warning"
+                style={{ backgroundColor: '#fffbeb' }}
+              >
+                <label
+                  className="fw-bold small text-uppercase opacity-50 d-block mb-2"
+                  style={{ letterSpacing: '1px' }}
+                >
+                  Curso a eliminar
+                </label>
+
+                <div className="d-flex align-items-center">
+                  <div className="p-3 bg-warning rounded-3 me-3 shadow-sm">
+                    <CIcon icon={cilEducation} className="text-dark" size="lg" />
+                  </div>
+                  <span className="fs-4 fw-bold text-dark">
+                    {cursos.find((c) => c.id_curso === cursoAEliminar)?.nombre_curso ||
+                      'Curso no seleccionado'}
+                  </span>
+                </div>
+              </div>
+            </CCol>
+          </CRow>
+
+          <div className="mt-4 p-3 rounded-3 bg-light border text-center">
+            <p className="mb-0 text-secondary" style={{ fontSize: '0.9rem' }}>
+              ⚠️ Al eliminar este curso se eliminarán todos los módulos, inscripciones y registros
+              asociados de forma permanente.
+            </p>
+          </div>
         </CModalBody>
-        <CModalFooter className="border-0 justify-content-center">
-          <CButton color="light" className="px-4" onClick={() => setModalConfirmCurso(false)}>
-            No, Volver
+
+        {/* FOOTER */}
+        <CModalFooter
+          className="border-0 p-4 justify-content-between"
+          style={{ background: '#f8fafc' }}
+        >
+          <CButton
+            color="secondary"
+            variant="ghost"
+            className="fw-bold text-uppercase"
+            onClick={() => setModalConfirmCurso(false)}
+          >
+            Cancelar
           </CButton>
-          <CButton color="danger" className="text-white px-4" onClick={handleDeleteCurso}>
-            Sí, Eliminar Todo
+
+          <CButton
+            className="px-5 text-white shadow"
+            style={{
+              background: '#dc3545',
+              border: 'none',
+              borderRadius: '12px',
+              fontWeight: 'bold',
+            }}
+            onClick={() => {
+              setModalConfirmCurso(false)
+              handleDeleteCurso()
+            }}
+          >
+            SÍ, ELIMINAR CURSO
           </CButton>
         </CModalFooter>
       </CModal>

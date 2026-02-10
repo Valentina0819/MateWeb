@@ -28,7 +28,15 @@ import {
   CModalTitle,
 } from '@coreui/react'
 import { CIcon } from '@coreui/icons-react'
-import { cilSave, cilPencil, cilTrash, cilWarning, cilPeople } from '@coreui/icons'
+import {
+  cilSave,
+  cilPencil,
+  cilTrash,
+  cilWarning,
+  cilPeople,
+  cilUser,
+  cilGroup,
+} from '@coreui/icons'
 const roles = [
   { value: 'admin', label: 'Administrador' },
   { value: 'alumno', label: 'Alumno' },
@@ -237,91 +245,227 @@ export default function CrudUsuarios() {
         visible={modalEliminar}
         onClose={() => setModalEliminar(false)}
         alignment="center"
-        size="sm"
+        backdrop="static"
+        size="lg"
       >
-        <CModalBody className="text-center p-4">
-          <CIcon icon={cilWarning} size="3xl" className="text-danger mb-3" />
-          <h5 className="fw-bold">¿Estás seguro?</h5>
-          <p className="text-muted small">
-            Estás a punto de eliminar a <br />
-            <strong className="text-dark">
-              {usuarioEliminar?.nombre} {usuarioEliminar?.apellido}
-            </strong>
-            . Esta acción no se puede deshacer.
-          </p>
-          <div className="d-flex gap-2 justify-content-center mt-4">
-            <CButton color="light" className="px-4" onClick={() => setModalEliminar(false)}>
-              Cancelar
-            </CButton>
-            <CButton color="danger" className="text-white px-4" onClick={handleEliminar}>
-              Eliminar
-            </CButton>
+        {/* HEADER */}
+        <CModalHeader
+          className="border-0 p-4"
+          style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}
+        >
+          <div className="d-flex align-items-center">
+            <div className="p-3 bg-danger rounded-circle me-3 shadow-sm">
+              <CIcon icon={cilTrash} className="text-white" size="xl" />
+            </div>
+            <div>
+              <h5 className="mb-0 fw-bold" style={{ color: '#070145' }}>
+                Confirmar Eliminación de Usuario
+              </h5>
+              <small className="text-muted">Esta acción no se puede deshacer</small>
+            </div>
+          </div>
+        </CModalHeader>
+
+        {/* BODY */}
+        <CModalBody className="p-4">
+          <div className="text-center mb-4">
+            <p className="text-muted">
+              Estás a punto de eliminar al siguiente usuario del sistema:
+            </p>
+          </div>
+
+          <CRow className="g-3">
+            <CCol md={12}>
+              <div
+                className="p-4 rounded-4 border-start border-4 border-danger"
+                style={{ backgroundColor: '#fff5f5' }}
+              >
+                <label
+                  className="fw-bold small text-uppercase opacity-50 d-block mb-2"
+                  style={{ letterSpacing: '1px' }}
+                >
+                  Usuario a eliminar
+                </label>
+
+                <div className="d-flex align-items-center">
+                  <div className="p-3 bg-danger rounded-3 me-3 shadow-sm">
+                    <CIcon icon={cilUser} className="text-white" size="lg" />
+                  </div>
+                  <span className="fs-4 fw-bold text-dark">
+                    {usuarioEliminar?.nombre} {usuarioEliminar?.apellido}
+                  </span>
+                </div>
+              </div>
+            </CCol>
+          </CRow>
+
+          <div className="mt-4 p-3 rounded-3 bg-light border text-center">
+            <p className="mb-0 text-secondary" style={{ fontSize: '0.9rem' }}>
+              ⚠️ Al eliminar este usuario se perderá toda la información asociada, incluyendo
+              accesos, registros y actividad.
+            </p>
           </div>
         </CModalBody>
+
+        {/* FOOTER */}
+        <CModalFooter
+          className="border-0 p-4 justify-content-between"
+          style={{ background: '#f8fafc' }}
+        >
+          <CButton
+            color="secondary"
+            variant="ghost"
+            className="fw-bold text-uppercase"
+            onClick={() => setModalEliminar(false)}
+          >
+            Cancelar
+          </CButton>
+
+          <CButton
+            className="px-5 text-white shadow"
+            style={{
+              background: '#dc3545',
+              border: 'none',
+              borderRadius: '12px',
+              fontWeight: 'bold',
+            }}
+            onClick={handleEliminar}
+          >
+            SÍ, ELIMINAR USUARIO
+          </CButton>
+        </CModalFooter>
       </CModal>
 
-      {/* Modal Editar - Rediseñado */}
-      <CModal backdrop="static" visible={modal} onClose={() => setModal(false)} alignment="center">
-        <CModalHeader className="border-0">
-          <CModalTitle className="fw-bold">Editar Perfil</CModalTitle>
+      <CModal
+        backdrop="static"
+        visible={modal}
+        onClose={() => setModal(false)}
+        alignment="center"
+        size="lg"
+      >
+        {/* HEADER */}
+        <CModalHeader
+          closeButton
+          style={{
+            background: '#ffffff',
+            borderBottom: '1px solid #e5e7eb',
+            padding: '16px 24px',
+          }}
+        >
+          <div className="d-flex align-items-center gap-2">
+            <div
+              style={{
+                background: '#4f46e5',
+                color: 'white',
+                borderRadius: 8,
+                width: 36,
+                height: 36,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontWeight: 'bold',
+              }}
+            >
+              👤
+            </div>
+            <h5 className="mb-0 fw-semibold">Editar Perfil</h5>
+          </div>
         </CModalHeader>
-        <CModalBody className="px-4 pb-4">
+
+        {/* BODY */}
+        <CModalBody style={{ padding: 24, background: '#f9fafb' }}>
           {usuarioEdit && (
-            <CForm onSubmit={handleGuardar} className="row g-3">
-              <CCol md={6}>
-                <CFormInput
-                  label="Nombre"
-                  placeholder="Ej: Juan"
-                  value={usuarioEdit.nombre}
-                  onChange={(e) => setUsuarioEdit({ ...usuarioEdit, nombre: e.target.value })}
-                  required
-                />
-              </CCol>
-              <CCol md={6}>
-                <CFormInput
-                  label="Apellido"
-                  placeholder="Ej: Pérez"
-                  value={usuarioEdit.apellido}
-                  onChange={(e) => setUsuarioEdit({ ...usuarioEdit, apellido: e.target.value })}
-                  required
-                />
-              </CCol>
-              <CCol md={12}>
-                <CFormInput
-                  label="Correo Electrónico"
-                  type="email"
-                  value={usuarioEdit.email}
-                  onChange={(e) => setUsuarioEdit({ ...usuarioEdit, email: e.target.value })}
-                  required
-                />
-              </CCol>
-              <CCol md={12}>
-                <CFormSelect
-                  label="Asignar Rol"
-                  value={usuarioEdit.rol}
-                  onChange={(e) => setUsuarioEdit({ ...usuarioEdit, rol: e.target.value })}
-                  required
+            <CForm onSubmit={handleGuardar}>
+              <div className="row g-3">
+                {/* NOMBRE */}
+                <CCol md={6}>
+                  <div className="p-3 bg-white rounded shadow-sm">
+                    <CFormInput
+                      label="Nombre"
+                      placeholder="Ej: Juan"
+                      value={usuarioEdit.nombre}
+                      onChange={(e) => setUsuarioEdit({ ...usuarioEdit, nombre: e.target.value })}
+                      required
+                    />
+                  </div>
+                </CCol>
+
+                {/* APELLIDO */}
+                <CCol md={6}>
+                  <div className="p-3 bg-white rounded shadow-sm">
+                    <CFormInput
+                      label="Apellido"
+                      placeholder="Ej: Pérez"
+                      value={usuarioEdit.apellido}
+                      onChange={(e) => setUsuarioEdit({ ...usuarioEdit, apellido: e.target.value })}
+                      required
+                    />
+                  </div>
+                </CCol>
+
+                {/* EMAIL */}
+                <CCol md={12}>
+                  <div className="p-3 bg-white rounded shadow-sm">
+                    <CFormInput
+                      label="Correo Electrónico"
+                      type="email"
+                      value={usuarioEdit.email}
+                      onChange={(e) => setUsuarioEdit({ ...usuarioEdit, email: e.target.value })}
+                      required
+                    />
+                  </div>
+                </CCol>
+
+                {/* ROL */}
+                <CCol md={12}>
+                  <div className="p-3 bg-white rounded shadow-sm">
+                    <CFormSelect
+                      label="Asignar Rol"
+                      value={usuarioEdit.rol}
+                      onChange={(e) => setUsuarioEdit({ ...usuarioEdit, rol: e.target.value })}
+                      required
+                    >
+                      <option disabled value="">
+                        Seleccionar...
+                      </option>
+                      {roles.map((r) => (
+                        <option key={r.value} value={r.value}>
+                          {r.label}
+                        </option>
+                      ))}
+                    </CFormSelect>
+                  </div>
+                </CCol>
+              </div>
+
+              {/* FOOTER */}
+              <div className="d-flex justify-content-between align-items-center mt-4">
+                <span
+                  role="button"
+                  onClick={() => setModal(false)}
+                  style={{
+                    color: '#6b7280',
+                    cursor: 'pointer',
+                    fontWeight: 500,
+                  }}
                 >
-                  <option disabled value="">
-                    Seleccionar...
-                  </option>
-                  {roles.map((r) => (
-                    <option key={r.value} value={r.value}>
-                      {r.label}
-                    </option>
-                  ))}
-                </CFormSelect>
-              </CCol>
-              <CCol xs={12} className="mt-4 pt-2">
+                  Descartar
+                </span>
+
                 <CButton
-                  color="primary"
                   type="submit"
-                  className="w-100 py-2 fw-bold"
-                  style={{ background: '#070145', border: 'none' }}
+                  style={{
+                    background: '#0f172a',
+                    color: 'white',
+                    borderRadius: 10,
+                    padding: '10px 24px',
+                    minWidth: 180,
+                    border: 'none',
+                  }}
                 >
-                  Actualizar Usuario
+                  Guardar cambios
                 </CButton>
-              </CCol>
+              </div>
             </CForm>
           )}
         </CModalBody>

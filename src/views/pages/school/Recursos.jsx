@@ -28,7 +28,16 @@ import {
 } from '@coreui/react'
 
 import CIcon from '@coreui/icons-react'
-import { cilPlus, cilSearch, cilTrash, cilSave, cilBook, cilPencil } from '@coreui/icons'
+import {
+  cilPlus,
+  cilSearch,
+  cilTrash,
+  cilSave,
+  cilBook,
+  cilPencil,
+  cilFile,
+  cilEducation,
+} from '@coreui/icons'
 
 export default function CrudRecursos() {
   const [lecciones, setLecciones] = useState([])
@@ -360,92 +369,240 @@ export default function CrudRecursos() {
         size="lg"
         backdrop="static"
       >
-        <CModalHeader closeButton style={{ background: '#114c5f', color: 'white' }}>
-          Editar Recurso
+        {/* HEADER */}
+        <CModalHeader
+          closeButton
+          style={{
+            background: '#ffffff',
+            borderBottom: '1px solid #e5e7eb',
+            padding: '16px 24px',
+          }}
+        >
+          <div className="d-flex align-items-center gap-2">
+            <div
+              style={{
+                background: '#4f46e5',
+                color: 'white',
+                borderRadius: 8,
+                width: 36,
+                height: 36,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontWeight: 'bold',
+              }}
+            >
+              ✎
+            </div>
+            <h5 className="mb-0 fw-semibold">Editar Recurso</h5>
+          </div>
         </CModalHeader>
-        <CModalBody style={{ padding: 32 }}>
+
+        {/* BODY */}
+        <CModalBody style={{ padding: 24, background: '#f9fafb' }}>
           {recursoEdit && (
-            <CForm onSubmit={handleRecursoEditSave} style={modalStyle}>
-              <CFormSelect
-                className="mb-3"
-                label="Lección"
-                value={recursoEdit.id_leccion}
-                onChange={(e) => setRecursoEdit({ ...recursoEdit, id_leccion: e.target.value })}
-                required
-              >
-                <option value="">Seleccione una lección</option>
-                {lecciones
-                  .filter((l) =>
-                    l.nombre_leccion.toLowerCase().includes(filtroLeccionForm.toLowerCase()),
-                  )
-                  .map((l) => (
-                    <option key={l.id_leccion} value={l.id_leccion}>
-                      {l.nombre_leccion}
-                    </option>
-                  ))}
-              </CFormSelect>
-              <CFormInput
-                className="mb-3"
-                type="text"
-                label="Tipo de recurso"
-                value={recursoEdit.tipo_recurso}
-                onChange={(e) => setRecursoEdit({ ...recursoEdit, tipo_recurso: e.target.value })}
-                required
-              />
-              <CFormInput
-                className="mb-3"
-                type="text"
-                label="URL"
-                value={recursoEdit.url}
-                onChange={(e) => setRecursoEdit({ ...recursoEdit, url: e.target.value })}
-                required
-              />
-              <CFormInput
-                className="mb-3"
-                type="text"
-                label="Descripción"
-                value={recursoEdit.descripcion}
-                onChange={(e) => setRecursoEdit({ ...recursoEdit, descripcion: e.target.value })}
-                required
-              />
-              <div className="d-flex justify-content-end">
+            <CForm onSubmit={handleRecursoEditSave}>
+              {/* LECCIÓN */}
+              <div className="mb-3 p-3 bg-white rounded shadow-sm">
+                <CFormSelect
+                  label="Lección"
+                  value={recursoEdit.id_leccion}
+                  onChange={(e) => setRecursoEdit({ ...recursoEdit, id_leccion: e.target.value })}
+                  required
+                >
+                  <option value="">Seleccione una lección</option>
+                  {lecciones
+                    .filter((l) =>
+                      l.nombre_leccion.toLowerCase().includes(filtroLeccionForm.toLowerCase()),
+                    )
+                    .map((l) => (
+                      <option key={l.id_leccion} value={l.id_leccion}>
+                        {l.nombre_leccion}
+                      </option>
+                    ))}
+                </CFormSelect>
+              </div>
+
+              {/* TIPO */}
+              <div className="mb-3 p-3 bg-white rounded shadow-sm">
+                <CFormInput
+                  type="text"
+                  label="Tipo de recurso"
+                  value={recursoEdit.tipo_recurso}
+                  onChange={(e) => setRecursoEdit({ ...recursoEdit, tipo_recurso: e.target.value })}
+                  required
+                />
+              </div>
+
+              {/* URL */}
+              <div className="mb-3 p-3 bg-white rounded shadow-sm">
+                <CFormInput
+                  type="text"
+                  label="URL"
+                  value={recursoEdit.url}
+                  onChange={(e) => setRecursoEdit({ ...recursoEdit, url: e.target.value })}
+                  required
+                />
+              </div>
+
+              {/* DESCRIPCIÓN */}
+              <div className="mb-4 p-3 bg-white rounded shadow-sm">
+                <CFormInput
+                  type="text"
+                  label="Descripción"
+                  value={recursoEdit.descripcion}
+                  onChange={(e) => setRecursoEdit({ ...recursoEdit, descripcion: e.target.value })}
+                  required
+                />
+              </div>
+
+              {/* FOOTER */}
+              <div className="d-flex justify-content-between align-items-center">
+                <span
+                  role="button"
+                  onClick={() => setRecursoEdit(null)}
+                  style={{
+                    color: '#6b7280',
+                    cursor: 'pointer',
+                    fontWeight: 500,
+                  }}
+                >
+                  Descartar
+                </span>
+
                 <CButton
                   type="submit"
-                  style={{ background: '#114c5f', color: 'white', minWidth: 140 }}
+                  style={{
+                    background: '#0f172a',
+                    color: 'white',
+                    borderRadius: 10,
+                    padding: '10px 20px',
+                    minWidth: 160,
+                  }}
                 >
-                  Guardar
+                  Guardar cambios
                 </CButton>
               </div>
             </CForm>
           )}
         </CModalBody>
       </CModal>
+
       <CModal
         visible={!!recursoEliminar}
         onClose={() => setRecursoEliminar(null)}
         alignment="center"
-        size="sm"
         backdrop="static"
+        size="lg"
       >
-        <CModalHeader closeButton style={{ background: '#114c5f', color: 'white' }}>
-          Eliminar Recurso
+        {/* HEADER */}
+        <CModalHeader
+          className="border-0 p-4"
+          style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}
+        >
+          <div className="d-flex align-items-center">
+            <div className="p-3 bg-danger rounded-circle me-3 shadow-sm">
+              <CIcon icon={cilTrash} className="text-white" size="xl" />
+            </div>
+            <div>
+              <h5 className="mb-0 fw-bold" style={{ color: '#070145' }}>
+                Confirmar Eliminación de Recurso
+              </h5>
+              <small className="text-muted">Esta acción no se puede deshacer</small>
+            </div>
+          </div>
         </CModalHeader>
-        <CModalBody className="text-center" style={{ padding: 32 }}>
-          ¿Seguro que deseas eliminar el recurso <b>{recursoEliminar?.tipo_recurso}</b> de la
-          lección <b>{recursoEliminar?.nombre_leccion}</b>?
+
+        {/* BODY */}
+        <CModalBody className="p-4">
+          <div className="text-center mb-4">
+            <p className="text-muted">
+              Estás a punto de eliminar el siguiente recurso asociado a una lección:
+            </p>
+          </div>
+
+          <CRow className="g-3">
+            {/* Bloque del Recurso */}
+            <CCol md={6}>
+              <div
+                className="p-4 h-100 rounded-4 border-start border-4 border-danger"
+                style={{ backgroundColor: '#fff5f5' }}
+              >
+                <label
+                  className="fw-bold small text-uppercase opacity-50 d-block mb-2"
+                  style={{ letterSpacing: '1px' }}
+                >
+                  Recurso
+                </label>
+
+                <div className="d-flex align-items-center">
+                  <div className="p-3 bg-danger rounded-3 me-3 shadow-sm">
+                    <CIcon icon={cilFile} className="text-white" size="lg" />
+                  </div>
+                  <span className="fs-5 fw-bold text-dark">
+                    {recursoEliminar?.tipo_recurso || 'Recurso no definido'}
+                  </span>
+                </div>
+              </div>
+            </CCol>
+
+            {/* Bloque de la Lección */}
+            <CCol md={6}>
+              <div
+                className="p-4 h-100 rounded-4 border-start border-4 border-warning"
+                style={{ backgroundColor: '#fffbeb' }}
+              >
+                <label
+                  className="fw-bold small text-uppercase opacity-50 d-block mb-2"
+                  style={{ letterSpacing: '1px' }}
+                >
+                  Lección asociada
+                </label>
+
+                <div className="d-flex align-items-center">
+                  <div className="p-3 bg-warning rounded-3 me-3 shadow-sm">
+                    <CIcon icon={cilEducation} className="text-dark" size="lg" />
+                  </div>
+                  <span className="fs-5 fw-bold text-dark">
+                    {recursoEliminar?.nombre_leccion || 'Lección no definida'}
+                  </span>
+                </div>
+              </div>
+            </CCol>
+          </CRow>
+
+          <div className="mt-4 p-3 rounded-3 bg-light border text-center">
+            <p className="mb-0 text-secondary" style={{ fontSize: '0.9rem' }}>
+              ⚠️ Este recurso será eliminado permanentemente y no podrá recuperarse.
+            </p>
+          </div>
         </CModalBody>
-        <CModalFooter className="justify-content-center">
+
+        {/* FOOTER */}
+        <CModalFooter
+          className="border-0 p-4 justify-content-between"
+          style={{ background: '#f8fafc' }}
+        >
           <CButton
-            style={{ background: '#114c5f', color: 'white', ...buttonStyle }}
+            color="secondary"
+            variant="ghost"
+            className="fw-bold text-uppercase"
             onClick={() => setRecursoEliminar(null)}
           >
             Cancelar
           </CButton>
+
           <CButton
-            style={{ background: '#114c5f', color: 'white', ...buttonStyle }}
+            className="px-5 text-white shadow"
+            style={{
+              background: '#dc3545',
+              border: 'none',
+              borderRadius: '12px',
+              fontWeight: 'bold',
+            }}
             onClick={handleRecursoEliminarConfirm}
           >
-            Eliminar
+            SÍ, ELIMINAR RECURSO
           </CButton>
         </CModalFooter>
       </CModal>

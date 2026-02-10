@@ -1,9 +1,7 @@
 import React from 'react'
 
-
 const AdminDashboard = React.lazy(() => import('./views/dashboard/AdminDashboard'))
 const DocenteDashboard = React.lazy(() => import('./views/dashboard/DocenteDashboard'))
-const error = React.lazy(() => import('./views/pages/page404/Page404'))
 const Docents = React.lazy(() => import('./views/pages/school/docents'))
 const Estudiantes = React.lazy(() => import('./views/pages/school/estudiantes'))
 
@@ -46,49 +44,97 @@ const Noticas = React.lazy(() => import('./views/pages/school/noticas'))
 
 const routes = [
   { path: '/', exact: true, name: 'Inicio' },
-  { path: '/admin/dashboard', name: 'Panel', element: AdminDashboard},
-  { path: '/docente/dashboard', name: 'Panel', element: DocenteDashboard},
-    { path: '/AlumnoDashboard', name: 'Panel', element: Alumno},
-  { path: '/404', name: 'Error 404', element: error },
+  { path: '/admin/dashboard', name: 'Panel', element: AdminDashboard },
+  { path: '/docente/dashboard', name: 'Panel', element: DocenteDashboard },
+  { path: '/AlumnoDashboard', name: 'Panel', element: Alumno },
   { path: '/registro/estudiante', name: 'Docentes', element: Docents },
-  { path: '/estudiantes', name: 'Estudiantes', element: Estudiantes, private: true},
+  { path: '/estudiantes', name: 'Estudiantes', element: Estudiantes, private: true },
 
-  { path: '/contenidos/leccion1', name: 'Sistemas de numeración', element: SistemasNum, private: true },
-  { path: '/contenidos/leccion2', name: 'Los múltiplos y los divisores', element: MultiplosyDivisores, private: true },
-  { path: '/contenidos/leccion3', name: 'Operaciones con numeros naturales y decimales', element: OpNumerosNyD, private: true},
-  { path: '/contenidos/leccion4', name: 'Ecuaciones de primer grado', element: EcuacionesPG, private: true},
-  { path: '/contenidos/leccion5', name: 'Las fracciones y las operaciones', element: Fracciones, private: true},
+  {
+    path: '/contenidos/leccion1',
+    name: 'Sistemas de numeración',
+    element: SistemasNum,
+    private: true,
+  },
+  {
+    path: '/contenidos/leccion2',
+    name: 'Los múltiplos y los divisores',
+    element: MultiplosyDivisores,
+    private: true,
+  },
+  {
+    path: '/contenidos/leccion3',
+    name: 'Operaciones con numeros naturales y decimales',
+    element: OpNumerosNyD,
+    private: true,
+  },
+  {
+    path: '/contenidos/leccion4',
+    name: 'Ecuaciones de primer grado',
+    element: EcuacionesPG,
+    private: true,
+  },
+  {
+    path: '/contenidos/leccion5',
+    name: 'Las fracciones y las operaciones',
+    element: Fracciones,
+    private: true,
+  },
 
   { path: '/registro/docente', name: 'Registro Docente', element: RegistroDocente },
   { path: '/cargar/notas', name: 'Cargar Notas', element: CargarNotas, private: true },
-  { path: '/materia/docente', name: 'Asignar Mat a Doc', element: AsignarMateriaDoc, private: true },
-  { path: '/inscribir/estudiante', name: 'Inscribir Estudiante', element: InscribirEstudiante, private: true},
-  { path: '/listado/inscripciones', name: 'Listado Inscripciones', element: ListadoInscripcion, private: true },
+  {
+    path: '/materia/docente',
+    name: 'Asignar Mat a Doc',
+    element: AsignarMateriaDoc,
+    private: true,
+  },
+  {
+    path: '/inscribir/estudiante',
+    name: 'Inscribir Estudiante',
+    element: InscribirEstudiante,
+    private: true,
+  },
+  {
+    path: '/listado/inscripciones',
+    name: 'Listado Inscripciones',
+    element: ListadoInscripcion,
+    private: true,
+  },
 
-  { path: '/materia/año', name: 'Asignar Materia a Año', element: AsignarMateriaAño, private: true },
-  { path: '/constancia/estudiante', name: 'Constancia Estudiante', element: ConstanciaEst, private: true },
+  {
+    path: '/materia/año',
+    name: 'Asignar Materia a Año',
+    element: AsignarMateriaAño,
+    private: true,
+  },
+  {
+    path: '/constancia/estudiante',
+    name: 'Constancia Estudiante',
+    element: ConstanciaEst,
+    private: true,
+  },
   { path: '/director', name: 'Director', element: Director },
-  { path: '/imprimir/notas', name: 'Imprimir notas', element: ImprimirNotas , private: true},
+  { path: '/imprimir/notas', name: 'Imprimir notas', element: ImprimirNotas, private: true },
   { path: '/constancia/docente', name: 'Constancia Docente', element: ConstanciaDoc },
   { path: '/lista', name: 'lista', element: Lista },
   { path: '/usuario', name: 'Usuario', element: Usuario },
- { path: '/anioescolar', name: 'Anio', element: Anioescolar },
- { path: '/editar', name: 'editar', element: editar },
-{ path: '/EditarEstudiante', name: 'EditarEstudiante', element: EditarEstudiante },
-{ path: '/Sabana', name: 'Sabana', element: Sabana },
-{ path: '/administrador', name: 'Administrador', element: Administrador },
-{ path: '/cortes', name: 'Cortes', element: Cortes },
-{ path: '/inscripcion', name: 'inscripcion', element: Inscripcion },
-{ path: '/cursosymodulos', name: 'cursos', element: Cursos },
-{ path: '/recursosylecciones', name: 'recursosylecciones', element: Recursos },
-{ path: '/ejerciciodocente', name: 'ejerciciodocente', element: Ejercicio },
-{ path: '/examencito', name: 'examencito', element: Examen },
-{ path: '/prueba', name: 'prueba', element: Prueba },
-{ path: '/puntaje', name: 'puntaje', element: Puntaje },
-{ path: '/usuarios', name: 'usuarios', element: Usuarios },
-{ path: '/Recursos', name: 'Recursos', element: Recursosdenuevo },
-{ path: '/noticas', name: 'noticas', element: Noticas },
+  { path: '/anioescolar', name: 'Anio', element: Anioescolar },
+  { path: '/editar', name: 'editar', element: editar },
+  { path: '/EditarEstudiante', name: 'EditarEstudiante', element: EditarEstudiante },
+  { path: '/Sabana', name: 'Sabana', element: Sabana },
+  { path: '/administrador', name: 'Administrador', element: Administrador },
+  { path: '/cortes', name: 'Cortes', element: Cortes },
+  { path: '/inscripcion', name: 'inscripcion', element: Inscripcion },
+  { path: '/cursosymodulos', name: 'cursos', element: Cursos },
+  { path: '/recursosylecciones', name: 'recursosylecciones', element: Recursos },
+  { path: '/ejerciciodocente', name: 'ejerciciodocente', element: Ejercicio },
+  { path: '/examencito', name: 'examencito', element: Examen },
+  { path: '/prueba', name: 'prueba', element: Prueba },
+  { path: '/puntaje', name: 'puntaje', element: Puntaje },
+  { path: '/usuarios', name: 'usuarios', element: Usuarios },
+  { path: '/Recursos', name: 'Recursos', element: Recursosdenuevo },
+  { path: '/noticas', name: 'noticas', element: Noticas },
 ]
-
 
 export default routes

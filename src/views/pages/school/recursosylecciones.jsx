@@ -39,6 +39,7 @@ import {
   cilSave,
   cilWarning,
   cilX,
+  cilEducation,
 } from '@coreui/icons'
 
 export default function CrudLecciones() {
@@ -356,45 +357,126 @@ export default function CrudLecciones() {
         </CCol>
       </CRow>
 
-      {/* MODAL EDITAR - MÁS ELEGANTE */}
       <CModal
-        backdrop="static"
         visible={!!leccionEdit}
         onClose={() => setLeccionEdit(null)}
         alignment="center"
+        backdrop="static"
+        size="lg"
       >
-        <CModalHeader className="bg-info text-white">
-          <CModalTitle>
-            <CIcon icon={cilPencil} className="me-2" /> Editar Lección
-          </CModalTitle>
+        {/* HEADER */}
+        <CModalHeader
+          className="border-0 p-4"
+          style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}
+        >
+          <div className="d-flex align-items-center">
+            <div className="p-3 bg-info rounded-3 me-3 shadow-sm">
+              <CIcon icon={cilPencil} className="text-white" size="lg" />
+            </div>
+            <div>
+              <h5 className="mb-0 fw-bold" style={{ color: '#070145' }}>
+                Editar Lección
+              </h5>
+              <small className="text-muted">Actualiza la información de la lección</small>
+            </div>
+          </div>
         </CModalHeader>
+
+        {/* BODY */}
         <CModalBody className="p-4">
           {leccionEdit && (
-            <>
-              <div className="mb-3">
-                <label className="form-label small fw-bold">Nombre de la Lección</label>
-                <CFormInput
-                  value={leccionEdit.nombre_leccion}
-                  onChange={(e) =>
-                    setLeccionEdit({ ...leccionEdit, nombre_leccion: e.target.value })
-                  }
-                />
-              </div>
-              <div className="mb-3">
-                <label className="form-label small fw-bold">Descripción</label>
-                <CFormInput
-                  value={leccionEdit.descripcion}
-                  onChange={(e) => setLeccionEdit({ ...leccionEdit, descripcion: e.target.value })}
-                />
-              </div>
-            </>
+            <CRow className="g-4">
+              {/* Nombre */}
+              <CCol md={12}>
+                <div
+                  className="p-3 rounded-4"
+                  style={{
+                    backgroundColor: '#f1f5f9',
+                    border: '1px solid #e2e8f0',
+                  }}
+                >
+                  <label
+                    className="fw-bold small text-uppercase d-block mb-2"
+                    style={{ color: '#070145', letterSpacing: '1px' }}
+                  >
+                    Nombre de la lección
+                  </label>
+                  <CFormInput
+                    className="shadow-sm"
+                    style={{
+                      backgroundColor: '#fff',
+                      padding: '12px',
+                      borderRadius: '10px',
+                      border: '2px solid #cbd5e1',
+                    }}
+                    placeholder="Ej: Introducción a React"
+                    value={leccionEdit.nombre_leccion}
+                    onChange={(e) =>
+                      setLeccionEdit({ ...leccionEdit, nombre_leccion: e.target.value })
+                    }
+                  />
+                </div>
+              </CCol>
+
+              {/* Descripción */}
+              <CCol md={12}>
+                <div
+                  className="p-3 rounded-4"
+                  style={{
+                    backgroundColor: '#f1f5f9',
+                    border: '1px solid #e2e8f0',
+                  }}
+                >
+                  <label
+                    className="fw-bold small text-uppercase d-block mb-2"
+                    style={{ color: '#070145', letterSpacing: '1px' }}
+                  >
+                    Descripción
+                  </label>
+                  <CFormInput
+                    className="shadow-sm"
+                    style={{
+                      backgroundColor: '#fff',
+                      padding: '12px',
+                      borderRadius: '10px',
+                      border: '2px solid #cbd5e1',
+                    }}
+                    placeholder="Breve descripción de la lección"
+                    value={leccionEdit.descripcion}
+                    onChange={(e) =>
+                      setLeccionEdit({ ...leccionEdit, descripcion: e.target.value })
+                    }
+                  />
+                </div>
+              </CCol>
+            </CRow>
           )}
         </CModalBody>
-        <CModalFooter>
-          <CButton color="secondary" variant="ghost" onClick={() => setLeccionEdit(null)}>
+
+        {/* FOOTER */}
+        <CModalFooter
+          className="border-0 p-4 justify-content-between"
+          style={{ background: '#f8fafc' }}
+        >
+          <CButton
+            color="secondary"
+            variant="ghost"
+            className="fw-bold text-uppercase"
+            onClick={() => setLeccionEdit(null)}
+          >
             Cancelar
           </CButton>
-          <CButton color="info" className="text-white fw-bold" onClick={handleEditSave}>
+
+          <CButton
+            className="px-5 text-white shadow"
+            style={{
+              background: 'linear-gradient(45deg, #0dcaf0, #0aa2c0)',
+              border: 'none',
+              borderRadius: '12px',
+              fontWeight: 'bold',
+            }}
+            onClick={handleEditSave}
+          >
             Guardar Cambios
           </CButton>
         </CModalFooter>
@@ -405,24 +487,95 @@ export default function CrudLecciones() {
         visible={!!leccionEliminar}
         onClose={() => setLeccionEliminar(null)}
         alignment="center"
-        size="sm"
+        backdrop="static"
+        size="lg"
       >
-        <CModalBody className="text-center p-4">
-          <CIcon icon={cilWarning} size="3xl" className="text-danger mb-3" />
-          <h4 className="mb-2">¿Estás seguro?</h4>
-          <p className="text-muted">
-            Esta acción no se puede deshacer. Se eliminará la lección{' '}
-            <strong>{leccionEliminar?.nombre_leccion}</strong>.
-          </p>
-          <div className="d-flex justify-content-center gap-2 mt-4">
-            <CButton color="light" onClick={() => setLeccionEliminar(null)}>
-              Cancelar
-            </CButton>
-            <CButton color="danger" className="text-white" onClick={handleDelete}>
-              Sí, eliminar
-            </CButton>
+        {/* HEADER */}
+        <CModalHeader
+          className="border-0 p-4"
+          style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}
+        >
+          <div className="d-flex align-items-center">
+            <div className="p-3 bg-danger rounded-circle me-3 shadow-sm">
+              <CIcon icon={cilTrash} className="text-white" size="xl" />
+            </div>
+            <div>
+              <h5 className="mb-0 fw-bold" style={{ color: '#070145' }}>
+                Confirmar Eliminación de Lección
+              </h5>
+              <small className="text-muted">Esta acción no se puede deshacer</small>
+            </div>
+          </div>
+        </CModalHeader>
+
+        {/* BODY */}
+        <CModalBody className="p-4">
+          <div className="text-center mb-4">
+            <p className="text-muted">
+              Estás a punto de eliminar la siguiente lección del sistema:
+            </p>
+          </div>
+
+          <CRow className="g-3">
+            <CCol md={12}>
+              <div
+                className="p-4 rounded-4 border-start border-4 border-danger"
+                style={{ backgroundColor: '#fff5f5' }}
+              >
+                <label
+                  className="fw-bold small text-uppercase opacity-50 d-block mb-2"
+                  style={{ letterSpacing: '1px' }}
+                >
+                  Lección a eliminar
+                </label>
+
+                <div className="d-flex align-items-center">
+                  <div className="p-3 bg-danger rounded-3 me-3 shadow-sm">
+                    <CIcon icon={cilEducation} className="text-white" size="lg" />
+                  </div>
+                  <span className="fs-4 fw-bold text-dark">
+                    {leccionEliminar?.nombre_leccion || 'Lección no seleccionada'}
+                  </span>
+                </div>
+              </div>
+            </CCol>
+          </CRow>
+
+          <div className="mt-4 p-3 rounded-3 bg-light border text-center">
+            <p className="mb-0 text-secondary" style={{ fontSize: '0.9rem' }}>
+              ⚠️ Al eliminar esta lección se perderá toda la información asociada de forma
+              permanente.
+            </p>
           </div>
         </CModalBody>
+
+        {/* FOOTER */}
+        <CModalFooter
+          className="border-0 p-4 justify-content-between"
+          style={{ background: '#f8fafc' }}
+        >
+          <CButton
+            color="secondary"
+            variant="ghost"
+            className="fw-bold text-uppercase"
+            onClick={() => setLeccionEliminar(null)}
+          >
+            Cancelar
+          </CButton>
+
+          <CButton
+            className="px-5 text-white shadow"
+            style={{
+              background: '#dc3545',
+              border: 'none',
+              borderRadius: '12px',
+              fontWeight: 'bold',
+            }}
+            onClick={handleDelete}
+          >
+            SÍ, ELIMINAR LECCIÓN
+          </CButton>
+        </CModalFooter>
       </CModal>
     </CContainer>
   )

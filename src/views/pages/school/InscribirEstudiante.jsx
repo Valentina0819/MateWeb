@@ -1,208 +1,238 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react'
 import {
-  CContainer, CRow, CCol, CCard, CCardHeader, CCardBody, CCardTitle,
-  CForm, CFormLabel, CFormInput, CFormSelect, CButton, CAlert, CListGroup, CListGroupItem,
-  CTable, CTableHead, CTableRow, CTableHeaderCell, CTableBody, CTableDataCell,
-  CModal, CModalHeader, CModalTitle, CModalBody, CModalFooter
-} from "@coreui/react";
+  CContainer,
+  CRow,
+  CCol,
+  CCard,
+  CCardHeader,
+  CCardBody,
+  CCardTitle,
+  CForm,
+  CFormLabel,
+  CFormInput,
+  CFormSelect,
+  CButton,
+  CAlert,
+  CListGroup,
+  CListGroupItem,
+  CTable,
+  CTableHead,
+  CTableRow,
+  CTableHeaderCell,
+  CTableBody,
+  CTableDataCell,
+  CModal,
+  CModalHeader,
+  CModalTitle,
+  CModalBody,
+  CModalFooter,
+} from '@coreui/react'
 
 const InscribirEstudiante = () => {
-  const [estudiantes, setEstudiantes] = useState([]);
-  const [secciones, setSecciones] = useState([]);
-  const [aniosEscolares, setAniosEscolares] = useState([]);
-  const [cedulaEstudiante, setCedulaEstudiante] = useState("");
-  const [idSeccionSeleccionada, setIdSeccionSeleccionada] = useState("");
-  const [fkAñoEscolarSeleccionado, setFkAñoEscolarSeleccionado] = useState("");
-  const [mensaje, setMensaje] = useState("");
-  const [estudianteSeleccionado, setEstudianteSeleccionado] = useState(null);
+  const [estudiantes, setEstudiantes] = useState([])
+  const [secciones, setSecciones] = useState([])
+  const [aniosEscolares, setAniosEscolares] = useState([])
+  const [cedulaEstudiante, setCedulaEstudiante] = useState('')
+  const [idSeccionSeleccionada, setIdSeccionSeleccionada] = useState('')
+  const [fkAñoEscolarSeleccionado, setFkAñoEscolarSeleccionado] = useState('')
+  const [mensaje, setMensaje] = useState('')
+  const [estudianteSeleccionado, setEstudianteSeleccionado] = useState(null)
 
   // Admin: inscripciones
-  const [inscripciones, setInscripciones] = useState([]);
-  const [filtroInscripcion, setFiltroInscripcion] = useState("");
-  const [modalEdit, setModalEdit] = useState(false);
-  const [editData, setEditData] = useState({});
-  const [mensajeAdmin, setMensajeAdmin] = useState("");
-  const [modalConfirm, setModalConfirm] = useState(false);
-  const [idAEliminar, setIdAEliminar] = useState(null);
-  const [pagina, setPagina] = useState(1);
-  const registrosPorPagina = 10;
+  const [inscripciones, setInscripciones] = useState([])
+  const [filtroInscripcion, setFiltroInscripcion] = useState('')
+  const [modalEdit, setModalEdit] = useState(false)
+  const [editData, setEditData] = useState({})
+  const [mensajeAdmin, setMensajeAdmin] = useState('')
+  const [modalConfirm, setModalConfirm] = useState(false)
+  const [idAEliminar, setIdAEliminar] = useState(null)
+  const [pagina, setPagina] = useState(1)
+  const registrosPorPagina = 10
 
-  const usuario = JSON.parse(localStorage.getItem("usuario") || "{}");
+  const usuario = JSON.parse(localStorage.getItem('usuario') || '{}')
 
   useEffect(() => {
-    obtenerSecciones();
-    obtenerAniosEscolares();
-    if (usuario.rol === "admin") fetchInscripciones();
+    obtenerSecciones()
+    obtenerAniosEscolares()
+    if (usuario.rol === 'admin') fetchInscripciones()
     // eslint-disable-next-line
-  }, []);
+  }, [])
 
   const obtenerSecciones = async () => {
     try {
-      const resSecciones = await fetch("http://localhost:4000/secciones");
-      const dataSecciones = await resSecciones.json();
-      setSecciones(dataSecciones.secciones || []);
+      const resSecciones = await fetch('http://localhost:4000/secciones')
+      const dataSecciones = await resSecciones.json()
+      setSecciones(dataSecciones.secciones || [])
     } catch (error) {
-      console.error("Error obteniendo secciones:", error);
+      console.error('Error obteniendo secciones:', error)
     }
-  };
+  }
 
   const obtenerAniosEscolares = async () => {
     try {
-      const resAnios = await fetch("http://localhost:4000/aniosescolares");
-      if (!resAnios.ok) throw new Error(`Error en la API: ${resAnios.status}`);
-      const dataAnios = await resAnios.json();
-      setAniosEscolares(Array.isArray(dataAnios.añosEscolares) ? dataAnios.añosEscolares : []);
+      const resAnios = await fetch('http://localhost:4000/aniosescolares')
+      if (!resAnios.ok) throw new Error(`Error en la API: ${resAnios.status}`)
+      const dataAnios = await resAnios.json()
+      setAniosEscolares(Array.isArray(dataAnios.añosEscolares) ? dataAnios.añosEscolares : [])
     } catch (error) {
-      console.error("Error obteniendo años escolares:", error.message);
-      setAniosEscolares([]);
+      console.error('Error obteniendo años escolares:', error.message)
+      setAniosEscolares([])
     }
-  };
+  }
 
   const filtrarEstudiantes = async (cedula) => {
-    setCedulaEstudiante(cedula);
-    setEstudianteSeleccionado(null);
+    setCedulaEstudiante(cedula)
+    setEstudianteSeleccionado(null)
     if (!cedula) {
-      setEstudiantes([]);
-      return;
+      setEstudiantes([])
+      return
     }
     try {
-      const res = await fetch(`http://localhost:4000/estudiantes?cedula=${cedula}`);
-      const data = await res.json();
-      setEstudiantes(data.estudiantes || []);
+      const res = await fetch(`http://localhost:4000/estudiantes?cedula=${cedula}`)
+      const data = await res.json()
+      setEstudiantes(data.estudiantes || [])
     } catch (error) {
-      console.error("Error filtrando estudiantes:", error);
+      console.error('Error filtrando estudiantes:', error)
     }
-  };
+  }
 
   const handleSeleccionarEstudiante = (est) => {
-    setEstudianteSeleccionado(est);
-    setCedulaEstudiante(est.cedula);
-    setEstudiantes([]);
-  };
+    setEstudianteSeleccionado(est)
+    setCedulaEstudiante(est.cedula)
+    setEstudiantes([])
+  }
 
   const handleInscribir = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
     if (!cedulaEstudiante || !idSeccionSeleccionada || !fkAñoEscolarSeleccionado) {
-      setMensaje("Todos los campos son obligatorios.");
-      return;
+      setMensaje('Todos los campos son obligatorios.')
+      return
     }
     try {
-      const res = await fetch("http://localhost:4000/inscribir-estudiante", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const res = await fetch('http://localhost:4000/inscribir-estudiante', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           cedula_estudiante: cedulaEstudiante,
           id_seccion: idSeccionSeleccionada,
-          fk_año_escolar: fkAñoEscolarSeleccionado
+          fk_año_escolar: fkAñoEscolarSeleccionado,
         }),
-      });
-      const data = await res.json();
+      })
+      const data = await res.json()
       if (res.ok) {
-        setMensaje("Estudiante inscrito correctamente.");
-        setCedulaEstudiante("");
-        setIdSeccionSeleccionada("");
-        setFkAñoEscolarSeleccionado("");
-        setEstudianteSeleccionado(null);
-        if (usuario.rol === "admin") fetchInscripciones();
+        setMensaje('Estudiante inscrito correctamente.')
+        setCedulaEstudiante('')
+        setIdSeccionSeleccionada('')
+        setFkAñoEscolarSeleccionado('')
+        setEstudianteSeleccionado(null)
+        if (usuario.rol === 'admin') fetchInscripciones()
       } else {
-        setMensaje(`Error: ${data.mensaje}`);
+        setMensaje(`Error: ${data.mensaje}`)
       }
     } catch (error) {
-      console.error("Error inscribiendo estudiante:", error);
-      setMensaje("Error en la conexión con el servidor.");
+      console.error('Error inscribiendo estudiante:', error)
+      setMensaje('Error en la conexión con el servidor.')
     }
-  };
+  }
 
   // --- ADMIN: Inscripciones registradas ---
   const fetchInscripciones = async () => {
     try {
-      const token = localStorage.getItem("token");
-      let url = `http://localhost:4000/inscripciones-todas?`;
-      if (filtroInscripcion) url += `filtro=${encodeURIComponent(filtroInscripcion)}`;
-      const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
-      const data = await res.json();
-      setInscripciones(data.inscripciones || []);
+      const token = localStorage.getItem('token')
+      let url = `http://localhost:4000/inscripciones-todas?`
+      if (filtroInscripcion) url += `filtro=${encodeURIComponent(filtroInscripcion)}`
+      const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } })
+      const data = await res.json()
+      setInscripciones(data.inscripciones || [])
     } catch (error) {
-      setMensajeAdmin("Error obteniendo inscripciones.");
+      setMensajeAdmin('Error obteniendo inscripciones.')
     }
-  };
+  }
 
   useEffect(() => {
-    if (usuario.rol === "admin") fetchInscripciones();
+    if (usuario.rol === 'admin') fetchInscripciones()
     // eslint-disable-next-line
-  }, [filtroInscripcion]);
+  }, [filtroInscripcion])
 
   const handleEliminarInscripcion = async (id) => {
-    
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem('token')
       const res = await fetch(`http://localhost:4000/inscripciones/${id}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const data = await res.json();
-      setMensajeAdmin(data.mensaje || "Inscripción eliminada.");
-      fetchInscripciones();
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      const data = await res.json()
+      setMensajeAdmin(data.mensaje || 'Inscripción eliminada.')
+      fetchInscripciones()
     } catch (error) {
-      setMensajeAdmin("Error eliminando inscripción.");
+      setMensajeAdmin('Error eliminando inscripción.')
     }
-  };
+  }
 
   const handleEditarInscripcion = (insc) => {
-    setEditData(insc);
-    setModalEdit(true);
-  };
+    setEditData(insc)
+    setModalEdit(true)
+  }
 
   const handleGuardarEdicion = async () => {
-    if (!editData.id_seccion || !editData.fk_año_escolar) {
-      setMensajeAdmin("Debe seleccionar sección y año escolar.");
-      return;
+    if (!editData.id_seccion) {
+      setMensajeAdmin('Debe seleccionar sección y año escolar.')
+      return
     }
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem('token')
       const res = await fetch(`http://localhost:4000/inscripciones/${editData.id_inscripcion}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({
-          id_seccion: editData.id_seccion,
-          fk_año_escolar: editData.fk_año_escolar
-        })
-      });
-      const data = await res.json();
-      setModalEdit(false);
-      setMensajeAdmin(data.mensaje || "Inscripción actualizada.");
-      fetchInscripciones();
+          id_curso: editData.id_seccion,
+        }),
+      })
+      const data = await res.json()
+      setModalEdit(false)
+      setMensajeAdmin(data.mensaje || 'Inscripción actualizada.')
+      fetchInscripciones()
     } catch (error) {
-      setMensajeAdmin("Error editando inscripción.");
+      setMensajeAdmin('Error editando inscripción.')
     }
-  };
+  }
 
   const solicitarEliminarInscripcion = (id) => {
-    setIdAEliminar(id);
-    setModalConfirm(true);
-  };
+    setIdAEliminar(id)
+    setModalConfirm(true)
+  }
 
   // Calcular los registros a mostrar
-  const inicio = (pagina - 1) * registrosPorPagina;
-  const fin = inicio + registrosPorPagina;
-  const inscripcionesPaginadas = inscripciones.slice(inicio, fin);
+  const inicio = (pagina - 1) * registrosPorPagina
+  const fin = inicio + registrosPorPagina
+  const inscripcionesPaginadas = inscripciones.slice(inicio, fin)
 
   // Calcular total de páginas
-  const totalPaginas = Math.ceil(inscripciones.length / registrosPorPagina);
+  const totalPaginas = Math.ceil(inscripciones.length / registrosPorPagina)
+
+  useEffect(() => {
+    if (mensaje) {
+      const timer = setTimeout(() => {
+        setMensaje('') // borra el mensaje después de 3 segundos
+      }, 3000)
+
+      return () => clearTimeout(timer) // limpia si el mensaje cambia antes
+    }
+  }, [mensaje])
 
   // --- RENDER ---
   return (
     <CContainer className="py-4">
       <CRow className="justify-content-center">
         <CCol xs={12} md={8} lg={6}>
-          {usuario.rol === "admin" && (
+          {usuario.rol === 'admin' && (
             <CCard className="shadow-sm">
-              <CCardHeader style={{ backgroundColor: "#114c5f", color: "white" }}>
+              <CCardHeader style={{ backgroundColor: '#114c5f', color: 'white' }}>
                 <CCardTitle>Inscripción de Estudiantes</CCardTitle>
               </CCardHeader>
               <CCardBody>
                 {mensaje && (
-                  <CAlert color={mensaje.includes("Error") ? "danger" : "success"} dismissible onClose={() => setMensaje("")}>
+                  <CAlert color={mensaje.includes('Error') ? 'danger' : 'success'}>
                     {mensaje}
                   </CAlert>
                 )}
@@ -221,15 +251,17 @@ const InscribirEstudiante = () => {
                       {estudiantes.map((est) => (
                         <CListGroupItem
                           key={est.cedula}
-                          style={{ cursor: "pointer" }}
+                          style={{ cursor: 'pointer' }}
                           onClick={() => handleSeleccionarEstudiante(est)}
                           className="d-flex flex-column align-items-start"
                         >
-                          <span style={{ fontWeight: "bold", color: "#114c5f" }}>
+                          <span style={{ fontWeight: 'bold', color: '#114c5f' }}>
                             {est.nombres} {est.apellidos}
                           </span>
                           <small className="text-muted">Cédula: {est.cedula}</small>
-                          <small className="text-muted">Fecha Nacimiento:   {est.fecha_nacimiento?.substring(0, 10)}</small>
+                          <small className="text-muted">
+                            Fecha Nacimiento: {est.fecha_nacimiento?.substring(0, 10)}
+                          </small>
                           <small className="text-muted">Sexo: {est.sexo}</small>
                         </CListGroupItem>
                       ))}
@@ -238,12 +270,15 @@ const InscribirEstudiante = () => {
 
                   {/* Espacio bonito para mostrar el estudiante seleccionado */}
                   {estudianteSeleccionado && (
-                    <CCard className="mb-3" style={{ background: "#eaf6f6", border: "1px solid #b2dfdb" }}>
+                    <CCard
+                      className="mb-3"
+                      style={{ background: '#eaf6f6', border: '1px solid #b2dfdb' }}
+                    >
                       <CCardBody className="py-2">
-                        <div style={{ fontWeight: "bold", color: "#114c5f", fontSize: "1.1rem" }}>
+                        <div style={{ fontWeight: 'bold', color: '#114c5f', fontSize: '1.1rem' }}>
                           {estudianteSeleccionado.nombres} {estudianteSeleccionado.apellidos}
                         </div>
-                        <div className="text-muted" style={{ fontSize: "0.95rem" }}>
+                        <div className="text-muted" style={{ fontSize: '0.95rem' }}>
                           Cédula: {estudianteSeleccionado.cedula} <br />
                           Fecha Nac: {estudianteSeleccionado.fecha_nacimiento} <br />
                           Sexo: {estudianteSeleccionado.sexo}
@@ -281,7 +316,15 @@ const InscribirEstudiante = () => {
                   </CFormSelect>
 
                   <div className="d-flex justify-content-center mt-4">
-                    <CButton  type="submit" style={{ minWidth: 160, borderRadius: 20, backgroundColor: '#9cd2d3', color: '#114c5f'}}> 
+                    <CButton
+                      type="submit"
+                      style={{
+                        minWidth: 160,
+                        borderRadius: 20,
+                        backgroundColor: '#9cd2d3',
+                        color: '#114c5f',
+                      }}
+                    >
                       Inscribir
                     </CButton>
                   </div>
@@ -289,7 +332,7 @@ const InscribirEstudiante = () => {
               </CCardBody>
             </CCard>
           )}
-          {usuario.rol !== "admin" && (
+          {usuario.rol !== 'admin' && (
             <CCard className="shadow-sm">
               <CCardBody>
                 <CAlert color="warning" className="text-center mb-0">
@@ -302,7 +345,7 @@ const InscribirEstudiante = () => {
       </CRow>
 
       {/* Módulo de inscripciones registradas solo para admin */}
-      {usuario.rol === "admin" && (
+      {usuario.rol === 'admin' && (
         <CRow className="justify-content-center mt-4">
           <CCol xs={12} md={10} lg={10}>
             <CCard className="shadow-sm">
@@ -311,7 +354,11 @@ const InscribirEstudiante = () => {
               </CCardHeader>
               <CCardBody>
                 {mensajeAdmin && (
-                  <CAlert color={mensajeAdmin.includes("Error") ? "danger" : "success"} dismissible onClose={() => setMensajeAdmin("")}>
+                  <CAlert
+                    color={mensajeAdmin.includes('Error') ? 'danger' : 'success'}
+                    dismissible
+                    onClose={() => setMensajeAdmin('')}
+                  >
                     {mensajeAdmin}
                   </CAlert>
                 )}
@@ -319,7 +366,7 @@ const InscribirEstudiante = () => {
                   type="text"
                   placeholder="Filtrar por cédula o nombre..."
                   value={filtroInscripcion}
-                  onChange={e => setFiltroInscripcion(e.target.value)}
+                  onChange={(e) => setFiltroInscripcion(e.target.value)}
                   className="mb-3"
                 />
                 <CTable hover responsive>
@@ -337,15 +384,28 @@ const InscribirEstudiante = () => {
                   <CTableBody>
                     {inscripcionesPaginadas.map((i) => (
                       <CTableRow key={i.id_inscripcion}>
-                        <CTableDataCell>{i.nombres} {i.apellidos}</CTableDataCell>
+                        <CTableDataCell>
+                          {i.nombres} {i.apellidos}
+                        </CTableDataCell>
                         <CTableDataCell>{i.cedula}</CTableDataCell>
                         <CTableDataCell>{i.nombre_año}</CTableDataCell>
                         <CTableDataCell>{i.nombre_seccion}</CTableDataCell>
                         <CTableDataCell>{i.año_escolar}</CTableDataCell>
                         <CTableDataCell>{i.fecha_inscripcion?.substring(0, 10)}</CTableDataCell>
                         <CTableDataCell>
-                          <CButton size="sm" style={{ backgroundColor: 'white', color:'blue', borderColor:'blue'}} className="me-2" onClick={() => handleEditarInscripcion(i)}>Editar</CButton>
-                          <CButton size="sm" style={{ backgroundColor: 'white', color:'red', borderColor:'red'}} onClick={() => solicitarEliminarInscripcion(i.id_inscripcion)}>
+                          <CButton
+                            size="sm"
+                            style={{ backgroundColor: 'white', color: 'blue', borderColor: 'blue' }}
+                            className="me-2"
+                            onClick={() => handleEditarInscripcion(i)}
+                          >
+                            Editar
+                          </CButton>
+                          <CButton
+                            size="sm"
+                            style={{ backgroundColor: 'white', color: 'red', borderColor: 'red' }}
+                            onClick={() => solicitarEliminarInscripcion(i.id_inscripcion)}
+                          >
                             Eliminar
                           </CButton>
                         </CTableDataCell>
@@ -364,7 +424,7 @@ const InscribirEstudiante = () => {
                   >
                     Anterior
                   </CButton>
-                  <span style={{ lineHeight: "2.2rem" }}>
+                  <span style={{ lineHeight: '2.2rem' }}>
                     Página {pagina} de {totalPaginas}
                   </span>
                   <CButton
@@ -392,7 +452,7 @@ const InscribirEstudiante = () => {
           <CFormLabel>Sección</CFormLabel>
           <CFormSelect
             value={editData.id_seccion}
-            onChange={e => setEditData({ ...editData, id_seccion: e.target.value })}
+            onChange={(e) => setEditData({ ...editData, id_seccion: e.target.value })}
           >
             <option value="">Seleccione Sección</option>
             {secciones.map((s) => (
@@ -404,7 +464,7 @@ const InscribirEstudiante = () => {
           <CFormLabel className="mt-2">Año Escolar</CFormLabel>
           <CFormSelect
             value={editData.fk_año_escolar}
-            onChange={e => setEditData({ ...editData, fk_año_escolar: e.target.value })}
+            onChange={(e) => setEditData({ ...editData, fk_año_escolar: e.target.value })}
           >
             <option value="">Seleccione Año Escolar</option>
             {aniosEscolares.map((a) => (
@@ -415,8 +475,19 @@ const InscribirEstudiante = () => {
           </CFormSelect>
         </CModalBody>
         <CModalFooter>
-          <CButton style={{backgroundColor:'white', color:'blue',borderColor:'blue'}} onClick={handleGuardarEdicion}>Guardar</CButton>
-          <CButton style={{backgroundColor:'white', color:'#114c5f',borderColor:'#114c5f'}} variant="outline" onClick={() => setModalEdit(false)}>Cancelar</CButton>
+          <CButton
+            style={{ backgroundColor: 'white', color: 'blue', borderColor: 'blue' }}
+            onClick={handleGuardarEdicion}
+          >
+            Guardar
+          </CButton>
+          <CButton
+            style={{ backgroundColor: 'white', color: '#114c5f', borderColor: '#114c5f' }}
+            variant="outline"
+            onClick={() => setModalEdit(false)}
+          >
+            Cancelar
+          </CButton>
         </CModalFooter>
       </CModal>
 
@@ -426,22 +497,30 @@ const InscribirEstudiante = () => {
           <CModalTitle>Confirmar Eliminación</CModalTitle>
         </CModalHeader>
         <CModalBody>
-          ¿Seguro que desea eliminar esta inscripción? Si eliminas la inscripción eliminarás todos aquellos registros donde esté presente.
+          ¿Seguro que desea eliminar esta inscripción? Si eliminas la inscripción eliminarás todos
+          aquellos registros donde esté presente.
         </CModalBody>
         <CModalFooter>
-          <CButton style={{backgroundColor:'white', color:'red', borderColor:'red'}} onClick={() => {
-            setModalConfirm(false);
-            handleEliminarInscripcion(idAEliminar);
-          }}>
+          <CButton
+            style={{ backgroundColor: 'white', color: 'red', borderColor: 'red' }}
+            onClick={() => {
+              setModalConfirm(false)
+              handleEliminarInscripcion(idAEliminar)
+            }}
+          >
             Eliminar
           </CButton>
-          <CButton style={{backgroundColor:'white', color:'#114c5f',borderColor:'#114c5f'}} variant="outline" onClick={() => setModalConfirm(false)}>
+          <CButton
+            style={{ backgroundColor: 'white', color: '#114c5f', borderColor: '#114c5f' }}
+            variant="outline"
+            onClick={() => setModalConfirm(false)}
+          >
             Cancelar
           </CButton>
         </CModalFooter>
       </CModal>
     </CContainer>
-  );
-};
+  )
+}
 
-export default InscribirEstudiante;
+export default InscribirEstudiante
