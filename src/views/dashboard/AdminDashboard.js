@@ -98,10 +98,10 @@ export default function DashboardDocente() {
           <CIcon icon={cilChartLine} size="xl" className="me-3" />
           Dashboard Docente
         </h2>
-        <p className="text-muted">Resumen general del progreso acadÃ©mico y estadÃ­stico.</p>
+        <p className="text-muted">Resumen general del progreso academico y estadistico.</p>
       </div>
 
-      {/* Widgets de EstadÃ­sticas Uniformes */}
+      {/* Widgets de Estadi­sticas Uniformes */}
       <CRow className="mb-4">
         <CCol sm={6} lg={4}>
           <CWidgetStatsA
@@ -133,7 +133,7 @@ export default function DashboardDocente() {
         {/* Tabla Estudiantes por Curso */}
         <CCol md={6}>
           <CCard className="card-uniform border-0 mb-4">
-            <CCardHeader className="header-morado py-3">DistribuciÃ³n de Alumnos</CCardHeader>
+            <CCardHeader className="header-morado py-3">Distribucion de Alumnos</CCardHeader>
             <CCardBody className="p-0">
               <CTable responsive className="custom-table">
                 <CTableHead>
@@ -160,7 +160,7 @@ export default function DashboardDocente() {
         {/* Tabla Progreso por Curso */}
         <CCol md={6}>
           <CCard className="card-uniform border-0 mb-4">
-            <CCardHeader className="header-morado py-3">Rendimiento por MÃ³dulo</CCardHeader>
+            <CCardHeader className="header-morado py-3">Rendimiento por Modulo</CCardHeader>
             <CCardBody className="p-0">
               <CTable responsive className="custom-table">
                 <CTableHead>

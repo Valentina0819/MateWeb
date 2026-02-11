@@ -120,7 +120,7 @@ export default function GestionNotas() {
       )
       const data = await res.json()
       if (res.ok) {
-        setMensaje('Â¡Nota registrada correctamente!')
+        setMensaje('¡Nota registrada correctamente!')
         setNota('')
         setNotasRegistradas([{ id_usuario: estudianteSel }])
       } else {
@@ -128,7 +128,7 @@ export default function GestionNotas() {
         setTipoMensaje('danger')
       }
     } catch {
-      setMensaje('Error de conexiÃ³n')
+      setMensaje('Error de conexion')
       setTipoMensaje('danger')
     }
   }
@@ -161,7 +161,7 @@ export default function GestionNotas() {
         `}
       </style>
       <CRow className="justify-content-center">
-        {/* Columna de selecciÃ³n/registro de notas */}
+        {/* Columna de seleccion/registro de notas */}
         <CCol md={4} lg={3}>
           <CCard className="mb-4 shadow">
             <CCardHeader className="header-dark p-3">
@@ -214,7 +214,7 @@ export default function GestionNotas() {
                       onChange={(e) => setEvaluacionSel(e.target.value)}
                       required
                     >
-                      <option value="">Seleccione evaluaciÃ³n</option>
+                      <option value="">Seleccione evaluacion</option>
                       {evaluaciones.map((ev) => (
                         <option key={ev.id_evaluacion} value={ev.id_evaluacion}>
                           {ev.nombre_evaluacion}
@@ -253,8 +253,8 @@ export default function GestionNotas() {
                 <CTableHead>
                   <CTableRow>
                     <CTableHeaderCell>ENUNCIADO</CTableHeaderCell>
-                    <CTableHeaderCell>LECCIÃ“N</CTableHeaderCell>
-                    <CTableHeaderCell>MÃ“DULO</CTableHeaderCell>
+                    <CTableHeaderCell>LECCION</CTableHeaderCell>
+                    <CTableHeaderCell>MODULO</CTableHeaderCell>
                     <CTableHeaderCell>RESPUESTA ESTUDIANTE</CTableHeaderCell>
                     <CTableHeaderCell>RESPUESTA CORRECTA</CTableHeaderCell>
                     <CTableHeaderCell>PUNTAJE</CTableHeaderCell>

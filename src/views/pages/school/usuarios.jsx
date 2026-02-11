@@ -70,7 +70,6 @@ export default function CrudUsuarios() {
     setMensaje('')
   }
 
-  // Guardar ediciÃ³n
   const handleGuardar = async (e) => {
     e.preventDefault()
     try {
@@ -93,7 +92,7 @@ export default function CrudUsuarios() {
         setTipoMensaje('danger')
       }
     } catch {
-      setMensaje('Error de conexiÃ³n')
+      setMensaje('Error de conexion')
       setTipoMensaje('danger')
     }
   }
@@ -118,7 +117,7 @@ export default function CrudUsuarios() {
         setTipoMensaje('danger')
       }
     } catch {
-      setMensaje('Error de conexiÃ³n')
+      setMensaje('Error de conexion')
       setTipoMensaje('danger')
     }
   }
@@ -146,7 +145,7 @@ export default function CrudUsuarios() {
           >
             <div className="d-flex align-items-center">
               <CIcon icon={cilPeople} className="me-2" size="lg" />
-              <h5 className="mb-0 fw-bold">GestiÃ³n de Usuarios</h5>
+              <h5 className="mb-0 fw-bold">Gestion de Usuarios</h5>
             </div>
             <CBadge color="info" shape="rounded-pill">
               {usuarios.length} Usuarios totales
@@ -265,9 +264,9 @@ export default function CrudUsuarios() {
             </div>
             <div>
               <h5 className="mb-0 fw-bold" style={{ color: '#070145' }}>
-                Confirmar EliminaciÃ³n de Usuario
+                Confirmar Eliminacion de Usuario
               </h5>
-              <small className="text-muted">Esta acciÃ³n no se puede deshacer</small>
+              <small className="text-muted">Esta accion no se puede deshacer</small>
             </div>
           </div>
         </CModalHeader>
@@ -276,7 +275,7 @@ export default function CrudUsuarios() {
         <CModalBody className="p-4">
           <div className="text-center mb-4">
             <p className="text-muted">
-              EstÃ¡s a punto de eliminar al siguiente usuario del sistema:
+              Estas a punto de eliminar al siguiente usuario del sistema:
             </p>
           </div>
 
@@ -307,8 +306,8 @@ export default function CrudUsuarios() {
 
           <div className="mt-4 p-3 rounded-3 bg-light border text-center">
             <p className="mb-0 text-secondary" style={{ fontSize: '0.9rem' }}>
-              âš ï¸ Al eliminar este usuario se perderÃ¡ toda la informaciÃ³n asociada, incluyendo
-              accesos, registros y actividad.
+              Al eliminar este usuario se perderá toda la información asociada, incluyendo accesos,
+              registros y actividad.
             </p>
           </div>
         </CModalBody>
@@ -337,7 +336,7 @@ export default function CrudUsuarios() {
             }}
             onClick={handleEliminar}
           >
-            SÃ, ELIMINAR USUARIO
+            SI, ELIMINAR USUARIO
           </CButton>
         </CModalFooter>
       </CModal>
@@ -401,7 +400,7 @@ export default function CrudUsuarios() {
                   <div className="p-3 bg-white rounded shadow-sm">
                     <CFormInput
                       label="Apellido"
-                      placeholder="Ej: PÃ©rez"
+                      placeholder="Ej: Perez"
                       value={usuarioEdit.apellido}
                       onChange={(e) => setUsuarioEdit({ ...usuarioEdit, apellido: e.target.value })}
                       required
@@ -413,7 +412,7 @@ export default function CrudUsuarios() {
                 <CCol md={12}>
                   <div className="p-3 bg-white rounded shadow-sm">
                     <CFormInput
-                      label="Correo ElectrÃ³nico"
+                      label="Correo Electrenico"
                       type="email"
                       value={usuarioEdit.email}
                       onChange={(e) => setUsuarioEdit({ ...usuarioEdit, email: e.target.value })}

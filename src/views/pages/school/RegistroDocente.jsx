@@ -31,7 +31,7 @@ const RegistroDocente = () => {
   const [mensaje, setMensaje] = useState({ tipo: '', texto: '' })
   const [loading, setLoading] = useState(false)
 
-  // ðŸ”¹ Cargar cÃ©dulas de usuarios con rol 'usuario'
+  // ðŸ”¹ Cargar cedulas de usuarios con rol 'usuario'
   useEffect(() => {
     const cargarCedulas = async () => {
       try {
@@ -39,7 +39,7 @@ const RegistroDocente = () => {
         const data = await res.json()
         setCedulas(data)
       } catch (error) {
-        console.error('Error al obtener cÃ©dulas:', error)
+        console.error('Error al obtener cedulas:', error)
       }
     }
     cargarCedulas()
@@ -63,7 +63,7 @@ const RegistroDocente = () => {
       })
 
       if (res.status === 200 || res.status === 201) {
-        setMensaje({ tipo: 'success', texto: 'Â¡Docente registrado exitosamente!' })
+        setMensaje({ tipo: 'success', texto: '¡Docente registrado exitosamente!' })
         setFormulario({
           fk_cedula: '',
           titulo_academico: '',
@@ -79,12 +79,12 @@ const RegistroDocente = () => {
         const data = await res.json()
         setMensaje({
           tipo: 'danger',
-          texto: data.mensaje || 'Ya existe un docente con esa cÃ©dula.',
+          texto: data.mensaje || 'Ya existe un docente con esa cedula.',
         })
       } else if (res.status === 404 || res.status === 500) {
         setMensaje({ tipo: 'danger', texto: 'No se pudo registrar el docente.' })
       } else {
-        setMensaje({ tipo: 'danger', texto: 'OcurriÃ³ un error inesperado.' })
+        setMensaje({ tipo: 'danger', texto: 'Ocurrio un error inesperado.' })
       }
     } catch (error) {
       setMensaje({ tipo: 'danger', texto: 'No se pudo registrar el docente.' })
@@ -118,7 +118,7 @@ const RegistroDocente = () => {
                 <CForm onSubmit={enviarFormulario}>
                   <CRow className="g-3 align-items-end">
                     <CCol md={3}>
-                      <CFormLabel>CÃ©dula</CFormLabel>
+                      <CFormLabel>Cedula</CFormLabel>
                       <CFormSelect
                         name="fk_cedula"
                         value={formulario.fk_cedula}
@@ -134,7 +134,7 @@ const RegistroDocente = () => {
                       </CFormSelect>
                     </CCol>
                     <CCol md={3}>
-                      <CFormLabel>TÃ­tulo AcadÃ©mico</CFormLabel>
+                      <CFormLabel>Ti­tulo Academico</CFormLabel>
                       <CFormInput
                         type="text"
                         name="titulo_academico"
@@ -150,7 +150,7 @@ const RegistroDocente = () => {
                       <CFormInput
                         type="text"
                         name="especialidad"
-                        placeholder="Ejm MatemÃ¡ticas"
+                        placeholder="Ejm Matematicas"
                         value={formulario.especialidad}
                         onChange={manejarCambio}
                         required
@@ -170,7 +170,7 @@ const RegistroDocente = () => {
                       />
                     </CCol>
                     <CCol md={3}>
-                      <CFormLabel>Fecha ContrataciÃ³n</CFormLabel>
+                      <CFormLabel>Fecha Contratacion</CFormLabel>
                       <CFormInput
                         type="date"
                         name="fecha_contratacion"
@@ -192,7 +192,7 @@ const RegistroDocente = () => {
                       />
                     </CCol>
                     <CCol md={3}>
-                      <CFormLabel>TelÃ©fono</CFormLabel>
+                      <CFormLabel>Telefono</CFormLabel>
                       <CFormInput
                         type="text"
                         name="telefono"

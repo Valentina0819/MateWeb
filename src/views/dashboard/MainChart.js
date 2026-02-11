@@ -5,8 +5,6 @@ import { getStyle } from '@coreui/utils'
 
 const MainChart = () => {
   const chartRef = useRef(null)
-
- 
 }
 
 export default MainChart

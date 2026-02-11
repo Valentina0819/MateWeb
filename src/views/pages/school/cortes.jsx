@@ -40,7 +40,7 @@ const CrudCortes = () => {
   const [pagina, setPagina] = useState(1)
   const registrosPorPagina = 3
 
-  // Modal para confirmar eliminaciÃ³n
+  // Modal para confirmar eliminacion
   const [modalEliminar, setModalEliminar] = useState(false)
   const [idEliminar, setIdEliminar] = useState(null)
 
@@ -88,7 +88,7 @@ const CrudCortes = () => {
         setTimeout(() => setError(''), 2500)
       }
     } catch (err) {
-      setError('Error de conexiÃ³n')
+      setError('Error de conexion')
       setTimeout(() => setError(''), 2500)
     }
   }
@@ -99,7 +99,7 @@ const CrudCortes = () => {
     setModalEliminar(true)
   }
 
-  // Confirmar eliminaciÃ³n
+  // Confirmar eliminacion
   const confirmarEliminar = async () => {
     try {
       const res = await fetch(
@@ -118,14 +118,14 @@ const CrudCortes = () => {
         setTimeout(() => setError(''), 2500)
       }
     } catch (err) {
-      setError('Error de conexiÃ³n')
+      setError('Error de conexion')
       setTimeout(() => setError(''), 2500)
     }
     setModalEliminar(false)
     setIdEliminar(null)
   }
 
-  // Iniciar ediciÃ³n
+  // Iniciar edicion
   const handleEditInit = (corte) => {
     setEditId(corte.id_corte)
     setEditNombre(corte.nombre)
@@ -135,7 +135,7 @@ const CrudCortes = () => {
     setError('')
   }
 
-  // Cancelar ediciÃ³n
+  // Cancelar edicion
   const handleEditCancel = () => {
     setEditId(null)
     setEditNombre('')
@@ -143,7 +143,7 @@ const CrudCortes = () => {
     setEditFechaFin('')
   }
 
-  // Guardar ediciÃ³n
+  // Guardar edicion
   const handleEditSave = async () => {
     if (!editNombre || !editFechaInicio || !editFechaFin) {
       setError('Todos los campos son obligatorios')
@@ -171,7 +171,7 @@ const CrudCortes = () => {
         setTimeout(() => setError(''), 2500)
       }
     } catch (err) {
-      setError('Error de conexiÃ³n')
+      setError('Error de conexion')
       setTimeout(() => setError(''), 2500)
     }
   }
@@ -184,22 +184,22 @@ const CrudCortes = () => {
       (corte.fecha_fin && corte.fecha_fin.includes(busqueda)),
   )
 
-  // PaginaciÃ³n
+  // Paginacion
   const totalPaginas = Math.ceil(cortesFiltrados.length / registrosPorPagina)
   const inicio = (pagina - 1) * registrosPorPagina
   const cortesPaginados = cortesFiltrados.slice(inicio, inicio + registrosPorPagina)
 
   useEffect(() => {
-    setPagina(1) // Reinicia a la primera pÃ¡gina al filtrar
+    setPagina(1)
   }, [busqueda])
 
-  // FunciÃ³n para mostrar solo la fecha (sin hora)
+  // Funcion para mostrar solo la fecha (sin hora)
   const soloFecha = (fecha) => (fecha ? fecha.substring(0, 10) : '')
 
   return (
     <CCard className="shadow-sm mt-4" style={{ background: '#f1f3f0' }}>
       <CCardHeader style={{ background: '#114c5f', color: 'white' }}>
-        <CCardTitle>GestiÃ³n de Momentos</CCardTitle>
+        <CCardTitle>Gestion de Momentos</CCardTitle>
       </CCardHeader>
       <CCardBody>
         {mensaje && <CAlert color="success">{mensaje}</CAlert>}
@@ -342,7 +342,7 @@ const CrudCortes = () => {
           </CTableBody>
         </CTable>
 
-        {/* PaginaciÃ³n */}
+        {/* Paginacion */}
         {totalPaginas > 1 && (
           <div className="d-flex justify-content-center mt-3">
             <CPagination align="center">
@@ -360,12 +360,12 @@ const CrudCortes = () => {
           </div>
         )}
 
-        {/* Modal de confirmaciÃ³n para eliminar */}
+        {/* Modal de confirmacion para eliminar */}
         <CModal visible={modalEliminar} onClose={() => setModalEliminar(false)}>
           <CModalHeader>
-            <CModalTitle>Confirmar EliminaciÃ³n</CModalTitle>
+            <CModalTitle>Confirmar Eliminacion</CModalTitle>
           </CModalHeader>
-          <CModalBody>Â¿Seguro que desea eliminar este corte?</CModalBody>
+          <CModalBody>¿Seguro que desea eliminar este corte?</CModalBody>
           <CModalFooter>
             <CButton color="danger" onClick={confirmarEliminar}>
               Eliminar

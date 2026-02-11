@@ -84,7 +84,7 @@ const EstudianteForm = () => {
         })
       }
     } catch (err) {
-      setMensaje('Error en la conexiÃ³n')
+      setMensaje('Error en la conexion')
     }
   }
 
@@ -126,7 +126,7 @@ const EstudianteForm = () => {
                       </CFormSelect>
                     </CCol>
                     <CCol md={4}>
-                      <CFormLabel>CÃ©dula</CFormLabel>
+                      <CFormLabel>Cedula</CFormLabel>
                       <CFormInput
                         name="cedula"
                         placeholder="Ej: 12345678"
@@ -165,7 +165,7 @@ const EstudianteForm = () => {
                       <CFormLabel>Apellidos</CFormLabel>
                       <CFormInput
                         name="apellidos"
-                        placeholder="Ej: PÃ©rez GÃ³mez"
+                        placeholder="Ej: Perez Gomez"
                         value={formData.apellidos}
                         onChange={handleChange}
                         required

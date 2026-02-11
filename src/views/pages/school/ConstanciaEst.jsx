@@ -51,7 +51,7 @@ const BuscarEstudiante = () => {
         <CCol xs={12} md={8} lg={6}>
           <CCard className="shadow-sm">
             <CCardHeader className="" style={{ backgroundColor: '#114c5f', color: 'white' }}>
-              <CCardTitle>BÃºsqueda de Estudiante</CCardTitle>
+              <CCardTitle>Búsqueda de Estudiante</CCardTitle>
             </CCardHeader>
             <CCardBody>
               {usuario?.rol === 'admin' ? (
@@ -60,7 +60,7 @@ const BuscarEstudiante = () => {
                     <CCol xs={8}>
                       <CFormInput
                         type="text"
-                        placeholder="Ingrese cÃ©dula"
+                        placeholder="Ingrese cedula"
                         value={cedula}
                         onChange={(e) => setCedula(e.target.value)}
                       />
@@ -86,7 +86,7 @@ const BuscarEstudiante = () => {
                             : `${estudiante.nombres} ${estudiante.apellidos}`}
                         </CCardTitle>
                         <CCardText>
-                          <strong>CÃ©dula:</strong>{' '}
+                          <strong>Cedula:</strong>{' '}
                           {noEncontrado ? 'No disponible' : estudiante.cedula}
                         </CCardText>
                         <CButton

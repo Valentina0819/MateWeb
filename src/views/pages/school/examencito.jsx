@@ -59,9 +59,7 @@ export default function ResponderEjercicio({ id_usuario }) {
             justifyContent: 'center',
             fontWeight: 'bold',
           }}
-        >
-          âœï¸
-        </div>
+        ></div>
         <h4 className="mb-0 fw-semibold">Responder Ejercicio</h4>
       </div>
 

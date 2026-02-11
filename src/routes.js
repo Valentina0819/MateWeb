@@ -19,7 +19,6 @@ const ListadoInscripcion = React.lazy(() => import('./views/pages/school/Listado
 
 const AsignarMateriaAño = React.lazy(() => import('./views/pages/school/AsignarMateriaAño'))
 const ConstanciaEst = React.lazy(() => import('./views/pages/school/ConstanciaEst'))
-const Director = React.lazy(() => import('./views/pages/school/director'))
 const ImprimirNotas = React.lazy(() => import('./views/pages/school/ImprimirNotas'))
 const ConstanciaDoc = React.lazy(() => import('./views/pages/school/ConstanciaDoc'))
 const Lista = React.lazy(() => import('./views/pages/school/lista'))
@@ -114,7 +113,6 @@ const routes = [
     element: ConstanciaEst,
     private: true,
   },
-  { path: '/director', name: 'Director', element: Director },
   { path: '/imprimir/notas', name: 'Imprimir notas', element: ImprimirNotas, private: true },
   { path: '/constancia/docente', name: 'Constancia Docente', element: ConstanciaDoc },
   { path: '/lista', name: 'lista', element: Lista },

@@ -70,7 +70,7 @@ export default function InscripcionEstudiante() {
       setCursos(dataEst.cursos || [])
       setInscripciones(dataInsc || [])
     } catch (err) {
-      setMensaje({ texto: 'Error de conexiÃ³n con el servidor', tipo: 'danger' })
+      setMensaje({ texto: 'Error de conexion con el servidor', tipo: 'danger' })
     } finally {
       setLoading(false)
     }
@@ -90,13 +90,13 @@ export default function InscripcionEstudiante() {
         body: JSON.stringify({ id_usuario, id_curso }),
       })
       if (res.ok) {
-        setMensaje({ texto: 'Â¡InscripciÃ³n exitosa!', tipo: 'success' })
+        setMensaje({ texto: '¡Inscripcion exitosa!', tipo: 'success' })
         setIdUsuario('')
         setIdCurso('')
         cargarDatos()
       }
     } catch (error) {
-      setMensaje({ texto: 'No se pudo completar la acciÃ³n', tipo: 'danger' })
+      setMensaje({ texto: 'No se pudo completar la accion', tipo: 'danger' })
     }
     setEnviando(false)
   }
@@ -107,26 +107,26 @@ export default function InscripcionEstudiante() {
 
   const datosPaginados = inscripciones.slice((pagina - 1) * porPagina, pagina * porPagina)
 
-  // FunciÃ³n para ELIMINAR
+  // Funcion para ELIMINAR
   const eliminarInscripcion = async (id) => {
     try {
       const res = await fetch(`https://mateweb-production.up.railway.app/inscripciones/${id}`, {
         method: 'DELETE',
       })
       if (res.ok) {
-        setMensaje({ texto: 'InscripciÃ³n eliminada correctamente', tipo: 'success' })
+        setMensaje({ texto: 'Inscripcion eliminada correctamente', tipo: 'success' })
         setInscripciones(inscripciones.filter((i) => i.id_inscripcion !== id))
       } else {
         throw new Error()
       }
     } catch (error) {
-      setMensaje({ texto: 'Error al eliminar la inscripciÃ³n', tipo: 'danger' })
+      setMensaje({ texto: 'Error al eliminar la inscripcion', tipo: 'danger' })
     } finally {
       setModalDelete({ visible: false, data: null })
     }
   }
 
-  // FunciÃ³n para EDITAR (Actualizar curso)
+  // Funcion para EDITAR (Actualizar curso)
   const guardarCambiosEdicion = async () => {
     if (!modalEdit.data?.id_curso) return
 
@@ -141,7 +141,7 @@ export default function InscripcionEstudiante() {
       )
 
       if (res.ok) {
-        setMensaje({ texto: 'Â¡Actualizado con Ã©xito!', tipo: 'success' })
+        setMensaje({ texto: '¡Actualizado con exito!', tipo: 'success' })
         await cargarDatos() // Refresca la tabla
         setModalEdit({ visible: false, data: null })
       }
@@ -187,8 +187,8 @@ export default function InscripcionEstudiante() {
           <CCard className="custom-card h-100">
             <div className="p-4 text-white text-center" style={{ background: azulProfundo }}>
               <CIcon icon={cilUserPlus} size="xl" className="mb-2" />
-              <h4 className="fw-bold mb-0">Registro RÃ¡pido</h4>
-              <p className="small opacity-75">Asigna estudiantes a cursos fÃ¡cilmente</p>
+              <h4 className="fw-bold mb-0">Registro Rápido</h4>
+              <p className="small opacity-75">Asigna estudiantes a cursos fácilmente</p>
             </div>
             <CCardBody className="p-4">
               {mensaje.texto && (
@@ -204,7 +204,7 @@ export default function InscripcionEstudiante() {
                   </CFormLabel>
                   <CFormInput
                     className="form-control-custom mb-2"
-                    placeholder="Ej: Juan PÃ©rez"
+                    placeholder="Ej: Juan Perez"
                     value={filtro}
                     onChange={(e) => setFiltro(e.target.value)}
                   />
@@ -305,12 +305,12 @@ export default function InscripcionEstudiante() {
                             style={{
                               backgroundColor: '#eef2ff', // Fondo suave (celeste/purpura muy claro)
                               color: '#4338ca', // Texto en azul vibrante (Indigo)
-                              border: '1px solid #c7d2fe', // Borde sutil para dar definiciÃ³n
+                              border: '1px solid #c7d2fe', // Borde sutil para dar definicion
                               padding: '8px 14px',
                               fontSize: '0.85rem',
                               fontWeight: '700',
                               letterSpacing: '0.3px',
-                              boxShadow: '0 2px 4px rgba(0,0,0,0.05)', // PequeÃ±a sombra para profundidad
+                              boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
                             }}
                             shape="rounded-pill"
                           >
@@ -369,7 +369,6 @@ export default function InscripcionEstudiante() {
         </CCol>
       </CRow>
 
-      {/* MODAL DE EDICIÃ“N ESTILIZADA */}
       <CModal
         visible={modalEdit.visible}
         onClose={() => setModalEdit({ visible: false, data: null })}
@@ -383,7 +382,7 @@ export default function InscripcionEstudiante() {
               <CIcon icon={cilPencil} size="xl" style={{ color: azulProfundo }} />
             </div>
             <h5 className="mb-0 fw-bold" style={{ color: azulProfundo }}>
-              Editar InscripciÃ³n
+              Editar Inscripcion
             </h5>
           </div>
         </CModalHeader>
@@ -450,8 +449,6 @@ export default function InscripcionEstudiante() {
         </CModalFooter>
       </CModal>
 
-      {/* Modal de ConfirmaciÃ³n / EdiciÃ³n Estilizado */}
-      {/* MODAL DE ELIMINACIÃ“N (ÃšNICA Y OPTIMIZADA) */}
       <CModal
         visible={modalDelete.visible}
         onClose={() => setModalDelete({ visible: false, data: null })}
@@ -469,7 +466,7 @@ export default function InscripcionEstudiante() {
             </div>
             <div>
               <h5 className="mb-0 fw-bold" style={{ color: azulProfundo }}>
-                Confirmar Baja de InscripciÃ³n
+                Confirmar Baja de Inscripcion
               </h5>
               <small className="text-muted">
                 ID Registro: #{modalDelete.data?.id_inscripcion || '---'}
@@ -481,7 +478,7 @@ export default function InscripcionEstudiante() {
         <CModalBody className="p-4">
           <div className="text-center mb-4">
             <p className="text-muted">
-              EstÃ¡s a punto de dar de baja la siguiente relaciÃ³n acadÃ©mica:
+              Estás a punto de dar de baja la siguiente relación académica:
             </p>
           </div>
 
@@ -533,7 +530,7 @@ export default function InscripcionEstudiante() {
 
           <div className="mt-4 p-3 rounded-3 bg-light border text-center">
             <p className="mb-0 text-secondary italic" style={{ fontSize: '0.9rem' }}>
-              "Esta acciÃ³n retirarÃ¡ al alumno permanentemente de este curso."
+              "Esta acción retirará al alumno permanentemente de este curso."
             </p>
           </div>
         </CModalBody>
@@ -560,7 +557,7 @@ export default function InscripcionEstudiante() {
             }}
             onClick={() => eliminarInscripcion(modalDelete.data.id_inscripcion)} // <--- Vinculado
           >
-            SÃ, ELIMINAR
+            SI, ELIMINAR
           </CButton>
         </CModalFooter>
       </CModal>

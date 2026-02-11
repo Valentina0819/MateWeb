@@ -101,7 +101,7 @@ export default function PuntajesEstudiante() {
         setTipoMensaje('danger')
       }
     } catch {
-      setMensaje('Error de conexiÃ³n')
+      setMensaje('Error de conexion')
       setTipoMensaje('danger')
     }
   }
@@ -135,14 +135,14 @@ export default function PuntajesEstudiante() {
           </CCardHeader>
 
           <CCardBody className="p-4 bg-light">
-            {/* SecciÃ³n de Filtros Estilizada */}
+            {/* Seccion de Filtros Estilizada */}
             <div className="bg-white p-3 mb-4 shadow-sm" style={{ borderRadius: '15px' }}>
               <h6 className="text-muted mb-3 small fw-bold text-uppercase">Panel de Filtros</h6>
               <CRow className="g-3">
                 <CCol md={6} lg={3}>
                   <CFormInput
-                    label="MÃ³dulo"
-                    placeholder="Buscar mÃ³dulo..."
+                    label="Modulo"
+                    placeholder="Buscar modulo..."
                     value={filtroModulo}
                     onChange={(e) => setFiltroModulo(e.target.value)}
                     className="border-light-blue"
@@ -208,7 +208,7 @@ export default function PuntajesEstudiante() {
               </CAlert>
             )}
 
-            {/* Tabla con diseÃ±o moderno */}
+            {/* Tabla con diseño moderno */}
             <div
               className="bg-white shadow-sm"
               style={{ borderRadius: '15px', overflow: 'hidden' }}
@@ -220,7 +220,7 @@ export default function PuntajesEstudiante() {
                       Ejercicio / Enunciado
                     </CTableHeaderCell>
                     <CTableHeaderCell className="text-muted fw-bold border-0 py-3">
-                      UbicaciÃ³n
+                      Ubicacion
                     </CTableHeaderCell>
                     <CTableHeaderCell className="text-muted fw-bold border-0 py-3 text-center">
                       Puntaje
@@ -301,11 +301,11 @@ export default function PuntajesEstudiante() {
         backdrop="static"
       >
         <CModalHeader className="border-0 bg-light">
-          <CModalTitle className="fw-bold">Ajustar CalificaciÃ³n</CModalTitle>
+          <CModalTitle className="fw-bold">Ajustar Calificacion</CModalTitle>
         </CModalHeader>
         <CModalBody className="p-4">
           <p className="text-muted small mb-4">
-            Modifica el puntaje obtenido por el estudiante para este ejercicio especÃ­fico.
+            Modifica el puntaje obtenido por el estudiante para este ejercicio especi­fico.
           </p>
           <CForm onSubmit={handleSaveEdit}>
             <div className="mb-4">

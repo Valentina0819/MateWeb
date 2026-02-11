@@ -31,7 +31,7 @@ import {
   CPaginationItem,
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
-import { cilSearch, cilTrash, cilPrinter, cilFilter, cilUser } from '@coreui/icons'
+import { cilSearch, cilTrash, cilPrint, cilFilter, cilUser } from '@coreui/icons'
 
 const MateriasInscritasAdmin = () => {
   const [estudiantes, setEstudiantes] = useState([])
@@ -282,7 +282,7 @@ const MateriasInscritasAdmin = () => {
                                 )
                               }
                             >
-                              <CIcon icon={cilPrinter} className="me-2" /> Generar Comprobante
+                              <CIcon icon={cilPrint} className="me-2" /> Generar Comprobante
                             </CButton>
                           </div>
                         </CAccordionBody>

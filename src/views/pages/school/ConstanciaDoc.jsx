@@ -31,7 +31,7 @@ const BuscarDocenteConstancia = () => {
       const data = await res.json()
       setDocente(data)
     } catch (error) {
-      setMensaje('Error en la bÃºsqueda')
+      setMensaje('Error en la búsqueda')
     }
   }
 
@@ -45,13 +45,13 @@ const BuscarDocenteConstancia = () => {
         <CCol xs={12} md={8} lg={6}>
           <CCard>
             <CCardBody>
-              <CCardTitle>BÃºsqueda de Docente para Constancia de Trabajo</CCardTitle>
+              <CCardTitle>Búsqueda de Docente para Constancia de Trabajo</CCardTitle>
               <CForm onSubmit={handleBuscar} className="mb-3">
                 <CRow>
                   <CCol xs={8}>
                     <CFormInput
                       type="text"
-                      placeholder="Ingrese cÃ©dula"
+                      placeholder="Ingrese cedula"
                       value={cedula}
                       onChange={(e) => setCedula(e.target.value)}
                       required
@@ -73,7 +73,7 @@ const BuscarDocenteConstancia = () => {
                 <div className="mt-3">
                   <strong>Nombre:</strong> {docente.nombres} {docente.apellidos} <br />
                   <strong>Tipo de documento:</strong> {docente.tipo_documento} <br />
-                  <strong>CÃ©dula:</strong> {docente.cedula} <br />
+                  <strong>Cedula:</strong> {docente.cedula} <br />
                   <CButton
                     style={{ backgroundColor: '#114c5f', color: 'white' }}
                     className="mt-3"

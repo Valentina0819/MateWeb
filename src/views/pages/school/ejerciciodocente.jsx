@@ -82,7 +82,7 @@ export default function CrudEjercicios() {
     fetchEjercicios()
   }
 
-  // Filtrar ejercicios por nombre de curso/lecciÃ³n
+  // Filtrar ejercicios por nombre de curso/leccion
   const ejerciciosFiltrados = ejercicios.filter((e) =>
     (e.nombre_leccion || '').toLowerCase().includes(filtro.toLowerCase()),
   )
@@ -92,7 +92,7 @@ export default function CrudEjercicios() {
     l.nombre_leccion.toLowerCase().includes(filtroLeccion.toLowerCase()),
   )
 
-  // PaginaciÃ³n
+  // Paginacion
   const totalPaginas = Math.ceil(ejerciciosFiltrados.length / porPagina)
   const ejerciciosPagina = ejerciciosFiltrados.slice((pagina - 1) * porPagina, pagina * porPagina)
   const azulProfundo = '#070145'
@@ -129,7 +129,7 @@ export default function CrudEjercicios() {
               <CForm onSubmit={handleSubmit} className="row g-3">
                 <CCol md={12}>
                   <CFormInput
-                    placeholder="Filtrar lecciÃ³n por nombre"
+                    placeholder="Filtrar leccion por nombre"
                     value={filtroLeccion}
                     onChange={(e) => setFiltroLeccion(e.target.value)}
                     className="mb-2"
@@ -137,12 +137,12 @@ export default function CrudEjercicios() {
                 </CCol>
                 <CCol md={6}>
                   <CFormSelect
-                    label="LecciÃ³n"
+                    label="Leccion"
                     value={form.id_leccion}
                     onChange={(e) => setForm({ ...form, id_leccion: e.target.value })}
                     required
                   >
-                    <option value="">Seleccione una lecciÃ³n</option>
+                    <option value="">Seleccione una leccion</option>
                     {leccionesFiltradas.map((l) => (
                       <option key={l.id_leccion} value={l.id_leccion}>
                         {l.nombre_leccion}
@@ -220,7 +220,7 @@ export default function CrudEjercicios() {
                     <CIcon icon={cilSearch} className="text-muted" />
                   </CInputGroupText>
                   <CFormInput
-                    placeholder="Filtrar por nombre de curso/lecciÃ³n"
+                    placeholder="Filtrar por nombre de curso/leccion"
                     value={filtro}
                     onChange={(e) => {
                       setFiltro(e.target.value)

@@ -41,7 +41,6 @@ const EstudiantesAdmin = () => {
   const [nacionalidades, setNacionalidades] = useState([])
   const [errorEdit, setErrorEdit] = useState('')
 
-  // Cargar catÃ¡logos
   const fetchCatalogos = async () => {
     try {
       const [tdRes, nacRes] = await Promise.all([
@@ -123,13 +122,11 @@ const EstudiantesAdmin = () => {
     }
   }
 
-  // Manejar cambios en los campos del modal de ediciÃ³n
   const handleEditChange = (e) => {
     const { name, value } = e.target
     setEstudianteEdit({ ...estudianteEdit, [name]: value })
   }
 
-  // Filtrar estudiantes por bÃºsqueda
   const estudiantesFiltrados = estudiantes.filter(
     (est) =>
       (est.nombres && est.nombres.toLowerCase().includes(busqueda.toLowerCase())) ||
@@ -137,12 +134,10 @@ const EstudiantesAdmin = () => {
       (est.cedula && est.cedula.toString().includes(busqueda)),
   )
 
-  // Reiniciar a la pÃ¡gina 1 cuando cambia la bÃºsqueda
   useEffect(() => {
     setPage(1)
   }, [busqueda])
 
-  // PaginaciÃ³n local sobre los filtrados
   const estudiantesPorPagina = 20
   const totalPagesFiltrado = Math.ceil(estudiantesFiltrados.length / estudiantesPorPagina)
   const estudiantesPaginaActual = estudiantesFiltrados.slice(
@@ -150,7 +145,6 @@ const EstudiantesAdmin = () => {
     page * estudiantesPorPagina,
   )
 
-  // Ajuste de estilos para que los nombres y apellidos no se monten ni hagan scroll
   const tablaEstilos = `
   .celda-nombre, .celda-apellido {
     white-space: normal;
@@ -170,10 +164,9 @@ const EstudiantesAdmin = () => {
               <strong>Estudiantes</strong>
             </CCardHeader>
             <CCardBody>
-              {/* Barra de bÃºsqueda */}
               <CFormInput
                 className="mb-3"
-                placeholder="Buscar por nombres, apellidos o cÃ©dula..."
+                placeholder="Buscar por nombres, apellidos o cedula..."
                 value={busqueda}
                 onChange={(e) => setBusqueda(e.target.value)}
               />
@@ -196,7 +189,7 @@ const EstudiantesAdmin = () => {
                     <CTableHead color="light">
                       <CTableRow style={{ textAlign: 'center' }}>
                         <CTableHeaderCell>Tipo Documento</CTableHeaderCell>
-                        <CTableHeaderCell>CÃ©dula</CTableHeaderCell>
+                        <CTableHeaderCell>Cedula</CTableHeaderCell>
                         <CTableHeaderCell>Nombres</CTableHeaderCell>
                         <CTableHeaderCell>Apellidos</CTableHeaderCell>
                         <CTableHeaderCell>Nacionalidad</CTableHeaderCell>
@@ -307,7 +300,7 @@ const EstudiantesAdmin = () => {
             <>
               <CFormInput
                 className="mb-2"
-                label="CÃ©dula"
+                label="Cedula"
                 name="nueva_cedula"
                 value={estudianteEdit.nueva_cedula}
                 onChange={handleEditChange}
@@ -407,7 +400,7 @@ const EstudiantesAdmin = () => {
         <CModalHeader>
           <CModalTitle>Eliminar Estudiante</CModalTitle>
         </CModalHeader>
-        <CModalBody>Â¿EstÃ¡ seguro que desea eliminar este estudiante?</CModalBody>
+        <CModalBody>¿Está seguro que desea eliminar este estudiante?</CModalBody>
         <CModalFooter>
           <CButton
             style={{ backgroundColor: 'white', color: 'red', borderColor: 'red' }}

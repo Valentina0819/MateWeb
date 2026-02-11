@@ -36,7 +36,7 @@ const RestablecerContrasena = () => {
     setMensaje('')
     setError('')
     if (nuevaContrasena !== repeat) {
-      setError('Las contraseÃ±as no coinciden')
+      setError('Las contraseñas no coinciden')
       return
     }
     try {
@@ -49,7 +49,7 @@ const RestablecerContrasena = () => {
       if (res.ok) setMensaje(data.mensaje)
       else setError(data.mensaje)
     } catch {
-      setError('Error en la conexiÃ³n')
+      setError('Error en la conexion')
     }
   }
 
@@ -60,32 +60,32 @@ const RestablecerContrasena = () => {
           <CCard className="shadow-lg border-0">
             <CCardHeader className="text-center" style={{ background: '#114c5f' }}>
               <CCardTitle style={{ color: '#fff', fontWeight: 600, fontSize: '1.5rem' }}>
-                Restablecer ContraseÃ±a
+                Restablecer Contraseña
               </CCardTitle>
             </CCardHeader>
             <CCardBody style={{ background: '#f8f9fa' }}>
               <p className="text-center mb-4" style={{ color: '#114c5f' }}>
-                Ingresa tu nueva contraseÃ±a y confÃ­rmala para restablecer el acceso.
+                Ingresa tu nueva contraseña y confirmala para restablecer el acceso.
               </p>
               <CForm onSubmit={handleSubmit}>
                 <CFormInput
                   type="password"
-                  placeholder="Nueva contraseÃ±a"
+                  placeholder="Nueva contraseña"
                   value={nuevaContrasena}
                   onChange={(e) => setNuevaContrasena(e.target.value)}
                   required
                   className="mb-3"
-                  floatingLabel="Nueva contraseÃ±a"
+                  floatingLabel="Nueva contraseña"
                   autoComplete="new-password"
                 />
                 <CFormInput
                   type="password"
-                  placeholder="Repetir contraseÃ±a"
+                  placeholder="Repetir contraseña"
                   value={repeat}
                   onChange={(e) => setRepeat(e.target.value)}
                   required
                   className="mb-3"
-                  floatingLabel="Repetir contraseÃ±a"
+                  floatingLabel="Repetir contraseña"
                   autoComplete="new-password"
                 />
                 <CButton

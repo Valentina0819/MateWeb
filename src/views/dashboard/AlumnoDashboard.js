@@ -35,7 +35,7 @@ export default function DashboardEstudiante() {
   useEffect(() => {
     if (!id_usuario || rol !== 'alumno') {
       setLoading(false)
-      setError('Acceso denegado: No se identificÃ³ una cuenta de alumno activa.')
+      setError('Acceso denegado: No se identifico una cuenta de alumno activa.')
       return
     }
     setLoading(true)
@@ -148,7 +148,7 @@ export default function DashboardEstudiante() {
             <CTableHead>
               <CTableRow>
                 <CTableHeaderCell className="ps-4">Curso</CTableHeaderCell>
-                <CTableHeaderCell>LecciÃ³n</CTableHeaderCell>
+                <CTableHeaderCell>Leccion</CTableHeaderCell>
                 <CTableHeaderCell>Enunciado</CTableHeaderCell>
                 <CTableHeaderCell className="text-center">Estado</CTableHeaderCell>
               </CTableRow>
@@ -187,7 +187,7 @@ export default function DashboardEstudiante() {
 
           {totalPages > 1 && (
             <div className="d-flex justify-content-center py-3 border-top">
-              <CPagination aria-label="NavegaciÃ³n de ejercicios">
+              <CPagination aria-label="Navegacion de ejercicios">
                 <CPaginationItem
                   disabled={page === 1}
                   onClick={() => setPage(page - 1)}

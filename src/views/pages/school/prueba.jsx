@@ -54,7 +54,7 @@ function generarDistractores(correcta) {
     'Perro',
     'Gato',
     'Casa',
-    'Ãrbol',
+    'Arbol',
     'Libro',
     'Mesa',
     'Silla',
@@ -143,7 +143,7 @@ export default function ResponderEjercicioAlumno() {
       })
 
       if (res.ok) {
-        setMensaje('Â¡Respuesta enviada correctamente!')
+        setMensaje('¡Respuesta enviada correctamente!')
         setTipoMensaje('success')
         setForm({ id_ejercicio: '', respuesta_usuario: '' })
         setOpciones([])
@@ -152,7 +152,7 @@ export default function ResponderEjercicioAlumno() {
         setTipoMensaje('danger')
       }
     } catch {
-      setMensaje('Error de conexiÃ³n')
+      setMensaje('Error de conexion')
       setTipoMensaje('danger')
     }
   }
@@ -186,9 +186,7 @@ export default function ResponderEjercicioAlumno() {
                   justifyContent: 'center',
                   fontWeight: 'bold',
                 }}
-              >
-                âœï¸
-              </div>
+              ></div>
               <h5 className="mb-0 fw-semibold">Responder Ejercicio</h5>
             </div>
 

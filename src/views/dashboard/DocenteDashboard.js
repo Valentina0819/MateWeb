@@ -91,7 +91,7 @@ export default function DashboardDocente() {
         </h2>
       </div>
 
-      {/* Widgets de EstadÃ­sticas Uniformes */}
+      {/* Widgets de Estadisticas Uniformes */}
       <CRow className="mb-4">
         <CCol md={4}>
           <CWidgetStatsA
@@ -126,7 +126,7 @@ export default function DashboardDocente() {
         {/* Tabla Estudiantes */}
         <CCol lg={6}>
           <CCard className="card-uniform h-100">
-            <CCardHeader className="header-morado py-3">DistribuciÃ³n de Alumnos</CCardHeader>
+            <CCardHeader className="header-morado py-3">Distribucion de Alumnos</CCardHeader>
             <CCardBody>
               <CTable hover responsive className="align-middle">
                 <CTableHead>
@@ -243,12 +243,11 @@ export default function DashboardDocente() {
         </CCol>
       </CRow>
 
-      {/* GrÃ¡fica de Barras */}
       <CRow className="justify-content-center">
         <CCol md={12}>
           <CCard className="card-uniform border-0">
             <CCardHeader className="header-morado py-3">
-              VisualizaciÃ³n de Rendimiento AcadÃ©mico
+              Visualizacion de Rendimiento Academico
             </CCardHeader>
             <CCardBody className="p-4">
               <div style={{ height: '300px' }}>

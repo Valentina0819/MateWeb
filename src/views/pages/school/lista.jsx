@@ -27,10 +27,10 @@ const SolicitarRecuperacion = () => {
       if (res.ok) {
         setMensaje(data.mensaje || 'Enlace enviado. Revisa tu correo.')
       } else {
-        setError(data.mensaje || 'El correo no estÃ¡ registrado.')
+        setError(data.mensaje || 'El correo no esta registrado.')
       }
     } catch {
-      setError('Error en la conexiÃ³n con el servidor')
+      setError('Error en la conexion con el servidor')
     } finally {
       setEnviando(false)
     }
@@ -70,8 +70,8 @@ const SolicitarRecuperacion = () => {
           .math-symbol {
             position: absolute;
             font-weight: 900;
-            color: rgba(255, 255, 255, 0.9); /* MÃ¡s opacidad */
-            text-shadow: 0 0 20px rgba(255, 255, 255, 0.6), 0 0 40px rgba(99, 102, 241, 0.4); /* Efecto NeÃ³n */
+            color: rgba(255, 255, 255, 0.9); 
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.6), 0 0 40px rgba(99, 102, 241, 0.4); /* Efecto Neon */
             user-select: none;
             filter: blur(0.5px);
           }
@@ -79,9 +79,9 @@ const SolicitarRecuperacion = () => {
 
           .sym-lg { font-size: 8rem; opacity: 0.25; filter: blur(1px); } /* Menos blur para que se vea */
           .sym-md { font-size: 5rem; opacity: 0.5; }
-          .sym-sm { font-size: 3rem; opacity: 0.9; } /* El mÃ¡s pequeÃ±o es el mÃ¡s brillante */
+          .sym-sm { font-size: 3rem; opacity: 0.9; } 
 
-          /* 3. AnimaciÃ³n un poco mÃ¡s rÃ¡pida para que se vea el movimiento */
+
           @keyframes float-complex {
             0% { transform: translate(0, 0) rotate(0deg); }
             50% { transform: translate(45px, -70px) rotate(20deg); }
@@ -146,20 +146,20 @@ const SolicitarRecuperacion = () => {
       </style>
 
       <div className="recovery-page">
-        {/* SÃ­mbolos de fondo para coherencia visual */}
+        {/* Simbolos de fondo para coherencia visual */}
         <div className="math-symbols">
           {[
-            { s: 'Ï€', t: '10%', l: '5%', sz: 'sym-lg' },
-            { s: 'âˆš', t: '80%', l: '10%', sz: 'sym-lg' },
-            { s: 'âˆ‘', t: '15%', l: '85%', sz: 'sym-md' },
-            { s: 'âˆ«', t: '50%', l: '5%', sz: 'sym-sm' },
-            { s: 'âˆž', t: '40%', l: '45%', sz: 'sym-lg' },
-            { s: 'Î”', t: '70%', l: '80%', sz: 'sym-md' },
-            { s: 'Î¸', t: '5%', l: '40%', sz: 'sym-sm' },
-            { s: 'Î»', t: '60%', l: '20%', sz: 'sym-sm' },
-            { s: 'Î©', t: '30%', l: '75%', sz: 'sym-md' },
-            { s: 'Î±', t: '85%', l: '45%', sz: 'sym-sm' },
-            { s: 'Î²', t: '25%', l: '25%', sz: 'sym-md' },
+            { s: 'π', t: '10%', l: '5%', sz: 'sym-lg' },
+            { s: '√', t: '80%', l: '10%', sz: 'sym-lg' },
+            { s: '∑', t: '15%', l: '85%', sz: 'sym-md' },
+            { s: '∫', t: '50%', l: '5%', sz: 'sym-sm' },
+            { s: '∞', t: '40%', l: '45%', sz: 'sym-lg' },
+            { s: 'Δ', t: '70%', l: '80%', sz: 'sym-md' },
+            { s: 'θ', t: '5%', l: '40%', sz: 'sym-sm' },
+            { s: 'λ', t: '60%', l: '20%', sz: 'sym-sm' },
+            { s: 'Ω', t: '30%', l: '75%', sz: 'sym-md' },
+            { s: 'α', t: '85%', l: '45%', sz: 'sym-sm' },
+            { s: 'β', t: '25%', l: '25%', sz: 'sym-md' },
             { s: 'f(x)', t: '55%', l: '90%', sz: 'sym-sm' },
           ].map((item, index) => (
             <span
@@ -182,8 +182,8 @@ const SolicitarRecuperacion = () => {
             <CCol xs={12} sm={10} md={8} lg={5}>
               <div className="glass-card">
                 <div className="text-center mb-4">
-                  <h2 style={{ color: '#1a1c2e', fontWeight: 800 }}>RecuperaciÃ³n</h2>
-                  <p className="text-muted">Enviaremos un enlace mÃ¡gico a tu bandeja de entrada</p>
+                  <h2 style={{ color: '#1a1c2e', fontWeight: 800 }}>Recuperacion</h2>
+                  <p className="text-muted">Enviaremos un enlace magico a tu bandeja de entrada</p>
                 </div>
 
                 {mensaje && (
@@ -203,7 +203,7 @@ const SolicitarRecuperacion = () => {
                     <input
                       type="email"
                       className="modern-input"
-                      placeholder="Tu correo electrÃ³nico"
+                      placeholder="Tu correo electronico"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
@@ -222,7 +222,7 @@ const SolicitarRecuperacion = () => {
                       style={{ color: '#7e22ce', textDecoration: 'none', fontWeight: 600 }}
                     >
                       <CIcon icon={cilArrowLeft} className="me-2" />
-                      Volver al inicio de sesiÃ³n
+                      Volver al inicio de sesion
                     </CButton>
                   </div>
                 </CForm>

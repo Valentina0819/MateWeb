@@ -94,10 +94,10 @@ export default function CrudLecciones() {
       })
       setLeccionForm({ id_modulo: '', nombre_leccion: '', descripcion: '' })
       fetchLecciones()
-      setMensaje('Â¡Ã‰xito! La lecciÃ³n ha sido creada.')
+      setMensaje('¡Exito! La leccion ha sido creada.')
       setTipoMensaje('success')
     } catch {
-      setMensaje('Error al intentar crear la lecciÃ³n')
+      setMensaje('Error al intentar crear la leccion')
       setTipoMensaje('danger')
     }
   }
@@ -111,7 +111,7 @@ export default function CrudLecciones() {
       })
       setLeccionEdit(null)
       fetchLecciones()
-      setMensaje('LecciÃ³n actualizada correctamente')
+      setMensaje('Leccion actualizada correctamente')
       setTipoMensaje('success')
     } catch {
       setMensaje('Error al editar')
@@ -129,7 +129,7 @@ export default function CrudLecciones() {
       )
       setLeccionEliminar(null)
       fetchLecciones()
-      setMensaje('LecciÃ³n eliminada permanentemente')
+      setMensaje('Leccion eliminada permanentemente')
       setTipoMensaje('info')
     } catch {
       setMensaje('Error al eliminar')
@@ -189,13 +189,13 @@ export default function CrudLecciones() {
           )}
 
           <CRow className="g-4">
-            {/* FORMULARIO DE CREACIÃ“N */}
+            {/* FORMULARIO DE CREACION */}
             <CCol lg={4}>
               <CCard className="custom-card">
                 <CCardHeader className="header-dark p-3">
                   <div className="p-4 text-white text-center" style={{ background: azulProfundo }}>
                     <CIcon icon={cilPlus} size="xl" className="mb-2" />
-                    <h4 className="fw-bold mb-0">Nueva LecciÃ³n</h4>
+                    <h4 className="fw-bold mb-0">Nueva Leccion</h4>
                     <p className="small opacity-75">
                       Asigna nuevas lecciones a modulos correspondientes
                     </p>
@@ -203,13 +203,13 @@ export default function CrudLecciones() {
                 </CCardHeader>
                 <CCardBody>
                   <CForm onSubmit={handleSubmit}>
-                    <label className="small mb-1 fw-bold text-muted">MÃ³dulo Padre</label>
+                    <label className="small mb-1 fw-bold text-muted">Modulo Padre</label>
                     <CInputGroup className="mb-3">
                       <CInputGroupText>
                         <CIcon icon={cilSearch} />
                       </CInputGroupText>
                       <CFormInput
-                        placeholder="Buscar mÃ³dulo..."
+                        placeholder="Buscar modulo..."
                         value={filtroModuloForm}
                         onChange={(e) => setFiltroModuloForm(e.target.value)}
                       />
@@ -222,7 +222,7 @@ export default function CrudLecciones() {
                         setLeccionForm({ ...leccionForm, id_modulo: e.target.value })
                       }
                     >
-                      <option value="">Seleccione un mÃ³dulo</option>
+                      <option value="">Seleccione un modulo</option>
                       {modulos
                         .filter((m) =>
                           m.nombre_modulo.toLowerCase().includes(filtroModuloForm.toLowerCase()),
@@ -234,20 +234,20 @@ export default function CrudLecciones() {
                         ))}
                     </CFormSelect>
 
-                    <label className="small mb-1 fw-bold text-muted">TÃ­tulo</label>
+                    <label className="small mb-1 fw-bold text-muted">Ti­tulo</label>
                     <CFormInput
                       className="mb-3"
-                      placeholder="Ej: IntroducciÃ³n a React"
+                      placeholder="Ej: Introduccion a React"
                       value={leccionForm.nombre_leccion}
                       onChange={(e) =>
                         setLeccionForm({ ...leccionForm, nombre_leccion: e.target.value })
                       }
                     />
 
-                    <label className="small mb-1 fw-bold text-muted">DescripciÃ³n Corta</label>
+                    <label className="small mb-1 fw-bold text-muted">Descripcion Corta</label>
                     <CFormInput
                       className="mb-4"
-                      placeholder="Â¿De quÃ© trata esta lecciÃ³n?"
+                      placeholder="¿De que trata esta leccion?"
                       value={leccionForm.descripcion}
                       onChange={(e) =>
                         setLeccionForm({ ...leccionForm, descripcion: e.target.value })
@@ -260,7 +260,7 @@ export default function CrudLecciones() {
                       style={{ background: azulProfundo }}
                     >
                       <CIcon icon={cilSave} className="me-2" />
-                      Registrar LecciÃ³n
+                      Registrar Leccion
                     </CButton>
                   </CForm>
                 </CCardBody>
@@ -327,7 +327,7 @@ export default function CrudLecciones() {
                     </CTableBody>
                   </CTable>
 
-                  {/* PAGINACIÃ“N ESTILO IMAGEN */}
+                  {/* PAGINACIÓN ESTILO IMAGEN */}
                   <div className="d-flex justify-content-center py-4 border-top">
                     <CPagination className="mb-0 shadow-sm rounded">
                       <CPaginationItem
@@ -378,9 +378,9 @@ export default function CrudLecciones() {
             </div>
             <div>
               <h5 className="mb-0 fw-bold" style={{ color: '#070145' }}>
-                Editar LecciÃ³n
+                Editar Leccion
               </h5>
-              <small className="text-muted">Actualiza la informaciÃ³n de la lecciÃ³n</small>
+              <small className="text-muted">Actualiza la informacion de la leccion</small>
             </div>
           </div>
         </CModalHeader>
@@ -402,7 +402,7 @@ export default function CrudLecciones() {
                     className="fw-bold small text-uppercase d-block mb-2"
                     style={{ color: '#070145', letterSpacing: '1px' }}
                   >
-                    Nombre de la lecciÃ³n
+                    Nombre de la leccion
                   </label>
                   <CFormInput
                     className="shadow-sm"
@@ -412,7 +412,7 @@ export default function CrudLecciones() {
                       borderRadius: '10px',
                       border: '2px solid #cbd5e1',
                     }}
-                    placeholder="Ej: IntroducciÃ³n a React"
+                    placeholder="Ej: Introduccion a React"
                     value={leccionEdit.nombre_leccion}
                     onChange={(e) =>
                       setLeccionEdit({ ...leccionEdit, nombre_leccion: e.target.value })
@@ -421,7 +421,7 @@ export default function CrudLecciones() {
                 </div>
               </CCol>
 
-              {/* DescripciÃ³n */}
+              {/* Descripcion */}
               <CCol md={12}>
                 <div
                   className="p-3 rounded-4"
@@ -434,7 +434,7 @@ export default function CrudLecciones() {
                     className="fw-bold small text-uppercase d-block mb-2"
                     style={{ color: '#070145', letterSpacing: '1px' }}
                   >
-                    DescripciÃ³n
+                    Descripcion
                   </label>
                   <CFormInput
                     className="shadow-sm"
@@ -444,7 +444,7 @@ export default function CrudLecciones() {
                       borderRadius: '10px',
                       border: '2px solid #cbd5e1',
                     }}
-                    placeholder="Breve descripciÃ³n de la lecciÃ³n"
+                    placeholder="Breve descripcion de la leccion"
                     value={leccionEdit.descripcion}
                     onChange={(e) =>
                       setLeccionEdit({ ...leccionEdit, descripcion: e.target.value })
@@ -504,9 +504,9 @@ export default function CrudLecciones() {
             </div>
             <div>
               <h5 className="mb-0 fw-bold" style={{ color: '#070145' }}>
-                Confirmar EliminaciÃ³n de LecciÃ³n
+                Confirmar Eliminacion de Leccion
               </h5>
-              <small className="text-muted">Esta acciÃ³n no se puede deshacer</small>
+              <small className="text-muted">Esta accion no se puede deshacer</small>
             </div>
           </div>
         </CModalHeader>
@@ -515,7 +515,7 @@ export default function CrudLecciones() {
         <CModalBody className="p-4">
           <div className="text-center mb-4">
             <p className="text-muted">
-              EstÃ¡s a punto de eliminar la siguiente lecciÃ³n del sistema:
+              Estas a punto de eliminar la siguiente leccion del sistema:
             </p>
           </div>
 
@@ -529,7 +529,7 @@ export default function CrudLecciones() {
                   className="fw-bold small text-uppercase opacity-50 d-block mb-2"
                   style={{ letterSpacing: '1px' }}
                 >
-                  LecciÃ³n a eliminar
+                  Leccion a eliminar
                 </label>
 
                 <div className="d-flex align-items-center">
@@ -537,7 +537,7 @@ export default function CrudLecciones() {
                     <CIcon icon={cilEducation} className="text-white" size="lg" />
                   </div>
                   <span className="fs-4 fw-bold text-dark">
-                    {leccionEliminar?.nombre_leccion || 'LecciÃ³n no seleccionada'}
+                    {leccionEliminar?.nombre_leccion || 'Leccion no seleccionada'}
                   </span>
                 </div>
               </div>
@@ -546,8 +546,7 @@ export default function CrudLecciones() {
 
           <div className="mt-4 p-3 rounded-3 bg-light border text-center">
             <p className="mb-0 text-secondary" style={{ fontSize: '0.9rem' }}>
-              âš ï¸ Al eliminar esta lecciÃ³n se perderÃ¡ toda la informaciÃ³n asociada de forma
-              permanente.
+              Al eliminar esta lección se perdera toda la informacion asociada de forma permanente.
             </p>
           </div>
         </CModalBody>
@@ -576,7 +575,7 @@ export default function CrudLecciones() {
             }}
             onClick={handleDelete}
           >
-            SÃ, ELIMINAR LECCIÃ“N
+            Si, ELIMINAR LECCIÓN
           </CButton>
         </CModalFooter>
       </CModal>
