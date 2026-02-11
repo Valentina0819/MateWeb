@@ -1,120 +1,154 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react'
 import {
-  CContainer, CRow, CCol, CCard, CCardHeader, CCardBody, CTable, CTableHead, CTableRow,
-  CTableHeaderCell, CTableBody, CTableDataCell, CButton, CPagination, CPaginationItem,
-  CModal, CModalHeader, CModalTitle, CModalBody, CModalFooter, CFormInput, CFormSelect, CAlert, CSpinner
-} from "@coreui/react";
+  CContainer,
+  CRow,
+  CCol,
+  CCard,
+  CCardHeader,
+  CCardBody,
+  CTable,
+  CTableHead,
+  CTableRow,
+  CTableHeaderCell,
+  CTableBody,
+  CTableDataCell,
+  CButton,
+  CPagination,
+  CPaginationItem,
+  CModal,
+  CModalHeader,
+  CModalTitle,
+  CModalBody,
+  CModalFooter,
+  CFormInput,
+  CFormSelect,
+  CAlert,
+  CSpinner,
+} from '@coreui/react'
 
 const EstudiantesAdmin = () => {
-  const [estudiantes, setEstudiantes] = useState([]);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [mensaje, setMensaje] = useState("");
-  const [modalEdit, setModalEdit] = useState(false);
-  const [modalDelete, setModalDelete] = useState(false);
-  const [estudianteEdit, setEstudianteEdit] = useState(null);
-  const [estudianteDelete, setEstudianteDelete] = useState(null);
-  const [busqueda, setBusqueda] = useState("");
-  const [tiposDocumento, setTiposDocumento] = useState([]);
-  const [nacionalidades, setNacionalidades] = useState([]);
-  const [errorEdit, setErrorEdit] = useState("");
+  const [estudiantes, setEstudiantes] = useState([])
+  const [page, setPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+  const [loading, setLoading] = useState(false)
+  const [mensaje, setMensaje] = useState('')
+  const [modalEdit, setModalEdit] = useState(false)
+  const [modalDelete, setModalDelete] = useState(false)
+  const [estudianteEdit, setEstudianteEdit] = useState(null)
+  const [estudianteDelete, setEstudianteDelete] = useState(null)
+  const [busqueda, setBusqueda] = useState('')
+  const [tiposDocumento, setTiposDocumento] = useState([])
+  const [nacionalidades, setNacionalidades] = useState([])
+  const [errorEdit, setErrorEdit] = useState('')
 
-  // Cargar catálogos
+  // Cargar catÃ¡logos
   const fetchCatalogos = async () => {
     try {
       const [tdRes, nacRes] = await Promise.all([
-        fetch("http://localhost:4000/tipos-documento"),
-        fetch("http://localhost:4000/nacionalidades")
-      ]);
-      setTiposDocumento(await tdRes.json());
-      setNacionalidades(await nacRes.json());
+        fetch('https://mateweb-production.up.railway.app/tipos-documento'),
+        fetch('https://mateweb-production.up.railway.app/nacionalidades'),
+      ])
+      setTiposDocumento(await tdRes.json())
+      setNacionalidades(await nacRes.json())
     } catch {
-      setTiposDocumento([]);
-      setNacionalidades([]);
+      setTiposDocumento([])
+      setNacionalidades([])
     }
-  };
+  }
 
   // Listar estudiantes paginados
   const fetchEstudiantes = async (pagina = 1) => {
-    setLoading(true);
+    setLoading(true)
     try {
-      const res = await fetch(`http://localhost:4000/estudiante?page=${pagina}&limit=1000`);
-      const data = await res.json();
-      setEstudiantes(data.estudiantes || []);
-      setTotalPages(data.totalPages || 1);
-      setPage(data.page || 1);
+      const res = await fetch(
+        `https://mateweb-production.up.railway.app/estudiante?page=${pagina}&limit=1000`,
+      )
+      const data = await res.json()
+      setEstudiantes(data.estudiantes || [])
+      setTotalPages(data.totalPages || 1)
+      setPage(data.page || 1)
     } catch {
-      setMensaje("Error cargando estudiantes.");
+      setMensaje('Error cargando estudiantes.')
     }
-    setLoading(false);
-  };
+    setLoading(false)
+  }
 
-  useEffect(() => { fetchEstudiantes(); }, []);
-  useEffect(() => { fetchCatalogos(); }, []);
+  useEffect(() => {
+    fetchEstudiantes()
+  }, [])
+  useEffect(() => {
+    fetchCatalogos()
+  }, [])
 
   // Eliminar
   const handleDelete = async () => {
     try {
-      const res = await fetch(`http://localhost:4000/estudiante/${estudianteDelete.cedula}`, {
-        method: "DELETE"
-      });
-      const data = await res.json();
-      setMensaje(data.mensaje);
-      setModalDelete(false);
-      fetchEstudiantes();
+      const res = await fetch(
+        `https://mateweb-production.up.railway.app/estudiante/${estudianteDelete.cedula}`,
+        {
+          method: 'DELETE',
+        },
+      )
+      const data = await res.json()
+      setMensaje(data.mensaje)
+      setModalDelete(false)
+      fetchEstudiantes()
     } catch {
-      setMensaje("Error eliminando estudiante.");
+      setMensaje('Error eliminando estudiante.')
     }
-  };
+  }
 
   // Editar
   const handleEdit = async () => {
-    setErrorEdit("");
+    setErrorEdit('')
     try {
-      const res = await fetch(`http://localhost:4000/estudiante/${estudianteEdit.cedula}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(estudianteEdit)
-      });
-      const data = await res.json();
+      const res = await fetch(
+        `https://mateweb-production.up.railway.app/estudiante/${estudianteEdit.cedula}`,
+        {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(estudianteEdit),
+        },
+      )
+      const data = await res.json()
       if (res.ok) {
-        setMensaje(data.mensaje);
-        setModalEdit(false);
-        fetchEstudiantes();
+        setMensaje(data.mensaje)
+        setModalEdit(false)
+        fetchEstudiantes()
       } else {
-        setErrorEdit(data.mensaje || "Error editando estudiante.");
+        setErrorEdit(data.mensaje || 'Error editando estudiante.')
       }
     } catch {
-      setErrorEdit("Error editando estudiante.");
+      setErrorEdit('Error editando estudiante.')
     }
-  };
+  }
 
-  // Manejar cambios en los campos del modal de edición
+  // Manejar cambios en los campos del modal de ediciÃ³n
   const handleEditChange = (e) => {
-    const { name, value } = e.target;
-    setEstudianteEdit({ ...estudianteEdit, [name]: value });
-  };
+    const { name, value } = e.target
+    setEstudianteEdit({ ...estudianteEdit, [name]: value })
+  }
 
-  // Filtrar estudiantes por búsqueda
-  const estudiantesFiltrados = estudiantes.filter(est =>
-    (est.nombres && est.nombres.toLowerCase().includes(busqueda.toLowerCase())) ||
-    (est.apellidos && est.apellidos.toLowerCase().includes(busqueda.toLowerCase())) ||
-    (est.cedula && est.cedula.toString().includes(busqueda))
-  );
+  // Filtrar estudiantes por bÃºsqueda
+  const estudiantesFiltrados = estudiantes.filter(
+    (est) =>
+      (est.nombres && est.nombres.toLowerCase().includes(busqueda.toLowerCase())) ||
+      (est.apellidos && est.apellidos.toLowerCase().includes(busqueda.toLowerCase())) ||
+      (est.cedula && est.cedula.toString().includes(busqueda)),
+  )
 
-  // Reiniciar a la página 1 cuando cambia la búsqueda
+  // Reiniciar a la pÃ¡gina 1 cuando cambia la bÃºsqueda
   useEffect(() => {
-    setPage(1);
-  }, [busqueda]);
+    setPage(1)
+  }, [busqueda])
 
-  // Paginación local sobre los filtrados
-  const estudiantesPorPagina = 20;
-  const totalPagesFiltrado = Math.ceil(estudiantesFiltrados.length / estudiantesPorPagina);
+  // PaginaciÃ³n local sobre los filtrados
+  const estudiantesPorPagina = 20
+  const totalPagesFiltrado = Math.ceil(estudiantesFiltrados.length / estudiantesPorPagina)
   const estudiantesPaginaActual = estudiantesFiltrados.slice(
     (page - 1) * estudiantesPorPagina,
-    page * estudiantesPorPagina
-  );
+    page * estudiantesPorPagina,
+  )
 
   // Ajuste de estilos para que los nombres y apellidos no se monten ni hagan scroll
   const tablaEstilos = `
@@ -124,7 +158,7 @@ const EstudiantesAdmin = () => {
     max-width: 200px;
     min-width: 100px;
   }
-  `;
+  `
 
   return (
     <CContainer className="py-4">
@@ -132,31 +166,37 @@ const EstudiantesAdmin = () => {
       <CRow className="justify-content-center">
         <CCol xs={12} lg={11}>
           <CCard className="shadow-sm">
-            <CCardHeader style={{ background: "#114c5f", color: "#fff" }}>
+            <CCardHeader style={{ background: '#114c5f', color: '#fff' }}>
               <strong>Estudiantes</strong>
             </CCardHeader>
             <CCardBody>
-              {/* Barra de búsqueda */}
+              {/* Barra de bÃºsqueda */}
               <CFormInput
                 className="mb-3"
-                placeholder="Buscar por nombres, apellidos o cédula..."
+                placeholder="Buscar por nombres, apellidos o cÃ©dula..."
                 value={busqueda}
-                onChange={e => setBusqueda(e.target.value)}
+                onChange={(e) => setBusqueda(e.target.value)}
               />
               {mensaje && (
-                <CAlert color={mensaje.includes("Error") ? "danger" : "success"} dismissible onClose={() => setMensaje("")}>
+                <CAlert
+                  color={mensaje.includes('Error') ? 'danger' : 'success'}
+                  dismissible
+                  onClose={() => setMensaje('')}
+                >
                   {mensaje}
                 </CAlert>
               )}
               {loading ? (
-                <div className="text-center py-5"><CSpinner color="primary" /></div>
+                <div className="text-center py-5">
+                  <CSpinner color="primary" />
+                </div>
               ) : (
                 <>
                   <CTable hover bordered align="middle" className="mb-0">
                     <CTableHead color="light">
                       <CTableRow style={{ textAlign: 'center' }}>
                         <CTableHeaderCell>Tipo Documento</CTableHeaderCell>
-                        <CTableHeaderCell>Cédula</CTableHeaderCell>
+                        <CTableHeaderCell>CÃ©dula</CTableHeaderCell>
                         <CTableHeaderCell>Nombres</CTableHeaderCell>
                         <CTableHeaderCell>Apellidos</CTableHeaderCell>
                         <CTableHeaderCell>Nacionalidad</CTableHeaderCell>
@@ -167,36 +207,61 @@ const EstudiantesAdmin = () => {
                       </CTableRow>
                     </CTableHead>
                     <CTableBody>
-                      {estudiantesPaginaActual.map(est => (
+                      {estudiantesPaginaActual.map((est) => (
                         <CTableRow key={est.cedula} style={{ textAlign: 'center' }}>
                           <CTableDataCell>{est.tipo_documento}</CTableDataCell>
                           <CTableDataCell>{est.cedula}</CTableDataCell>
                           <CTableDataCell className="celda-nombre">{est.nombres}</CTableDataCell>
-                          <CTableDataCell className="celda-apellido">{est.apellidos}</CTableDataCell>
+                          <CTableDataCell className="celda-apellido">
+                            {est.apellidos}
+                          </CTableDataCell>
                           <CTableDataCell>{est.nacionalidad}</CTableDataCell>
                           <CTableDataCell>{est.sexo}</CTableDataCell>
-                          <CTableDataCell>{est.fecha_nacimiento ? est.fecha_nacimiento.substring(0, 10) : ""}</CTableDataCell>
+                          <CTableDataCell>
+                            {est.fecha_nacimiento ? est.fecha_nacimiento.substring(0, 10) : ''}
+                          </CTableDataCell>
                           <CTableDataCell>{est.lugar_nacimiento}</CTableDataCell>
                           <CTableDataCell style={{ width: '150px' }}>
-                            <div style={{ display: "flex", gap: "0.5rem", justifyContent: "center" }}>
+                            <div
+                              style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}
+                            >
                               <CButton
-                                style={{backgroundColor:'white', color:'blue', borderColor:'blue'}}
+                                style={{
+                                  backgroundColor: 'white',
+                                  color: 'blue',
+                                  borderColor: 'blue',
+                                }}
                                 size="sm"
                                 onClick={() => {
                                   setEstudianteEdit({
                                     ...est,
                                     nueva_cedula: est.cedula,
-                                    fk_documento: tiposDocumento.find(td => td.nombre === est.tipo_documento)?.id_documento || "",
-                                    nacionalidad: nacionalidades.find(n => n.nombre === est.nacionalidad)?.id_nacionalidad || ""
-                                  });
-                                  setModalEdit(true);
+                                    fk_documento:
+                                      tiposDocumento.find((td) => td.nombre === est.tipo_documento)
+                                        ?.id_documento || '',
+                                    nacionalidad:
+                                      nacionalidades.find((n) => n.nombre === est.nacionalidad)
+                                        ?.id_nacionalidad || '',
+                                  })
+                                  setModalEdit(true)
                                 }}
-                              >Editar</CButton>
+                              >
+                                Editar
+                              </CButton>
                               <CButton
-                                style={{backgroundColor:'white', color:'red', borderColor:'red'}}
+                                style={{
+                                  backgroundColor: 'white',
+                                  color: 'red',
+                                  borderColor: 'red',
+                                }}
                                 size="sm"
-                                onClick={() => { setEstudianteDelete(est); setModalDelete(true); }}
-                              >Eliminar</CButton>
+                                onClick={() => {
+                                  setEstudianteDelete(est)
+                                  setModalDelete(true)
+                                }}
+                              >
+                                Eliminar
+                              </CButton>
                             </div>
                           </CTableDataCell>
                         </CTableRow>
@@ -222,7 +287,13 @@ const EstudiantesAdmin = () => {
       </CRow>
 
       {/* Modal Editar */}
-      <CModal visible={modalEdit} onClose={() => { setModalEdit(false); setErrorEdit(""); }}>
+      <CModal
+        visible={modalEdit}
+        onClose={() => {
+          setModalEdit(false)
+          setErrorEdit('')
+        }}
+      >
         <CModalHeader>
           <CModalTitle>Editar Estudiante</CModalTitle>
         </CModalHeader>
@@ -236,7 +307,7 @@ const EstudiantesAdmin = () => {
             <>
               <CFormInput
                 className="mb-2"
-                label="Cédula"
+                label="CÃ©dula"
                 name="nueva_cedula"
                 value={estudianteEdit.nueva_cedula}
                 onChange={handleEditChange}
@@ -263,8 +334,10 @@ const EstudiantesAdmin = () => {
                 onChange={handleEditChange}
               >
                 <option value="">Seleccione</option>
-                {nacionalidades.map(n => (
-                  <option key={n.id_nacionalidad} value={n.id_nacionalidad}>{n.nombre}</option>
+                {nacionalidades.map((n) => (
+                  <option key={n.id_nacionalidad} value={n.id_nacionalidad}>
+                    {n.nombre}
+                  </option>
                 ))}
               </CFormSelect>
               <CFormInput
@@ -279,7 +352,11 @@ const EstudiantesAdmin = () => {
                 label="Fecha de Nacimiento"
                 name="fecha_nacimiento"
                 type="date"
-                value={estudianteEdit.fecha_nacimiento ? estudianteEdit.fecha_nacimiento.substring(0, 10) : ""}
+                value={
+                  estudianteEdit.fecha_nacimiento
+                    ? estudianteEdit.fecha_nacimiento.substring(0, 10)
+                    : ''
+                }
                 onChange={handleEditChange}
               />
               <CFormInput
@@ -293,20 +370,35 @@ const EstudiantesAdmin = () => {
                 className="mb-2"
                 label="Tipo Documento"
                 name="fk_documento"
-                value={estudianteEdit.fk_documento || ""}
+                value={estudianteEdit.fk_documento || ''}
                 onChange={handleEditChange}
               >
                 <option value="">Seleccione</option>
-                {tiposDocumento.map(td => (
-                  <option key={td.id_documento} value={td.id_documento}>{td.nombre}</option>
+                {tiposDocumento.map((td) => (
+                  <option key={td.id_documento} value={td.id_documento}>
+                    {td.nombre}
+                  </option>
                 ))}
               </CFormSelect>
             </>
           )}
         </CModalBody>
         <CModalFooter>
-          <CButton style={{backgroundColor:'white', color:'blue', borderColor:'blue'}} onClick={handleEdit}>Guardar</CButton>
-          <CButton style={{backgroundColor:'white', color:'red', borderColor:'red'}} onClick={() => { setModalEdit(false); setErrorEdit(""); }}>Cancelar</CButton>
+          <CButton
+            style={{ backgroundColor: 'white', color: 'blue', borderColor: 'blue' }}
+            onClick={handleEdit}
+          >
+            Guardar
+          </CButton>
+          <CButton
+            style={{ backgroundColor: 'white', color: 'red', borderColor: 'red' }}
+            onClick={() => {
+              setModalEdit(false)
+              setErrorEdit('')
+            }}
+          >
+            Cancelar
+          </CButton>
         </CModalFooter>
       </CModal>
 
@@ -315,16 +407,24 @@ const EstudiantesAdmin = () => {
         <CModalHeader>
           <CModalTitle>Eliminar Estudiante</CModalTitle>
         </CModalHeader>
-        <CModalBody>
-          ¿Está seguro que desea eliminar este estudiante?
-        </CModalBody>
+        <CModalBody>Â¿EstÃ¡ seguro que desea eliminar este estudiante?</CModalBody>
         <CModalFooter>
-          <CButton style={{backgroundColor:'white', color:'red', borderColor:'red'}} onClick={handleDelete}>Eliminar</CButton>
-          <CButton style={{backgroundColor:'white', color:'blue', borderColor:'blue'}} onClick={() => setModalDelete(false)}>Cancelar</CButton>
+          <CButton
+            style={{ backgroundColor: 'white', color: 'red', borderColor: 'red' }}
+            onClick={handleDelete}
+          >
+            Eliminar
+          </CButton>
+          <CButton
+            style={{ backgroundColor: 'white', color: 'blue', borderColor: 'blue' }}
+            onClick={() => setModalDelete(false)}
+          >
+            Cancelar
+          </CButton>
         </CModalFooter>
       </CModal>
     </CContainer>
-  );
-};
+  )
+}
 
-export default EstudiantesAdmin;
+export default EstudiantesAdmin

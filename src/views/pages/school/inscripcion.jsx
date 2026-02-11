@@ -61,8 +61,8 @@ export default function InscripcionEstudiante() {
   const cargarDatos = useCallback(async () => {
     try {
       const [resEstCursos, resInsc] = await Promise.all([
-        fetch('http://localhost:4000/estudiantes-cursos'),
-        fetch('http://localhost:4000/inscripciones'),
+        fetch('https://mateweb-production.up.railway.app/estudiantes-cursos'),
+        fetch('https://mateweb-production.up.railway.app/inscripciones'),
       ])
       const dataEst = await resEstCursos.json()
       const dataInsc = await resInsc.json()
@@ -70,7 +70,7 @@ export default function InscripcionEstudiante() {
       setCursos(dataEst.cursos || [])
       setInscripciones(dataInsc || [])
     } catch (err) {
-      setMensaje({ texto: 'Error de conexión con el servidor', tipo: 'danger' })
+      setMensaje({ texto: 'Error de conexiÃ³n con el servidor', tipo: 'danger' })
     } finally {
       setLoading(false)
     }
@@ -84,19 +84,19 @@ export default function InscripcionEstudiante() {
     e.preventDefault()
     setEnviando(true)
     try {
-      const res = await fetch('http://localhost:4000/inscribir', {
+      const res = await fetch('https://mateweb-production.up.railway.app/inscribir', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id_usuario, id_curso }),
       })
       if (res.ok) {
-        setMensaje({ texto: '¡Inscripción exitosa!', tipo: 'success' })
+        setMensaje({ texto: 'Â¡InscripciÃ³n exitosa!', tipo: 'success' })
         setIdUsuario('')
         setIdCurso('')
         cargarDatos()
       }
     } catch (error) {
-      setMensaje({ texto: 'No se pudo completar la acción', tipo: 'danger' })
+      setMensaje({ texto: 'No se pudo completar la acciÃ³n', tipo: 'danger' })
     }
     setEnviando(false)
   }
@@ -107,32 +107,32 @@ export default function InscripcionEstudiante() {
 
   const datosPaginados = inscripciones.slice((pagina - 1) * porPagina, pagina * porPagina)
 
-  // Función para ELIMINAR
+  // FunciÃ³n para ELIMINAR
   const eliminarInscripcion = async (id) => {
     try {
-      const res = await fetch(`http://localhost:4000/inscripciones/${id}`, {
+      const res = await fetch(`https://mateweb-production.up.railway.app/inscripciones/${id}`, {
         method: 'DELETE',
       })
       if (res.ok) {
-        setMensaje({ texto: 'Inscripción eliminada correctamente', tipo: 'success' })
+        setMensaje({ texto: 'InscripciÃ³n eliminada correctamente', tipo: 'success' })
         setInscripciones(inscripciones.filter((i) => i.id_inscripcion !== id))
       } else {
         throw new Error()
       }
     } catch (error) {
-      setMensaje({ texto: 'Error al eliminar la inscripción', tipo: 'danger' })
+      setMensaje({ texto: 'Error al eliminar la inscripciÃ³n', tipo: 'danger' })
     } finally {
       setModalDelete({ visible: false, data: null })
     }
   }
 
-  // Función para EDITAR (Actualizar curso)
+  // FunciÃ³n para EDITAR (Actualizar curso)
   const guardarCambiosEdicion = async () => {
     if (!modalEdit.data?.id_curso) return
 
     try {
       const res = await fetch(
-        `http://localhost:4000/inscripciones/${modalEdit.data.id_inscripcion}`,
+        `https://mateweb-production.up.railway.app/inscripciones/${modalEdit.data.id_inscripcion}`,
         {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
@@ -141,7 +141,7 @@ export default function InscripcionEstudiante() {
       )
 
       if (res.ok) {
-        setMensaje({ texto: '¡Actualizado con éxito!', tipo: 'success' })
+        setMensaje({ texto: 'Â¡Actualizado con Ã©xito!', tipo: 'success' })
         await cargarDatos() // Refresca la tabla
         setModalEdit({ visible: false, data: null })
       }
@@ -187,8 +187,8 @@ export default function InscripcionEstudiante() {
           <CCard className="custom-card h-100">
             <div className="p-4 text-white text-center" style={{ background: azulProfundo }}>
               <CIcon icon={cilUserPlus} size="xl" className="mb-2" />
-              <h4 className="fw-bold mb-0">Registro Rápido</h4>
-              <p className="small opacity-75">Asigna estudiantes a cursos fácilmente</p>
+              <h4 className="fw-bold mb-0">Registro RÃ¡pido</h4>
+              <p className="small opacity-75">Asigna estudiantes a cursos fÃ¡cilmente</p>
             </div>
             <CCardBody className="p-4">
               {mensaje.texto && (
@@ -204,7 +204,7 @@ export default function InscripcionEstudiante() {
                   </CFormLabel>
                   <CFormInput
                     className="form-control-custom mb-2"
-                    placeholder="Ej: Juan Pérez"
+                    placeholder="Ej: Juan PÃ©rez"
                     value={filtro}
                     onChange={(e) => setFiltro(e.target.value)}
                   />
@@ -305,12 +305,12 @@ export default function InscripcionEstudiante() {
                             style={{
                               backgroundColor: '#eef2ff', // Fondo suave (celeste/purpura muy claro)
                               color: '#4338ca', // Texto en azul vibrante (Indigo)
-                              border: '1px solid #c7d2fe', // Borde sutil para dar definición
+                              border: '1px solid #c7d2fe', // Borde sutil para dar definiciÃ³n
                               padding: '8px 14px',
                               fontSize: '0.85rem',
                               fontWeight: '700',
                               letterSpacing: '0.3px',
-                              boxShadow: '0 2px 4px rgba(0,0,0,0.05)', // Pequeña sombra para profundidad
+                              boxShadow: '0 2px 4px rgba(0,0,0,0.05)', // PequeÃ±a sombra para profundidad
                             }}
                             shape="rounded-pill"
                           >
@@ -369,7 +369,7 @@ export default function InscripcionEstudiante() {
         </CCol>
       </CRow>
 
-      {/* MODAL DE EDICIÓN ESTILIZADA */}
+      {/* MODAL DE EDICIÃ“N ESTILIZADA */}
       <CModal
         visible={modalEdit.visible}
         onClose={() => setModalEdit({ visible: false, data: null })}
@@ -383,7 +383,7 @@ export default function InscripcionEstudiante() {
               <CIcon icon={cilPencil} size="xl" style={{ color: azulProfundo }} />
             </div>
             <h5 className="mb-0 fw-bold" style={{ color: azulProfundo }}>
-              Editar Inscripción
+              Editar InscripciÃ³n
             </h5>
           </div>
         </CModalHeader>
@@ -450,8 +450,8 @@ export default function InscripcionEstudiante() {
         </CModalFooter>
       </CModal>
 
-      {/* Modal de Confirmación / Edición Estilizado */}
-      {/* MODAL DE ELIMINACIÓN (ÚNICA Y OPTIMIZADA) */}
+      {/* Modal de ConfirmaciÃ³n / EdiciÃ³n Estilizado */}
+      {/* MODAL DE ELIMINACIÃ“N (ÃšNICA Y OPTIMIZADA) */}
       <CModal
         visible={modalDelete.visible}
         onClose={() => setModalDelete({ visible: false, data: null })}
@@ -469,7 +469,7 @@ export default function InscripcionEstudiante() {
             </div>
             <div>
               <h5 className="mb-0 fw-bold" style={{ color: azulProfundo }}>
-                Confirmar Baja de Inscripción
+                Confirmar Baja de InscripciÃ³n
               </h5>
               <small className="text-muted">
                 ID Registro: #{modalDelete.data?.id_inscripcion || '---'}
@@ -481,7 +481,7 @@ export default function InscripcionEstudiante() {
         <CModalBody className="p-4">
           <div className="text-center mb-4">
             <p className="text-muted">
-              Estás a punto de dar de baja la siguiente relación académica:
+              EstÃ¡s a punto de dar de baja la siguiente relaciÃ³n acadÃ©mica:
             </p>
           </div>
 
@@ -533,7 +533,7 @@ export default function InscripcionEstudiante() {
 
           <div className="mt-4 p-3 rounded-3 bg-light border text-center">
             <p className="mb-0 text-secondary italic" style={{ fontSize: '0.9rem' }}>
-              "Esta acción retirará al alumno permanentemente de este curso."
+              "Esta acciÃ³n retirarÃ¡ al alumno permanentemente de este curso."
             </p>
           </div>
         </CModalBody>
@@ -560,7 +560,7 @@ export default function InscripcionEstudiante() {
             }}
             onClick={() => eliminarInscripcion(modalDelete.data.id_inscripcion)} // <--- Vinculado
           >
-            SÍ, ELIMINAR
+            SÃ, ELIMINAR
           </CButton>
         </CModalFooter>
       </CModal>

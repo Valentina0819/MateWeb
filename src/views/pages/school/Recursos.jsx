@@ -65,20 +65,20 @@ export default function CrudRecursos() {
   }, [])
 
   const fetchLecciones = () => {
-    fetch('http://localhost:4000/obtenerlecciones')
+    fetch('https://mateweb-production.up.railway.app/obtenerlecciones')
       .then((res) => res.json())
       .then(setLecciones)
   }
 
   const fetchRecursos = () => {
-    fetch('http://localhost:4000/obtenerrecursos')
+    fetch('https://mateweb-production.up.railway.app/obtenerrecursos')
       .then((res) => res.json())
       .then(setRecursos)
   }
 
   const handleRecursoSubmit = async (e) => {
     e.preventDefault()
-    await fetch('http://localhost:4000/crearrecurso', {
+    await fetch('https://mateweb-production.up.railway.app/crearrecurso', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(recursoForm),
@@ -92,7 +92,7 @@ export default function CrudRecursos() {
   const handleRecursoEdit = (recurso) => setRecursoEdit(recurso)
   const handleRecursoEditSave = async (e) => {
     e.preventDefault()
-    await fetch(`http://localhost:4000/recursos/${recursoEdit.id_recurso}`, {
+    await fetch(`https://mateweb-production.up.railway.app/recursos/${recursoEdit.id_recurso}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(recursoEdit),
@@ -105,9 +105,12 @@ export default function CrudRecursos() {
 
   const handleRecursoEliminar = (recurso) => setRecursoEliminar(recurso)
   const handleRecursoEliminarConfirm = async () => {
-    await fetch(`http://localhost:4000/recursos/${recursoEliminar.id_recurso}`, {
-      method: 'DELETE',
-    })
+    await fetch(
+      `https://mateweb-production.up.railway.app/recursos/${recursoEliminar.id_recurso}`,
+      {
+        method: 'DELETE',
+      },
+    )
     setRecursoEliminar(null)
     fetchRecursos()
     setMensaje('Recurso eliminado correctamente')
@@ -119,7 +122,7 @@ export default function CrudRecursos() {
     l.nombre_leccion.toLowerCase().includes(filtroLeccionForm.toLowerCase()),
   )
 
-  // Filtrar recursos por nombre de lección en el CRUD
+  // Filtrar recursos por nombre de lecciÃ³n en el CRUD
   const recursosFiltrados = recursos.filter((r) =>
     r.nombre_leccion.toLowerCase().includes(filtroLeccionCrud.toLowerCase()),
   )
@@ -130,7 +133,7 @@ export default function CrudRecursos() {
     recursoPage * itemsPerPage,
   )
 
-  // Efecto para limpiar el mensaje automáticamente después de 5 segundos
+  // Efecto para limpiar el mensaje automÃ¡ticamente despuÃ©s de 5 segundos
   useEffect(() => {
     if (mensaje) {
       const timer = setTimeout(() => {
@@ -176,7 +179,7 @@ export default function CrudRecursos() {
           </CAlert>
         )}
 
-        {/* 🔹 ROW PRINCIPAL */}
+        {/* ðŸ”¹ ROW PRINCIPAL */}
         <CRow className="g-4 align-items-start">
           <CCol md={12} xl={5} xxl={4}>
             <CCard className="custom-card">
@@ -193,18 +196,18 @@ export default function CrudRecursos() {
                 <CForm onSubmit={handleRecursoSubmit}>
                   <CFormInput
                     className="mb-2"
-                    placeholder="Filtrar lección por nombre"
+                    placeholder="Filtrar lecciÃ³n por nombre"
                     value={filtroLeccionForm}
                     onChange={(e) => setFiltroLeccionForm(e.target.value)}
                   />
                   <CFormSelect
                     className="mb-3"
-                    label="Lección"
+                    label="LecciÃ³n"
                     value={recursoForm.id_leccion}
                     onChange={(e) => setRecursoForm({ ...recursoForm, id_leccion: e.target.value })}
                     required
                   >
-                    <option value="">Seleccione una lección</option>
+                    <option value="">Seleccione una lecciÃ³n</option>
                     {leccionesFiltradasForm.map((l) => (
                       <option key={l.id_leccion} value={l.id_leccion}>
                         {l.nombre_leccion}
@@ -234,8 +237,8 @@ export default function CrudRecursos() {
                   <CFormInput
                     className="mb-3"
                     type="text"
-                    label="Descripción"
-                    placeholder="Descripción"
+                    label="DescripciÃ³n"
+                    placeholder="DescripciÃ³n"
                     value={recursoForm.descripcion}
                     onChange={(e) =>
                       setRecursoForm({ ...recursoForm, descripcion: e.target.value })
@@ -260,7 +263,7 @@ export default function CrudRecursos() {
           <CCol md={12} xl={7} xxl={8}>
             <CCard className="custom-table-card mt-4">
               <CCardHeader className="bg-white border-0 py-3 d-flex justify-content-between align-items-center">
-                {/* Título a la izquierda */}
+                {/* TÃ­tulo a la izquierda */}
                 <div className="d-flex align-items-center fw-bold" style={{ color: '#333' }}>
                   <CIcon icon={cilBook} className="me-2 text-primary" size="lg" />
                   Recursos
@@ -278,7 +281,7 @@ export default function CrudRecursos() {
                     </CInputGroupText>
 
                     <CFormInput
-                      placeholder="Filtrar recursos por lección"
+                      placeholder="Filtrar recursos por lecciÃ³n"
                       value={filtroLeccionCrud}
                       onChange={(e) => {
                         setFiltroLeccionCrud(e.target.value)
@@ -295,7 +298,7 @@ export default function CrudRecursos() {
                       <CTableHeaderCell>LECCION</CTableHeaderCell>
                       <CTableHeaderCell>TIPO</CTableHeaderCell>
                       <CTableHeaderCell>URL</CTableHeaderCell>
-                      <CTableHeaderCell>DESCRIPCIÓN</CTableHeaderCell>
+                      <CTableHeaderCell>DESCRIPCIÃ“N</CTableHeaderCell>
                       <CTableHeaderCell className="text-center">ACCIONES</CTableHeaderCell>
                     </CTableRow>
                   </CTableHead>
@@ -331,7 +334,7 @@ export default function CrudRecursos() {
                   </CTableBody>
                 </CTable>
                 <div className="d-flex justify-content-center mt-3">
-                  <CPagination align="center" aria-label="Paginación recursos">
+                  <CPagination align="center" aria-label="PaginaciÃ³n recursos">
                     <CPaginationItem
                       disabled={recursoPage === 1}
                       onClick={() => setRecursoPage(recursoPage - 1)}
@@ -392,7 +395,7 @@ export default function CrudRecursos() {
                 fontWeight: 'bold',
               }}
             >
-              ✎
+              âœŽ
             </div>
             <h5 className="mb-0 fw-semibold">Editar Recurso</h5>
           </div>
@@ -402,15 +405,15 @@ export default function CrudRecursos() {
         <CModalBody style={{ padding: 24, background: '#f9fafb' }}>
           {recursoEdit && (
             <CForm onSubmit={handleRecursoEditSave}>
-              {/* LECCIÓN */}
+              {/* LECCIÃ“N */}
               <div className="mb-3 p-3 bg-white rounded shadow-sm">
                 <CFormSelect
-                  label="Lección"
+                  label="LecciÃ³n"
                   value={recursoEdit.id_leccion}
                   onChange={(e) => setRecursoEdit({ ...recursoEdit, id_leccion: e.target.value })}
                   required
                 >
-                  <option value="">Seleccione una lección</option>
+                  <option value="">Seleccione una lecciÃ³n</option>
                   {lecciones
                     .filter((l) =>
                       l.nombre_leccion.toLowerCase().includes(filtroLeccionForm.toLowerCase()),
@@ -445,11 +448,11 @@ export default function CrudRecursos() {
                 />
               </div>
 
-              {/* DESCRIPCIÓN */}
+              {/* DESCRIPCIÃ“N */}
               <div className="mb-4 p-3 bg-white rounded shadow-sm">
                 <CFormInput
                   type="text"
-                  label="Descripción"
+                  label="DescripciÃ³n"
                   value={recursoEdit.descripcion}
                   onChange={(e) => setRecursoEdit({ ...recursoEdit, descripcion: e.target.value })}
                   required
@@ -506,9 +509,9 @@ export default function CrudRecursos() {
             </div>
             <div>
               <h5 className="mb-0 fw-bold" style={{ color: '#070145' }}>
-                Confirmar Eliminación de Recurso
+                Confirmar EliminaciÃ³n de Recurso
               </h5>
-              <small className="text-muted">Esta acción no se puede deshacer</small>
+              <small className="text-muted">Esta acciÃ³n no se puede deshacer</small>
             </div>
           </div>
         </CModalHeader>
@@ -517,7 +520,7 @@ export default function CrudRecursos() {
         <CModalBody className="p-4">
           <div className="text-center mb-4">
             <p className="text-muted">
-              Estás a punto de eliminar el siguiente recurso asociado a una lección:
+              EstÃ¡s a punto de eliminar el siguiente recurso asociado a una lecciÃ³n:
             </p>
           </div>
 
@@ -546,7 +549,7 @@ export default function CrudRecursos() {
               </div>
             </CCol>
 
-            {/* Bloque de la Lección */}
+            {/* Bloque de la LecciÃ³n */}
             <CCol md={6}>
               <div
                 className="p-4 h-100 rounded-4 border-start border-4 border-warning"
@@ -556,7 +559,7 @@ export default function CrudRecursos() {
                   className="fw-bold small text-uppercase opacity-50 d-block mb-2"
                   style={{ letterSpacing: '1px' }}
                 >
-                  Lección asociada
+                  LecciÃ³n asociada
                 </label>
 
                 <div className="d-flex align-items-center">
@@ -564,7 +567,7 @@ export default function CrudRecursos() {
                     <CIcon icon={cilEducation} className="text-dark" size="lg" />
                   </div>
                   <span className="fs-5 fw-bold text-dark">
-                    {recursoEliminar?.nombre_leccion || 'Lección no definida'}
+                    {recursoEliminar?.nombre_leccion || 'LecciÃ³n no definida'}
                   </span>
                 </div>
               </div>
@@ -573,7 +576,7 @@ export default function CrudRecursos() {
 
           <div className="mt-4 p-3 rounded-3 bg-light border text-center">
             <p className="mb-0 text-secondary" style={{ fontSize: '0.9rem' }}>
-              ⚠️ Este recurso será eliminado permanentemente y no podrá recuperarse.
+              âš ï¸ Este recurso serÃ¡ eliminado permanentemente y no podrÃ¡ recuperarse.
             </p>
           </div>
         </CModalBody>
@@ -602,7 +605,7 @@ export default function CrudRecursos() {
             }}
             onClick={handleRecursoEliminarConfirm}
           >
-            SÍ, ELIMINAR RECURSO
+            SÃ, ELIMINAR RECURSO
           </CButton>
         </CModalFooter>
       </CModal>

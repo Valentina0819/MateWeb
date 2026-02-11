@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react'
 import {
   CContainer,
   CRow,
@@ -13,7 +13,7 @@ import {
   CFormSelect,
   CButton,
   CAlert,
-} from "@coreui/react";
+} from '@coreui/react'
 
 const EstudianteForm = () => {
   const [formData, setFormData] = useState({
@@ -24,54 +24,54 @@ const EstudianteForm = () => {
     nacionalidad: '',
     sexo: '',
     fecha_nacimiento: '',
-    lugar_nacimiento: ''
-  });
+    lugar_nacimiento: '',
+  })
 
-  const [tiposDocumento, setTiposDocumento] = useState([]);
-  const [nacionalidades, setNacionalidades] = useState([]);
-  const [mensaje, setMensaje] = useState("");
+  const [tiposDocumento, setTiposDocumento] = useState([])
+  const [nacionalidades, setNacionalidades] = useState([])
+  const [mensaje, setMensaje] = useState('')
 
   // Obtener usuario y rol
-  const usuarioGuardado = localStorage.getItem("usuario");
-  const usuario = usuarioGuardado ? JSON.parse(usuarioGuardado) : null;
+  const usuarioGuardado = localStorage.getItem('usuario')
+  const usuario = usuarioGuardado ? JSON.parse(usuarioGuardado) : null
 
   // Obtener tipos de documento
   useEffect(() => {
-    fetch('http://localhost:4000/tipos-documento')
-      .then(res => res.json())
-      .then(data => setTiposDocumento(data))
-      .catch(() => setTiposDocumento([]));
-  }, []);
+    fetch('https://mateweb-production.up.railway.app/tipos-documento')
+      .then((res) => res.json())
+      .then((data) => setTiposDocumento(data))
+      .catch(() => setTiposDocumento([]))
+  }, [])
 
   // Obtener nacionalidades
   useEffect(() => {
-    fetch('http://localhost:4000/nacionalidades')
-      .then(res => res.json())
-      .then(data => setNacionalidades(data))
-      .catch(() => setNacionalidades([]));
-  }, []);
+    fetch('https://mateweb-production.up.railway.app/nacionalidades')
+      .then((res) => res.json())
+      .then((data) => setNacionalidades(data))
+      .catch(() => setNacionalidades([]))
+  }, [])
 
-  const handleChange = e => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
+  const handleChange = (e) => {
+    const { name, value } = e.target
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
-    }));
-  };
+      [name]: value,
+    }))
+  }
 
-  const handleSubmit = async e => {
-    e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault()
     try {
-      const response = await fetch('http://localhost:4000/registrar', {
+      const response = await fetch('https://mateweb-production.up.railway.app/registrar', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
+        body: JSON.stringify(formData),
+      })
 
       if (!response.ok) {
-        setMensaje('Error al registrar estudiante');
+        setMensaje('Error al registrar estudiante')
       } else {
-        setMensaje('Estudiante registrado exitosamente');
+        setMensaje('Estudiante registrado exitosamente')
         setFormData({
           fk_documento: '',
           cedula: '',
@@ -80,33 +80,33 @@ const EstudianteForm = () => {
           nacionalidad: '',
           sexo: '',
           fecha_nacimiento: '',
-          lugar_nacimiento: ''
-        });
+          lugar_nacimiento: '',
+        })
       }
     } catch (err) {
-      setMensaje('Error en la conexión');
+      setMensaje('Error en la conexiÃ³n')
     }
-  };
+  }
 
   return (
     <CContainer className="py-4">
       <CRow className="justify-content-center">
         <CCol xs={12} lg={8}>
           <CCard className="shadow-sm">
-            <CCardHeader style={{ backgroundColor: "#114c5f", color: "white" }}>
+            <CCardHeader style={{ backgroundColor: '#114c5f', color: 'white' }}>
               <CCardTitle>Registro de Estudiante</CCardTitle>
             </CCardHeader>
             <CCardBody>
               {mensaje && (
                 <CAlert
-                  color={mensaje.toLowerCase().includes("error") ? "danger" : "success"}
+                  color={mensaje.toLowerCase().includes('error') ? 'danger' : 'success'}
                   dismissible
-                  onClose={() => setMensaje("")}
+                  onClose={() => setMensaje('')}
                 >
                   {mensaje}
                 </CAlert>
               )}
-              {usuario?.rol === "admin" ? (
+              {usuario?.rol === 'admin' ? (
                 <CForm onSubmit={handleSubmit}>
                   <CRow className="g-3">
                     <CCol md={4}>
@@ -118,7 +118,7 @@ const EstudianteForm = () => {
                         required
                       >
                         <option value="">Seleccione tipo</option>
-                        {tiposDocumento.map(td => (
+                        {tiposDocumento.map((td) => (
                           <option key={td.id_documento} value={td.id_documento}>
                             {td.nombre}
                           </option>
@@ -126,7 +126,7 @@ const EstudianteForm = () => {
                       </CFormSelect>
                     </CCol>
                     <CCol md={4}>
-                      <CFormLabel>Cédula</CFormLabel>
+                      <CFormLabel>CÃ©dula</CFormLabel>
                       <CFormInput
                         name="cedula"
                         placeholder="Ej: 12345678"
@@ -144,7 +144,7 @@ const EstudianteForm = () => {
                         required
                       >
                         <option value="">Seleccione Nacionalidad</option>
-                        {nacionalidades.map(n => (
+                        {nacionalidades.map((n) => (
                           <option key={n.id_nacionalidad} value={n.id_nacionalidad}>
                             {n.nombre}
                           </option>
@@ -165,7 +165,7 @@ const EstudianteForm = () => {
                       <CFormLabel>Apellidos</CFormLabel>
                       <CFormInput
                         name="apellidos"
-                        placeholder="Ej: Pérez Gómez"
+                        placeholder="Ej: PÃ©rez GÃ³mez"
                         value={formData.apellidos}
                         onChange={handleChange}
                         required
@@ -219,7 +219,7 @@ const EstudianteForm = () => {
                           fontSize: '1rem',
                           padding: '8px 8px',
                           borderRadius: '5px',
-                          boxShadow: '0 2px 8px #0001'
+                          boxShadow: '0 2px 8px #0001',
                         }}
                       >
                         Registrar Estudiante
@@ -237,7 +237,7 @@ const EstudianteForm = () => {
         </CCol>
       </CRow>
     </CContainer>
-  );
-};
+  )
+}
 
-export default EstudianteForm;
+export default EstudianteForm

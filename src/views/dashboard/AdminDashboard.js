@@ -21,7 +21,7 @@ export default function DashboardDocente() {
   const [stats, setStats] = useState(null)
 
   useEffect(() => {
-    fetch('http://localhost:4000/dashboard-docente/estadisticas')
+    fetch('https://mateweb-production.up.railway.app/dashboard-docente/estadisticas')
       .then((res) => res.json())
       .then(setStats)
       .catch((err) => console.error('Error al cargar stats:', err))
@@ -98,10 +98,10 @@ export default function DashboardDocente() {
           <CIcon icon={cilChartLine} size="xl" className="me-3" />
           Dashboard Docente
         </h2>
-        <p className="text-muted">Resumen general del progreso académico y estadístico.</p>
+        <p className="text-muted">Resumen general del progreso acadÃ©mico y estadÃ­stico.</p>
       </div>
 
-      {/* Widgets de Estadísticas Uniformes */}
+      {/* Widgets de EstadÃ­sticas Uniformes */}
       <CRow className="mb-4">
         <CCol sm={6} lg={4}>
           <CWidgetStatsA
@@ -133,7 +133,7 @@ export default function DashboardDocente() {
         {/* Tabla Estudiantes por Curso */}
         <CCol md={6}>
           <CCard className="card-uniform border-0 mb-4">
-            <CCardHeader className="header-morado py-3">Distribución de Alumnos</CCardHeader>
+            <CCardHeader className="header-morado py-3">DistribuciÃ³n de Alumnos</CCardHeader>
             <CCardBody className="p-0">
               <CTable responsive className="custom-table">
                 <CTableHead>
@@ -160,7 +160,7 @@ export default function DashboardDocente() {
         {/* Tabla Progreso por Curso */}
         <CCol md={6}>
           <CCard className="card-uniform border-0 mb-4">
-            <CCardHeader className="header-morado py-3">Rendimiento por Módulo</CCardHeader>
+            <CCardHeader className="header-morado py-3">Rendimiento por MÃ³dulo</CCardHeader>
             <CCardBody className="p-0">
               <CTable responsive className="custom-table">
                 <CTableHead>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react'
 import {
   CCard,
   CCardBody,
@@ -12,67 +12,67 @@ import {
   CContainer,
   CSpinner,
   CAlert,
-} from "@coreui/react";
+} from '@coreui/react'
 
 const BuscarEstudiante = () => {
-  const [cedula, setCedula] = useState("");
-  const [estudiante, setEstudiante] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [noEncontrado, setNoEncontrado] = useState(false);
+  const [cedula, setCedula] = useState('')
+  const [estudiante, setEstudiante] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [noEncontrado, setNoEncontrado] = useState(false)
 
   // Obtener usuario y rol
-  const usuarioGuardado = localStorage.getItem("usuario");
-  const usuario = usuarioGuardado ? JSON.parse(usuarioGuardado) : null;
+  const usuarioGuardado = localStorage.getItem('usuario')
+  const usuario = usuarioGuardado ? JSON.parse(usuarioGuardado) : null
 
   const buscarEstudiante = async () => {
-    setLoading(true);
-    setNoEncontrado(false);
+    setLoading(true)
+    setNoEncontrado(false)
     try {
-      const res = await fetch(`http://localhost:4000/estudiante/${cedula}`);
+      const res = await fetch(`https://mateweb-production.up.railway.app/estudiante/${cedula}`)
       if (res.status === 404) {
-        setEstudiante(null);
-        setNoEncontrado(true);
+        setEstudiante(null)
+        setNoEncontrado(true)
       } else {
-        const data = await res.json();
-        setEstudiante(data);
-        setNoEncontrado(false);
+        const data = await res.json()
+        setEstudiante(data)
+        setNoEncontrado(false)
       }
     } catch (error) {
-      console.error("Error al obtener estudiante");
-      setEstudiante(null);
-      setNoEncontrado(true);
+      console.error('Error al obtener estudiante')
+      setEstudiante(null)
+      setNoEncontrado(true)
     }
-    setLoading(false);
-  };
+    setLoading(false)
+  }
 
   return (
     <CContainer className="py-5">
       <CRow className="justify-content-center">
         <CCol xs={12} md={8} lg={6}>
           <CCard className="shadow-sm">
-            <CCardHeader className="" style={{ backgroundColor: "#114c5f", color: "white" }}>
-              <CCardTitle>Búsqueda de Estudiante</CCardTitle>
+            <CCardHeader className="" style={{ backgroundColor: '#114c5f', color: 'white' }}>
+              <CCardTitle>BÃºsqueda de Estudiante</CCardTitle>
             </CCardHeader>
             <CCardBody>
-              {usuario?.rol === "admin" ? (
+              {usuario?.rol === 'admin' ? (
                 <>
                   <CRow className="g-2 align-items-center mb-3">
                     <CCol xs={8}>
                       <CFormInput
                         type="text"
-                        placeholder="Ingrese cédula"
+                        placeholder="Ingrese cÃ©dula"
                         value={cedula}
                         onChange={(e) => setCedula(e.target.value)}
                       />
                     </CCol>
                     <CCol xs={4}>
                       <CButton
-                        style={{ backgroundColor: '#9cd2d3', color: '#114c5f'}}
+                        style={{ backgroundColor: '#9cd2d3', color: '#114c5f' }}
                         className="w-100"
                         onClick={buscarEstudiante}
                         disabled={loading || !cedula}
                       >
-                        {loading ? <CSpinner size="sm" /> : "Buscar"}
+                        {loading ? <CSpinner size="sm" /> : 'Buscar'}
                       </CButton>
                     </CCol>
                   </CRow>
@@ -82,20 +82,20 @@ const BuscarEstudiante = () => {
                       <CCardBody>
                         <CCardTitle className="mb-2">
                           {noEncontrado
-                            ? "Estudiante no encontrado"
+                            ? 'Estudiante no encontrado'
                             : `${estudiante.nombres} ${estudiante.apellidos}`}
                         </CCardTitle>
                         <CCardText>
-                          <strong>Cédula:</strong>{" "}
-                          {noEncontrado ? "No disponible" : estudiante.cedula}
+                          <strong>CÃ©dula:</strong>{' '}
+                          {noEncontrado ? 'No disponible' : estudiante.cedula}
                         </CCardText>
                         <CButton
-                          style={{ backgroundColor: '#114c5f', color: 'white'}}
+                          style={{ backgroundColor: '#114c5f', color: 'white' }}
                           disabled={noEncontrado}
                           onClick={() =>
                             window.open(
-                              `http://localhost:4000/constancia/${cedula}`,
-                              "_blank"
+                              `https://mateweb-production.up.railway.app/constancia/${cedula}`,
+                              '_blank',
                             )
                           }
                         >
@@ -107,8 +107,7 @@ const BuscarEstudiante = () => {
                 </>
               ) : (
                 <CAlert color="warning" className="mb-0">
-                  Solo los administradores pueden buscar estudiantes y generar
-                  constancias.
+                  Solo los administradores pueden buscar estudiantes y generar constancias.
                 </CAlert>
               )}
             </CCardBody>
@@ -116,7 +115,7 @@ const BuscarEstudiante = () => {
         </CCol>
       </CRow>
     </CContainer>
-  );
-};
+  )
+}
 
-export default BuscarEstudiante;
+export default BuscarEstudiante

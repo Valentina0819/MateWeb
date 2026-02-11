@@ -40,14 +40,14 @@ export default function PuntajesEstudiante() {
   const [filtroEstudiante, setFiltroEstudiante] = useState('')
 
   useEffect(() => {
-    fetch('http://localhost:4000/obtenercursos')
+    fetch('https://mateweb-production.up.railway.app/obtenercursos')
       .then((res) => res.json())
       .then(setCursos)
   }, [])
 
   useEffect(() => {
     if (cursoSel) {
-      fetch(`http://localhost:4000/estudiantes-curso/${cursoSel}`)
+      fetch(`https://mateweb-production.up.railway.app/estudiantes-curso/${cursoSel}`)
         .then((res) => res.json())
         .then(setEstudiantes)
     } else {
@@ -59,7 +59,9 @@ export default function PuntajesEstudiante() {
 
   useEffect(() => {
     if (estudianteSel && cursoSel) {
-      fetch(`http://localhost:4000/puntajes-estudiante/${estudianteSel}/${cursoSel}`)
+      fetch(
+        `https://mateweb-production.up.railway.app/puntajes-estudiante/${estudianteSel}/${cursoSel}`,
+      )
         .then((res) => res.json())
         .then(setPuntajes)
     } else {
@@ -76,7 +78,7 @@ export default function PuntajesEstudiante() {
     e.preventDefault()
     try {
       const res = await fetch(
-        `http://localhost:4000/puntaje-ejercicio/${puntajeEdit.id_resultado}`,
+        `https://mateweb-production.up.railway.app/puntaje-ejercicio/${puntajeEdit.id_resultado}`,
         {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
@@ -89,7 +91,9 @@ export default function PuntajesEstudiante() {
         setTipoMensaje('success')
         setEditModal(false)
         // Refrescar puntajes
-        fetch(`http://localhost:4000/puntajes-estudiante/${estudianteSel}/${cursoSel}`)
+        fetch(
+          `https://mateweb-production.up.railway.app/puntajes-estudiante/${estudianteSel}/${cursoSel}`,
+        )
           .then((res) => res.json())
           .then(setPuntajes)
       } else {
@@ -97,7 +101,7 @@ export default function PuntajesEstudiante() {
         setTipoMensaje('danger')
       }
     } catch {
-      setMensaje('Error de conexión')
+      setMensaje('Error de conexiÃ³n')
       setTipoMensaje('danger')
     }
   }
@@ -131,14 +135,14 @@ export default function PuntajesEstudiante() {
           </CCardHeader>
 
           <CCardBody className="p-4 bg-light">
-            {/* Sección de Filtros Estilizada */}
+            {/* SecciÃ³n de Filtros Estilizada */}
             <div className="bg-white p-3 mb-4 shadow-sm" style={{ borderRadius: '15px' }}>
               <h6 className="text-muted mb-3 small fw-bold text-uppercase">Panel de Filtros</h6>
               <CRow className="g-3">
                 <CCol md={6} lg={3}>
                   <CFormInput
-                    label="Módulo"
-                    placeholder="Buscar módulo..."
+                    label="MÃ³dulo"
+                    placeholder="Buscar mÃ³dulo..."
                     value={filtroModulo}
                     onChange={(e) => setFiltroModulo(e.target.value)}
                     className="border-light-blue"
@@ -204,7 +208,7 @@ export default function PuntajesEstudiante() {
               </CAlert>
             )}
 
-            {/* Tabla con diseño moderno */}
+            {/* Tabla con diseÃ±o moderno */}
             <div
               className="bg-white shadow-sm"
               style={{ borderRadius: '15px', overflow: 'hidden' }}
@@ -216,7 +220,7 @@ export default function PuntajesEstudiante() {
                       Ejercicio / Enunciado
                     </CTableHeaderCell>
                     <CTableHeaderCell className="text-muted fw-bold border-0 py-3">
-                      Ubicación
+                      UbicaciÃ³n
                     </CTableHeaderCell>
                     <CTableHeaderCell className="text-muted fw-bold border-0 py-3 text-center">
                       Puntaje
@@ -297,11 +301,11 @@ export default function PuntajesEstudiante() {
         backdrop="static"
       >
         <CModalHeader className="border-0 bg-light">
-          <CModalTitle className="fw-bold">Ajustar Calificación</CModalTitle>
+          <CModalTitle className="fw-bold">Ajustar CalificaciÃ³n</CModalTitle>
         </CModalHeader>
         <CModalBody className="p-4">
           <p className="text-muted small mb-4">
-            Modifica el puntaje obtenido por el estudiante para este ejercicio específico.
+            Modifica el puntaje obtenido por el estudiante para este ejercicio especÃ­fico.
           </p>
           <CForm onSubmit={handleSaveEdit}>
             <div className="mb-4">

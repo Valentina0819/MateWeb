@@ -53,21 +53,21 @@ export default function CrudEjercicios() {
   const [filtroLeccion, setFiltroLeccion] = useState('') // Nuevo estado para filtrar lecciones
 
   useEffect(() => {
-    fetch('http://localhost:4000/obtenerlecciones')
+    fetch('https://mateweb-production.up.railway.app/obtenerlecciones')
       .then((res) => res.json())
       .then(setLecciones)
     fetchEjercicios()
   }, [])
 
   const fetchEjercicios = () => {
-    fetch('http://localhost:4000/obtenerejercicios')
+    fetch('https://mateweb-production.up.railway.app/obtenerejercicios')
       .then((res) => res.json())
       .then(setEjercicios)
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    await fetch('http://localhost:4000/crearejercicio', {
+    await fetch('https://mateweb-production.up.railway.app/crearejercicio', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(form),
@@ -82,7 +82,7 @@ export default function CrudEjercicios() {
     fetchEjercicios()
   }
 
-  // Filtrar ejercicios por nombre de curso/lección
+  // Filtrar ejercicios por nombre de curso/lecciÃ³n
   const ejerciciosFiltrados = ejercicios.filter((e) =>
     (e.nombre_leccion || '').toLowerCase().includes(filtro.toLowerCase()),
   )
@@ -92,7 +92,7 @@ export default function CrudEjercicios() {
     l.nombre_leccion.toLowerCase().includes(filtroLeccion.toLowerCase()),
   )
 
-  // Paginación
+  // PaginaciÃ³n
   const totalPaginas = Math.ceil(ejerciciosFiltrados.length / porPagina)
   const ejerciciosPagina = ejerciciosFiltrados.slice((pagina - 1) * porPagina, pagina * porPagina)
   const azulProfundo = '#070145'
@@ -129,7 +129,7 @@ export default function CrudEjercicios() {
               <CForm onSubmit={handleSubmit} className="row g-3">
                 <CCol md={12}>
                   <CFormInput
-                    placeholder="Filtrar lección por nombre"
+                    placeholder="Filtrar lecciÃ³n por nombre"
                     value={filtroLeccion}
                     onChange={(e) => setFiltroLeccion(e.target.value)}
                     className="mb-2"
@@ -137,12 +137,12 @@ export default function CrudEjercicios() {
                 </CCol>
                 <CCol md={6}>
                   <CFormSelect
-                    label="Lección"
+                    label="LecciÃ³n"
                     value={form.id_leccion}
                     onChange={(e) => setForm({ ...form, id_leccion: e.target.value })}
                     required
                   >
-                    <option value="">Seleccione una lección</option>
+                    <option value="">Seleccione una lecciÃ³n</option>
                     {leccionesFiltradas.map((l) => (
                       <option key={l.id_leccion} value={l.id_leccion}>
                         {l.nombre_leccion}
@@ -220,7 +220,7 @@ export default function CrudEjercicios() {
                     <CIcon icon={cilSearch} className="text-muted" />
                   </CInputGroupText>
                   <CFormInput
-                    placeholder="Filtrar por nombre de curso/lección"
+                    placeholder="Filtrar por nombre de curso/lecciÃ³n"
                     value={filtro}
                     onChange={(e) => {
                       setFiltro(e.target.value)

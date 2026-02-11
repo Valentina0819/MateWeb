@@ -60,7 +60,7 @@ const InscribirEstudiante = () => {
 
   const obtenerSecciones = async () => {
     try {
-      const resSecciones = await fetch('http://localhost:4000/secciones')
+      const resSecciones = await fetch('https://mateweb-production.up.railway.app/secciones')
       const dataSecciones = await resSecciones.json()
       setSecciones(dataSecciones.secciones || [])
     } catch (error) {
@@ -70,7 +70,7 @@ const InscribirEstudiante = () => {
 
   const obtenerAniosEscolares = async () => {
     try {
-      const resAnios = await fetch('http://localhost:4000/aniosescolares')
+      const resAnios = await fetch('https://mateweb-production.up.railway.app/aniosescolares')
       if (!resAnios.ok) throw new Error(`Error en la API: ${resAnios.status}`)
       const dataAnios = await resAnios.json()
       setAniosEscolares(Array.isArray(dataAnios.añosEscolares) ? dataAnios.añosEscolares : [])
@@ -88,7 +88,9 @@ const InscribirEstudiante = () => {
       return
     }
     try {
-      const res = await fetch(`http://localhost:4000/estudiantes?cedula=${cedula}`)
+      const res = await fetch(
+        `https://mateweb-production.up.railway.app/estudiantes?cedula=${cedula}`,
+      )
       const data = await res.json()
       setEstudiantes(data.estudiantes || [])
     } catch (error) {
@@ -109,7 +111,7 @@ const InscribirEstudiante = () => {
       return
     }
     try {
-      const res = await fetch('http://localhost:4000/inscribir-estudiante', {
+      const res = await fetch('https://mateweb-production.up.railway.app/inscribir-estudiante', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -139,7 +141,7 @@ const InscribirEstudiante = () => {
   const fetchInscripciones = async () => {
     try {
       const token = localStorage.getItem('token')
-      let url = `http://localhost:4000/inscripciones-todas?`
+      let url = `https://mateweb-production.up.railway.app/inscripciones-todas?`
       if (filtroInscripcion) url += `filtro=${encodeURIComponent(filtroInscripcion)}`
       const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } })
       const data = await res.json()
@@ -157,7 +159,7 @@ const InscribirEstudiante = () => {
   const handleEliminarInscripcion = async (id) => {
     try {
       const token = localStorage.getItem('token')
-      const res = await fetch(`http://localhost:4000/inscripciones/${id}`, {
+      const res = await fetch(`https://mateweb-production.up.railway.app/inscripciones/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       })
@@ -181,13 +183,16 @@ const InscribirEstudiante = () => {
     }
     try {
       const token = localStorage.getItem('token')
-      const res = await fetch(`http://localhost:4000/inscripciones/${editData.id_inscripcion}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({
-          id_curso: editData.id_seccion,
-        }),
-      })
+      const res = await fetch(
+        `https://mateweb-production.up.railway.app/inscripciones/${editData.id_inscripcion}`,
+        {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({
+            id_curso: editData.id_seccion,
+          }),
+        },
+      )
       const data = await res.json()
       setModalEdit(false)
       setMensajeAdmin(data.mensaje || 'Inscripción actualizada.')

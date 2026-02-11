@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react'
 import {
   CContainer,
   CRow,
@@ -13,99 +13,100 @@ import {
   CButton,
   CAlert,
   CFormInput,
-} from "@coreui/react";
+} from '@coreui/react'
 
 const AsignarMateria = () => {
-  const [materias, setMaterias] = useState([]);
-  const [anios, setAnios] = useState([]);
-  const [codigoMateriaSeleccionada, setCodigoMateriaSeleccionada] = useState("");
-  const [idAnioSeleccionado, setIdAnioSeleccionado] = useState("");
-  const [mensaje, setMensaje] = useState("");
-  const [filtroMateria, setFiltroMateria] = useState(""); // Nuevo estado
+  const [materias, setMaterias] = useState([])
+  const [anios, setAnios] = useState([])
+  const [codigoMateriaSeleccionada, setCodigoMateriaSeleccionada] = useState('')
+  const [idAnioSeleccionado, setIdAnioSeleccionado] = useState('')
+  const [mensaje, setMensaje] = useState('')
+  const [filtroMateria, setFiltroMateria] = useState('') // Nuevo estado
 
   // Obtener usuario y rol
-  const usuarioGuardado = localStorage.getItem("usuario");
-  const usuario = usuarioGuardado ? JSON.parse(usuarioGuardado) : null;
+  const usuarioGuardado = localStorage.getItem('usuario')
+  const usuario = usuarioGuardado ? JSON.parse(usuarioGuardado) : null
 
   useEffect(() => {
-    obtenerMateriasYAnios();
-  }, []);
+    obtenerMateriasYAnios()
+  }, [])
 
   const obtenerMateriasYAnios = async () => {
     try {
-      const resMaterias = await fetch("http://localhost:4000/materias");
-      const dataMaterias = await resMaterias.json();
-      setMaterias(dataMaterias.materias || []);
+      const resMaterias = await fetch('https://mateweb-production.up.railway.app/materias')
+      const dataMaterias = await resMaterias.json()
+      setMaterias(dataMaterias.materias || [])
 
-      const resAnios = await fetch("http://localhost:4000/anios");
-      const dataAnios = await resAnios.json();
-      setAnios(dataAnios.anios || []);
+      const resAnios = await fetch('https://mateweb-production.up.railway.app/anios')
+      const dataAnios = await resAnios.json()
+      setAnios(dataAnios.anios || [])
     } catch (error) {
-      console.error("Error obteniendo datos:", error);
+      console.error('Error obteniendo datos:', error)
     }
-  };
+  }
 
   const handleAsignar = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
 
     if (!codigoMateriaSeleccionada || !idAnioSeleccionado) {
-      setMensaje("Selecciona una materia y un año.");
-      setTimeout(() => setMensaje(""), 2500);
-      return;
+      setMensaje('Selecciona una materia y un año.')
+      setTimeout(() => setMensaje(''), 2500)
+      return
     }
 
     try {
-      const res = await fetch("http://localhost:4000/asignar-seccion", {
-        method: "POST",
+      const res = await fetch('https://mateweb-production.up.railway.app/asignar-seccion', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json"
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           codigo_materia: codigoMateriaSeleccionada,
-          id_año: idAnioSeleccionado
+          id_año: idAnioSeleccionado,
         }),
-      });
+      })
 
-      const data = await res.json();
+      const data = await res.json()
       if (res.ok) {
-        setMensaje("Materia asignada correctamente.");
-        setCodigoMateriaSeleccionada("");
-        setIdAnioSeleccionado("");
+        setMensaje('Materia asignada correctamente.')
+        setCodigoMateriaSeleccionada('')
+        setIdAnioSeleccionado('')
       } else {
-        setMensaje(`Error: ${data.mensaje}`);
+        setMensaje(`Error: ${data.mensaje}`)
       }
-      setTimeout(() => setMensaje(""), 2500); // Cierra el mensaje automáticamente
+      setTimeout(() => setMensaje(''), 2500) // Cierra el mensaje automáticamente
     } catch (error) {
-      setMensaje("Error en la conexión con el servidor.");
-      setTimeout(() => setMensaje(""), 2500);
+      setMensaje('Error en la conexión con el servidor.')
+      setTimeout(() => setMensaje(''), 2500)
     }
-  };
+  }
 
   // Filtrado de materias por nombre o código
-  const materiasFiltradas = materias.filter(m =>
-    m.nombre.toLowerCase().includes(filtroMateria.toLowerCase()) ||
-    m.codigo_materia.toLowerCase().includes(filtroMateria.toLowerCase())
-  );
+  const materiasFiltradas = materias.filter(
+    (m) =>
+      m.nombre.toLowerCase().includes(filtroMateria.toLowerCase()) ||
+      m.codigo_materia.toLowerCase().includes(filtroMateria.toLowerCase()),
+  )
 
   return (
     <CContainer className="pt-2 pb-4 mb-5">
       <CRow className="justify-content-center">
         <CCol xs={12} md={8} lg={6}>
           <CCard className="shadow-sm">
-            <CCardHeader className="" style={{ backgroundColor: "#114c5f", color: "white" }}>
+            <CCardHeader className="" style={{ backgroundColor: '#114c5f', color: 'white' }}>
               <CCardTitle>Asignar Materia a Año</CCardTitle>
             </CCardHeader>
             <CCardBody>
               {mensaje && (
                 <CAlert
-                  color={mensaje.toLowerCase().includes("error") ? "danger" : "success"}
+                  color={mensaje.toLowerCase().includes('error') ? 'danger' : 'success'}
                   dismissible
-                  onClose={() => setMensaje("")}
+                  onClose={() => setMensaje('')}
                 >
                   {mensaje}
                 </CAlert>
               )}
-              {usuario?.rol === "admin" ? (
+              {usuario?.rol === 'admin' ? (
                 <CForm onSubmit={handleAsignar}>
                   <CRow className="g-3 align-items-end">
                     <CCol md={12}>
@@ -115,7 +116,7 @@ const AsignarMateria = () => {
                         type="text"
                         placeholder="Ej: Matemática o MAT101"
                         value={filtroMateria}
-                        onChange={e => setFiltroMateria(e.target.value)}
+                        onChange={(e) => setFiltroMateria(e.target.value)}
                         className="mb-2"
                       />
                       <CFormLabel>Materia</CFormLabel>
@@ -148,7 +149,12 @@ const AsignarMateria = () => {
                       </CFormSelect>
                     </CCol>
                     <CCol md={12} className="d-grid mt-3">
-                      <CButton color="" type="submit" size="lg" style={{ backgroundColor: '#9cd2d3', color: '#114c5f'}}>
+                      <CButton
+                        color=""
+                        type="submit"
+                        size="lg"
+                        style={{ backgroundColor: '#9cd2d3', color: '#114c5f' }}
+                      >
                         Asignar Materia
                       </CButton>
                     </CCol>
@@ -165,7 +171,7 @@ const AsignarMateria = () => {
       </CRow>
       <div style={{ minHeight: 120 }} />
     </CContainer>
-  );
-};
+  )
+}
 
-export default AsignarMateria;
+export default AsignarMateria

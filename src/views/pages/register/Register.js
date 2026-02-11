@@ -8,7 +8,7 @@ const Formulario = () => {
   const [nombre, setNombre] = useState('')
   const [apellido, setApellido] = useState('')
   const [email, setEmail] = useState('')
-  const [contraseña, setContraseña] = useState('')
+  const [contraseÃ±a, setContraseÃ±a] = useState('')
   const [repeatPassword, setRepeatPassword] = useState('')
   const [rol, setRol] = useState('usuario')
   const [enviando, setEnviando] = useState(false)
@@ -18,13 +18,13 @@ const Formulario = () => {
   const [mensaje, setMensaje] = useState({ text: '', color: '' })
   const navigate = useNavigate()
 
-  // VALIDACIONES (Mantenemos tu lógica pero optimizada)
-  const validarNombre = (val) => (!val || val.trim().length < 2 ? 'Mínimo 2 caracteres.' : '')
-  const validarApellido = (val) => (!val || val.trim().length < 2 ? 'Mínimo 2 caracteres.' : '')
-  const validarEmail = (val) => (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val) ? 'Email inválido.' : '')
-  const validarContraseña = (val) => {
-    if (!val || val.length < 6) return 'Mínimo 6 caracteres.'
-    if (!/(?=.*[A-Z])(?=.*\d)/.test(val)) return 'Usa Mayúscula y número.'
+  // VALIDACIONES (Mantenemos tu lÃ³gica pero optimizada)
+  const validarNombre = (val) => (!val || val.trim().length < 2 ? 'MÃ­nimo 2 caracteres.' : '')
+  const validarApellido = (val) => (!val || val.trim().length < 2 ? 'MÃ­nimo 2 caracteres.' : '')
+  const validarEmail = (val) => (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val) ? 'Email invÃ¡lido.' : '')
+  const validarContraseÃ±a = (val) => {
+    if (!val || val.length < 6) return 'MÃ­nimo 6 caracteres.'
+    if (!/(?=.*[A-Z])(?=.*\d)/.test(val)) return 'Usa MayÃºscula y nÃºmero.'
     return ''
   }
 
@@ -33,14 +33,14 @@ const Formulario = () => {
       nombre: validarNombre(nombre),
       apellido: validarApellido(apellido),
       email: validarEmail(email),
-      contraseña: validarContraseña(contraseña),
-      repeatPassword: repeatPassword !== contraseña ? 'No coinciden.' : '',
+      contraseÃ±a: validarContraseÃ±a(contraseÃ±a),
+      repeatPassword: repeatPassword !== contraseÃ±a ? 'No coinciden.' : '',
     }
     setErrors(newErrors)
     const allValid =
       Object.values(newErrors).every((err) => err === '') && nombre && apellido && email
     setIsFormValid(allValid)
-  }, [nombre, apellido, email, contraseña, repeatPassword])
+  }, [nombre, apellido, email, contraseÃ±a, repeatPassword])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -48,21 +48,21 @@ const Formulario = () => {
 
     setEnviando(true)
     try {
-      const response = await fetch('http://localhost:4000/userss', {
+      const response = await fetch('https://mateweb-production.up.railway.app/userss', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nombre, apellido, email, contraseña, rol }),
+        body: JSON.stringify({ nombre, apellido, email, contraseÃ±a, rol }),
       })
 
       if (response.ok) {
-        setMensaje({ text: '¡Registro exitoso! Redirigiendo...', color: 'success' })
+        setMensaje({ text: 'Â¡Registro exitoso! Redirigiendo...', color: 'success' })
         setTimeout(() => navigate('/login'), 2000)
       } else {
         const data = await response.json()
         setMensaje({ text: data.message || 'Error en el servidor', color: 'danger' })
       }
     } catch (error) {
-      setMensaje({ text: 'Error de conexión.', color: 'danger' })
+      setMensaje({ text: 'Error de conexiÃ³n.', color: 'danger' })
     }
     setEnviando(false)
   }
@@ -102,8 +102,8 @@ const Formulario = () => {
           .math-symbol {
             position: absolute;
             font-weight: 900;
-            color: rgba(255, 255, 255, 0.9); /* Más opacidad */
-            text-shadow: 0 0 20px rgba(255, 255, 255, 0.6), 0 0 40px rgba(99, 102, 241, 0.4); /* Efecto Neón */
+            color: rgba(255, 255, 255, 0.9); /* MÃ¡s opacidad */
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.6), 0 0 40px rgba(99, 102, 241, 0.4); /* Efecto NeÃ³n */
             user-select: none;
             filter: blur(0.5px);
           }
@@ -111,7 +111,7 @@ const Formulario = () => {
 
           .sym-lg { font-size: 8rem; opacity: 0.25; filter: blur(1px); } /* Menos blur para que se vea */
           .sym-md { font-size: 5rem; opacity: 0.5; }
-          .sym-sm { font-size: 3rem; opacity: 0.9; } /* El más pequeño es el más brillante */
+          .sym-sm { font-size: 3rem; opacity: 0.9; } /* El mÃ¡s pequeÃ±o es el mÃ¡s brillante */
 
          
           @keyframes float-complex {
@@ -185,20 +185,20 @@ const Formulario = () => {
       </style>
 
       <div className="reg-container">
-        {/* Lluvia de símbolos matemáticos */}
+        {/* Lluvia de sÃ­mbolos matemÃ¡ticos */}
         <div className="math-symbols">
           {[
-            { s: 'π', t: '10%', l: '5%', sz: 'sym-lg' },
-            { s: '√', t: '80%', l: '10%', sz: 'sym-lg' },
-            { s: '∑', t: '15%', l: '85%', sz: 'sym-md' },
-            { s: '∫', t: '50%', l: '5%', sz: 'sym-sm' },
-            { s: '∞', t: '40%', l: '45%', sz: 'sym-lg' },
-            { s: 'Δ', t: '70%', l: '80%', sz: 'sym-md' },
-            { s: 'θ', t: '5%', l: '40%', sz: 'sym-sm' },
-            { s: 'λ', t: '60%', l: '20%', sz: 'sym-sm' },
-            { s: 'Ω', t: '30%', l: '75%', sz: 'sym-md' },
-            { s: 'α', t: '85%', l: '45%', sz: 'sym-sm' },
-            { s: 'β', t: '25%', l: '25%', sz: 'sym-md' },
+            { s: 'Ï€', t: '10%', l: '5%', sz: 'sym-lg' },
+            { s: 'âˆš', t: '80%', l: '10%', sz: 'sym-lg' },
+            { s: 'âˆ‘', t: '15%', l: '85%', sz: 'sym-md' },
+            { s: 'âˆ«', t: '50%', l: '5%', sz: 'sym-sm' },
+            { s: 'âˆž', t: '40%', l: '45%', sz: 'sym-lg' },
+            { s: 'Î”', t: '70%', l: '80%', sz: 'sym-md' },
+            { s: 'Î¸', t: '5%', l: '40%', sz: 'sym-sm' },
+            { s: 'Î»', t: '60%', l: '20%', sz: 'sym-sm' },
+            { s: 'Î©', t: '30%', l: '75%', sz: 'sym-md' },
+            { s: 'Î±', t: '85%', l: '45%', sz: 'sym-sm' },
+            { s: 'Î²', t: '25%', l: '25%', sz: 'sym-md' },
             { s: 'f(x)', t: '55%', l: '90%', sz: 'sym-sm' },
           ].map((item, index) => (
             <span
@@ -220,7 +220,7 @@ const Formulario = () => {
           <div className="reg-card">
             <div className="text-center mb-4">
               <h2 style={{ color: '#2e1065', fontWeight: 800 }}>Crea tu Cuenta</h2>
-              <p className="text-muted">Únete a la mejor comunidad de matemáticas</p>
+              <p className="text-muted">Ãšnete a la mejor comunidad de matemÃ¡ticas</p>
             </div>
 
             {mensaje.text && <CAlert color={mensaje.color}>{mensaje.text}</CAlert>}
@@ -272,11 +272,11 @@ const Formulario = () => {
                     <input
                       className="form-input-custom"
                       type="password"
-                      placeholder="Contraseña"
-                      value={contraseña}
-                      onChange={(e) => setContraseña(e.target.value)}
+                      placeholder="ContraseÃ±a"
+                      value={contraseÃ±a}
+                      onChange={(e) => setContraseÃ±a(e.target.value)}
                     />
-                    {errors.contraseña && <div className="error-text">{errors.contraseña}</div>}
+                    {errors.contraseÃ±a && <div className="error-text">{errors.contraseÃ±a}</div>}
                   </div>
                 </CCol>
                 <CCol md={6}>
@@ -302,12 +302,12 @@ const Formulario = () => {
 
               <div className="text-center mt-4">
                 <p className="text-muted small">
-                  ¿Ya tienes cuenta?{' '}
+                  Â¿Ya tienes cuenta?{' '}
                   <Link
                     to="/login"
                     style={{ color: '#7e22ce', fontWeight: 600, textDecoration: 'none' }}
                   >
-                    Inicia Sesión
+                    Inicia SesiÃ³n
                   </Link>
                 </p>
               </div>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react'
 import {
   CCard,
   CCardBody,
@@ -13,105 +13,112 @@ import {
   CRow,
   CCol,
   CContainer,
-} from "@coreui/react";
+} from '@coreui/react'
 
 const RegistroDocente = () => {
-  const [cedulas, setCedulas] = useState([]);
+  const [cedulas, setCedulas] = useState([])
   const [formulario, setFormulario] = useState({
-    fk_cedula: "",
-    titulo_academico: "",
-    especialidad: "",
-    tipo_contrato: "",
-    fecha_contratacion: "",
-    estado_laboral: "",
-    telefono: "",
-    correo_institucional: "",
-    horas_semanales: "",
-  });
-  const [mensaje, setMensaje] = useState({ tipo: "", texto: "" });
-  const [loading, setLoading] = useState(false);
+    fk_cedula: '',
+    titulo_academico: '',
+    especialidad: '',
+    tipo_contrato: '',
+    fecha_contratacion: '',
+    estado_laboral: '',
+    telefono: '',
+    correo_institucional: '',
+    horas_semanales: '',
+  })
+  const [mensaje, setMensaje] = useState({ tipo: '', texto: '' })
+  const [loading, setLoading] = useState(false)
 
-  // 🔹 Cargar cédulas de usuarios con rol 'usuario'
+  // ðŸ”¹ Cargar cÃ©dulas de usuarios con rol 'usuario'
   useEffect(() => {
     const cargarCedulas = async () => {
       try {
-        const res = await fetch("http://localhost:4000/usuarios/cedulas");
-        const data = await res.json();
-        setCedulas(data);
+        const res = await fetch('https://mateweb-production.up.railway.app/usuarios/cedulas')
+        const data = await res.json()
+        setCedulas(data)
       } catch (error) {
-        console.error("Error al obtener cédulas:", error);
+        console.error('Error al obtener cÃ©dulas:', error)
       }
-    };
-    cargarCedulas();
-  }, []);
+    }
+    cargarCedulas()
+  }, [])
 
-  // 🔹 Manejar cambios en el formulario
+  // ðŸ”¹ Manejar cambios en el formulario
   const manejarCambio = (e) => {
-    setFormulario({ ...formulario, [e.target.name]: e.target.value });
-  };
+    setFormulario({ ...formulario, [e.target.name]: e.target.value })
+  }
 
-  // 🔹 Enviar el formulario al backend
+  // ðŸ”¹ Enviar el formulario al backend
   const enviarFormulario = async (e) => {
-    e.preventDefault();
-    setMensaje({ tipo: "", texto: "" });
-    setLoading(true);
+    e.preventDefault()
+    setMensaje({ tipo: '', texto: '' })
+    setLoading(true)
     try {
-      const res = await fetch("http://localhost:4000/docente", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const res = await fetch('https://mateweb-production.up.railway.app/docente', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formulario),
-      });
+      })
 
       if (res.status === 200 || res.status === 201) {
-        setMensaje({ tipo: "success", texto: "¡Docente registrado exitosamente!" });
+        setMensaje({ tipo: 'success', texto: 'Â¡Docente registrado exitosamente!' })
         setFormulario({
-          fk_cedula: "",
-          titulo_academico: "",
-          especialidad: "",
-          tipo_contrato: "",
-          fecha_contratacion: "",
-          estado_laboral: "",
-          telefono: "",
-          correo_institucional: "",
-          horas_semanales: "",
-        });
+          fk_cedula: '',
+          titulo_academico: '',
+          especialidad: '',
+          tipo_contrato: '',
+          fecha_contratacion: '',
+          estado_laboral: '',
+          telefono: '',
+          correo_institucional: '',
+          horas_semanales: '',
+        })
       } else if (res.status === 409) {
-        const data = await res.json();
-        setMensaje({ tipo: "danger", texto: data.mensaje || "Ya existe un docente con esa cédula." });
+        const data = await res.json()
+        setMensaje({
+          tipo: 'danger',
+          texto: data.mensaje || 'Ya existe un docente con esa cÃ©dula.',
+        })
       } else if (res.status === 404 || res.status === 500) {
-        setMensaje({ tipo: "danger", texto: "No se pudo registrar el docente." });
+        setMensaje({ tipo: 'danger', texto: 'No se pudo registrar el docente.' })
       } else {
-        setMensaje({ tipo: "danger", texto: "Ocurrió un error inesperado." });
+        setMensaje({ tipo: 'danger', texto: 'OcurriÃ³ un error inesperado.' })
       }
     } catch (error) {
-      setMensaje({ tipo: "danger", texto: "No se pudo registrar el docente." });
+      setMensaje({ tipo: 'danger', texto: 'No se pudo registrar el docente.' })
     }
-    setLoading(false);
-  };
+    setLoading(false)
+  }
 
   // Obtener usuario y rol
-  const usuarioGuardado = localStorage.getItem("usuario");
-  const usuario = usuarioGuardado ? JSON.parse(usuarioGuardado) : null;
+  const usuarioGuardado = localStorage.getItem('usuario')
+  const usuario = usuarioGuardado ? JSON.parse(usuarioGuardado) : null
 
   return (
     <CContainer className="py-5">
       <CRow className="justify-content-center">
         <CCol xs={12} md={10} lg={9}>
           <CCard className="shadow-sm">
-            <CCardHeader className="" style={{ backgroundColor: "#114c5f", color: "white" }}>
-              <CCardTitle >Registro de Docente</CCardTitle>
+            <CCardHeader className="" style={{ backgroundColor: '#114c5f', color: 'white' }}>
+              <CCardTitle>Registro de Docente</CCardTitle>
             </CCardHeader>
             <CCardBody>
               {mensaje.texto && (
-                <CAlert color={mensaje.tipo} dismissible onClose={() => setMensaje({ tipo: "", texto: "" })}>
+                <CAlert
+                  color={mensaje.tipo}
+                  dismissible
+                  onClose={() => setMensaje({ tipo: '', texto: '' })}
+                >
                   {mensaje.texto}
                 </CAlert>
               )}
-              {usuario?.rol === "admin" ? (
+              {usuario?.rol === 'admin' ? (
                 <CForm onSubmit={enviarFormulario}>
                   <CRow className="g-3 align-items-end">
                     <CCol md={3}>
-                      <CFormLabel>Cédula</CFormLabel>
+                      <CFormLabel>CÃ©dula</CFormLabel>
                       <CFormSelect
                         name="fk_cedula"
                         value={formulario.fk_cedula}
@@ -127,7 +134,7 @@ const RegistroDocente = () => {
                       </CFormSelect>
                     </CCol>
                     <CCol md={3}>
-                      <CFormLabel>Título Académico</CFormLabel>
+                      <CFormLabel>TÃ­tulo AcadÃ©mico</CFormLabel>
                       <CFormInput
                         type="text"
                         name="titulo_academico"
@@ -143,7 +150,7 @@ const RegistroDocente = () => {
                       <CFormInput
                         type="text"
                         name="especialidad"
-                        placeholder="Ejm Matemáticas"
+                        placeholder="Ejm MatemÃ¡ticas"
                         value={formulario.especialidad}
                         onChange={manejarCambio}
                         required
@@ -163,7 +170,7 @@ const RegistroDocente = () => {
                       />
                     </CCol>
                     <CCol md={3}>
-                      <CFormLabel>Fecha Contratación</CFormLabel>
+                      <CFormLabel>Fecha ContrataciÃ³n</CFormLabel>
                       <CFormInput
                         type="date"
                         name="fecha_contratacion"
@@ -185,7 +192,7 @@ const RegistroDocente = () => {
                       />
                     </CCol>
                     <CCol md={3}>
-                      <CFormLabel>Teléfono</CFormLabel>
+                      <CFormLabel>TelÃ©fono</CFormLabel>
                       <CFormInput
                         type="text"
                         name="telefono"
@@ -223,8 +230,12 @@ const RegistroDocente = () => {
                     </CCol>
                     <CCol md={12}>
                       <div className="d-grid">
-                        <CButton style={{ backgroundColor: '#9cd2d3', color: '#114c5f'}} type="submit" disabled={loading}>
-                          {loading ? "Registrando..." : "Registrar Docente"}
+                        <CButton
+                          style={{ backgroundColor: '#9cd2d3', color: '#114c5f' }}
+                          type="submit"
+                          disabled={loading}
+                        >
+                          {loading ? 'Registrando...' : 'Registrar Docente'}
                         </CButton>
                       </div>
                     </CCol>
@@ -240,7 +251,7 @@ const RegistroDocente = () => {
         </CCol>
       </CRow>
     </CContainer>
-  );
-};
+  )
+}
 
-export default RegistroDocente;
+export default RegistroDocente

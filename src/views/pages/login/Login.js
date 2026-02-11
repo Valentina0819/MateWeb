@@ -17,17 +17,17 @@ import { cilUser, cilLockLocked } from '@coreui/icons'
 const Login = () => {
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
-  const [contraseña, setContraseña] = useState('')
+  const [contraseÃ±a, setContraseÃ±a] = useState('')
   const [showErrorModal, setShowErrorModal] = useState(false)
   const [mensajeError, setMensajeError] = useState('')
 
   const handleLogin = async (e) => {
     e.preventDefault()
     try {
-      const response = await fetch('http://localhost:4000/login', {
+      const response = await fetch('https://mateweb-production.up.railway.app/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, contraseña }),
+        body: JSON.stringify({ email, contraseÃ±a }),
       })
 
       const data = await response.json()
@@ -50,11 +50,11 @@ const Login = () => {
         }
         navigate(routes[data.rol] || '/404')
       } else {
-        setMensajeError(data.mensaje || 'Error al iniciar sesión')
+        setMensajeError(data.mensaje || 'Error al iniciar sesiÃ³n')
         setShowErrorModal(true)
       }
     } catch (error) {
-      setMensajeError('Error de conexión con el servidor')
+      setMensajeError('Error de conexiÃ³n con el servidor')
       setShowErrorModal(true)
     }
   }
@@ -86,8 +86,8 @@ const Login = () => {
           .math-symbol {
             position: absolute;
             font-weight: 900;
-            color: rgba(255, 255, 255, 0.9); /* Más opacidad */
-            text-shadow: 0 0 20px rgba(255, 255, 255, 0.6), 0 0 40px rgba(99, 102, 241, 0.4); /* Efecto Neón */
+            color: rgba(255, 255, 255, 0.9); /* MÃ¡s opacidad */
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.6), 0 0 40px rgba(99, 102, 241, 0.4); /* Efecto NeÃ³n */
             user-select: none;
             filter: blur(0.5px);
           }
@@ -95,9 +95,9 @@ const Login = () => {
 
           .sym-lg { font-size: 8rem; opacity: 0.25; filter: blur(1px); } /* Menos blur para que se vea */
           .sym-md { font-size: 5rem; opacity: 0.5; }
-          .sym-sm { font-size: 3rem; opacity: 0.9; } /* El más pequeño es el más brillante */
+          .sym-sm { font-size: 3rem; opacity: 0.9; } /* El mÃ¡s pequeÃ±o es el mÃ¡s brillante */
 
-          /* 3. Animación un poco más rápida para que se vea el movimiento */
+          /* 3. AnimaciÃ³n un poco mÃ¡s rÃ¡pida para que se vea el movimiento */
           @keyframes float-complex {
             0% { transform: translate(0, 0) rotate(0deg); }
             50% { transform: translate(45px, -70px) rotate(20deg); }
@@ -222,17 +222,17 @@ const Login = () => {
       <div className="login-container">
         <div className="math-symbols">
           {[
-            { s: 'π', t: '10%', l: '5%', sz: 'sym-lg' },
-            { s: '√', t: '80%', l: '10%', sz: 'sym-lg' },
-            { s: '∑', t: '15%', l: '85%', sz: 'sym-md' },
-            { s: '∫', t: '50%', l: '5%', sz: 'sym-sm' },
-            { s: '∞', t: '40%', l: '45%', sz: 'sym-lg' },
-            { s: 'Δ', t: '70%', l: '80%', sz: 'sym-md' },
-            { s: 'θ', t: '5%', l: '40%', sz: 'sym-sm' },
-            { s: 'λ', t: '60%', l: '20%', sz: 'sym-sm' },
-            { s: 'Ω', t: '30%', l: '75%', sz: 'sym-md' },
-            { s: 'α', t: '85%', l: '45%', sz: 'sym-sm' },
-            { s: 'β', t: '25%', l: '25%', sz: 'sym-md' },
+            { s: 'Ï€', t: '10%', l: '5%', sz: 'sym-lg' },
+            { s: 'âˆš', t: '80%', l: '10%', sz: 'sym-lg' },
+            { s: 'âˆ‘', t: '15%', l: '85%', sz: 'sym-md' },
+            { s: 'âˆ«', t: '50%', l: '5%', sz: 'sym-sm' },
+            { s: 'âˆž', t: '40%', l: '45%', sz: 'sym-lg' },
+            { s: 'Î”', t: '70%', l: '80%', sz: 'sym-md' },
+            { s: 'Î¸', t: '5%', l: '40%', sz: 'sym-sm' },
+            { s: 'Î»', t: '60%', l: '20%', sz: 'sym-sm' },
+            { s: 'Î©', t: '30%', l: '75%', sz: 'sym-md' },
+            { s: 'Î±', t: '85%', l: '45%', sz: 'sym-sm' },
+            { s: 'Î²', t: '25%', l: '25%', sz: 'sym-md' },
             { s: 'f(x)', t: '55%', l: '90%', sz: 'sym-sm' },
           ].map((item, index) => (
             <span
@@ -257,7 +257,7 @@ const Login = () => {
                 {/* Lado del Formulario */}
                 <CCol md={6}>
                   <div className="login-card">
-                    <h1 className="login-title">¡Hola de nuevo!</h1>
+                    <h1 className="login-title">Â¡Hola de nuevo!</h1>
                     <p className="login-subtitle">Ingresa tus credenciales para continuar</p>
 
                     <CForm onSubmit={handleLogin}>
@@ -277,9 +277,9 @@ const Login = () => {
                         <input
                           type="password"
                           className="form-input-modern"
-                          placeholder="Contraseña"
-                          value={contraseña}
-                          onChange={(e) => setContraseña(e.target.value)}
+                          placeholder="ContraseÃ±a"
+                          value={contraseÃ±a}
+                          onChange={(e) => setContraseÃ±a(e.target.value)}
                           required
                         />
                         <CIcon icon={cilLockLocked} className="input-icon" size="lg" />
@@ -287,7 +287,7 @@ const Login = () => {
 
                       <div className="d-flex justify-content-end mb-4">
                         <Link to="/lista" className="forgot-password">
-                          ¿Problemas al entrar?
+                          Â¿Problemas al entrar?
                         </Link>
                       </div>
 
@@ -301,7 +301,7 @@ const Login = () => {
                 {/* Lado de Bienvenida (Visible solo en tablets/desktop) */}
                 <CCol md={6} className="d-none d-md-block">
                   <div className="welcome-card">
-                    <h2 className="welcome-title">Matemáticas al Alcance</h2>
+                    <h2 className="welcome-title">MatemÃ¡ticas al Alcance</h2>
                     <p className="welcome-text">
                       Descubre una nueva forma de aprender. Recursos interactivos, seguimiento
                       personalizado y comunidad activa.
@@ -316,7 +316,7 @@ const Login = () => {
           </CRow>
         </CContainer>
 
-        {/* Modal de Error con diseño limpio */}
+        {/* Modal de Error con diseÃ±o limpio */}
         <CModal visible={showErrorModal} onClose={() => setShowErrorModal(false)} centered>
           <CModalHeader closeButton className="border-0 pb-0"></CModalHeader>
           <CModalBody className="text-center py-4">

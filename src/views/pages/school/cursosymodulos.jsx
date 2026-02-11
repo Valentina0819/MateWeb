@@ -75,13 +75,13 @@ export default function CrudCursosModulos() {
 
   // --- CARGA DE DATOS ---
   const fetchCursos = useCallback(async () => {
-    const res = await fetch('http://localhost:4000/obtenercursos')
+    const res = await fetch('https://mateweb-production.up.railway.app/obtenercursos')
     const data = await res.json()
     setCursos(data)
   }, [])
 
   const fetchModulos = useCallback(async () => {
-    const res = await fetch('http://localhost:4000/obtenermodulos')
+    const res = await fetch('https://mateweb-production.up.railway.app/obtenermodulos')
     const data = await res.json()
     setModulos(data)
   }, [])
@@ -95,9 +95,9 @@ export default function CrudCursosModulos() {
   const validarCurso = (form) => {
     let errs = {}
     if (!form.nombre_curso || form.nombre_curso.trim().length < 3)
-      errs.nombre_curso = 'Mínimo 3 caracteres.'
+      errs.nombre_curso = 'MÃ­nimo 3 caracteres.'
     if (!form.descripcion || form.descripcion.trim().length < 5)
-      errs.descripcion = 'Mínimo 5 caracteres.'
+      errs.descripcion = 'MÃ­nimo 5 caracteres.'
     return errs
   }
 
@@ -105,7 +105,7 @@ export default function CrudCursosModulos() {
     let errs = {}
     if (!form.id_curso) errs.id_curso = 'Seleccione un curso.'
     if (!form.nombre_modulo || form.nombre_modulo.trim().length < 3)
-      errs.nombre_modulo = 'Mínimo 3 caracteres.'
+      errs.nombre_modulo = 'MÃ­nimo 3 caracteres.'
     return errs
   }
 
@@ -118,12 +118,12 @@ export default function CrudCursosModulos() {
       return
     }
     try {
-      await fetch('http://localhost:4000/crearcurso', {
+      await fetch('https://mateweb-production.up.railway.app/crearcurso', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(cursoForm),
       })
-      setAlert({ color: 'success', text: 'Curso creado con éxito' })
+      setAlert({ color: 'success', text: 'Curso creado con Ã©xito' })
       setCursoForm({ nombre_curso: '', descripcion: '' })
       setCursoErrors({})
       fetchCursos()
@@ -134,7 +134,7 @@ export default function CrudCursosModulos() {
 
   const handleGuardarEdicionCurso = async () => {
     try {
-      await fetch(`http://localhost:4000/editarcurso/${editCursoId}`, {
+      await fetch(`https://mateweb-production.up.railway.app/editarcurso/${editCursoId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(cursoEditForm),
@@ -149,11 +149,14 @@ export default function CrudCursosModulos() {
 
   const handleDeleteCurso = async () => {
     try {
-      const res = await fetch(`http://localhost:4000/eliminarcurso/${cursoAEliminar}`, {
-        method: 'DELETE',
-      })
+      const res = await fetch(
+        `https://mateweb-production.up.railway.app/eliminarcurso/${cursoAEliminar}`,
+        {
+          method: 'DELETE',
+        },
+      )
       if (res.ok) {
-        setAlert({ color: 'warning', text: 'Curso y módulos eliminados' })
+        setAlert({ color: 'warning', text: 'Curso y mÃ³dulos eliminados' })
         setModalConfirmCurso(false)
         fetchCursos()
         fetchModulos()
@@ -163,7 +166,7 @@ export default function CrudCursosModulos() {
     }
   }
 
-  // --- HANDLERS MÓDULOS ---
+  // --- HANDLERS MÃ“DULOS ---
   const handleModuloSubmit = async (e) => {
     e.preventDefault()
     const errs = validarModulo(moduloForm)
@@ -172,12 +175,12 @@ export default function CrudCursosModulos() {
       return
     }
     try {
-      await fetch('http://localhost:4000/crearmodulo', {
+      await fetch('https://mateweb-production.up.railway.app/crearmodulo', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(moduloForm),
       })
-      setAlert({ color: 'success', text: 'Módulo creado con éxito' })
+      setAlert({ color: 'success', text: 'MÃ³dulo creado con Ã©xito' })
       setModuloForm({ id_curso: '', nombre_modulo: '', descripcion: '' })
       setModuloErrors({})
       fetchModulos()
@@ -188,8 +191,10 @@ export default function CrudCursosModulos() {
 
   const handleDeleteModulo = async () => {
     try {
-      await fetch(`http://localhost:4000/eliminarmodulo/${moduloAEliminar}`, { method: 'DELETE' })
-      setAlert({ color: 'warning', text: 'Módulo eliminado' })
+      await fetch(`https://mateweb-production.up.railway.app/eliminarmodulo/${moduloAEliminar}`, {
+        method: 'DELETE',
+      })
+      setAlert({ color: 'warning', text: 'MÃ³dulo eliminado' })
       setModalConfirmModulo(false)
       fetchModulos()
     } catch {
@@ -197,7 +202,7 @@ export default function CrudCursosModulos() {
     }
   }
 
-  // --- PAGINACIÓN ---
+  // --- PAGINACIÃ“N ---
   const cursosToShow = cursos.slice((cursoPage - 1) * itemsPerPage, cursoPage * itemsPerPage)
   const modulosToShow = modulos.slice((moduloPage - 1) * itemsPerPage, moduloPage * itemsPerPage)
 
@@ -226,7 +231,7 @@ export default function CrudCursosModulos() {
       )}
 
       <CRow className="g-4">
-        {/* --- SECCIÓN CURSOS --- */}
+        {/* --- SECCIÃ“N CURSOS --- */}
         <CCol lg={5}>
           <CCard className="custom-card">
             <CCardHeader className="header-dark p-3">
@@ -248,7 +253,7 @@ export default function CrudCursosModulos() {
                   )}
                 </div>
                 <div className="mb-4">
-                  <span className="form-label-custom">Descripción</span>
+                  <span className="form-label-custom">DescripciÃ³n</span>
                   <CFormInput
                     className="input-modern"
                     value={cursoForm.descripcion}
@@ -284,7 +289,7 @@ export default function CrudCursosModulos() {
                 <thead>
                   <tr>
                     <th className="ps-4 py-3">CURSO</th>
-                    <th>DESCRIPCIÓN</th>
+                    <th>DESCRIPCIÃ“N</th>
                     <th className="text-center">ACCIONES</th>
                   </tr>
                 </thead>
@@ -340,12 +345,12 @@ export default function CrudCursosModulos() {
           </CCard>
         </CCol>
 
-        {/* --- SECCIÓN MÓDULOS --- */}
+        {/* --- SECCIÃ“N MÃ“DULOS --- */}
         <CCol lg={5}>
           <CCard className="custom-card">
             <CCardHeader className="header-green p-3">
               <CIcon icon={cilPlus} className="me-2" />
-              NUEVO MÓDULO
+              NUEVO MÃ“DULO
             </CCardHeader>
             <CCardBody className="p-4">
               <CForm onSubmit={handleModuloSubmit}>
@@ -368,14 +373,14 @@ export default function CrudCursosModulos() {
                   )}
                 </div>
                 <div className="mb-3">
-                  <span className="form-label-custom">Nombre del Módulo</span>
+                  <span className="form-label-custom">Nombre del MÃ³dulo</span>
                   <CFormInput
                     className="input-modern"
                     value={moduloForm.nombre_modulo}
                     onChange={(e) =>
                       setModuloForm({ ...moduloForm, nombre_modulo: e.target.value })
                     }
-                    placeholder="Ej: Hooks Básicos"
+                    placeholder="Ej: Hooks BÃ¡sicos"
                   />
                   {moduloErrors.nombre_modulo && (
                     <small className="text-danger fw-bold">{moduloErrors.nombre_modulo}</small>
@@ -386,7 +391,7 @@ export default function CrudCursosModulos() {
                   className="btn-main w-100 text-white"
                   style={{ background: '#101bb9ff', border: 'none' }}
                 >
-                  GUARDAR MÓDULO
+                  GUARDAR MÃ“DULO
                 </CButton>
               </CForm>
             </CCardBody>
@@ -398,14 +403,14 @@ export default function CrudCursosModulos() {
             <CCardHeader className="bg-white border-0 p-3">
               <h5 className="mb-0 fw-bold">
                 <CIcon icon={cilLayers} className="text-success me-2" />
-                Estructura de Módulos
+                Estructura de MÃ³dulos
               </h5>
             </CCardHeader>
             <CCardBody className="p-0">
               <CTable responsive align="middle" className="table-modern mb-0">
                 <thead>
                   <tr>
-                    <th className="ps-4 py-3">MÓDULO</th>
+                    <th className="ps-4 py-3">MÃ“DULO</th>
                     <th>CURSO RELACIONADO</th>
                     <th className="text-center">ACCIONES</th>
                   </tr>
@@ -472,7 +477,7 @@ export default function CrudCursosModulos() {
               <CIcon icon={cilPencil} className="text-white" size="lg" />
             </div>
             <h5 className="mb-0 fw-bold" style={{ color: azulProfundo }}>
-              Actualizar Información del Curso
+              Actualizar InformaciÃ³n del Curso
             </h5>
           </div>
         </CModalHeader>
@@ -523,7 +528,7 @@ export default function CrudCursosModulos() {
                   className="form-label-custom mb-2"
                   style={{ color: azulProfundo, letterSpacing: '1px' }}
                 >
-                  DESCRIPCIÓN DETALLADA
+                  DESCRIPCIÃ“N DETALLADA
                 </label>
                 <CFormInput
                   className="input-modern shadow-sm"
@@ -533,7 +538,7 @@ export default function CrudCursosModulos() {
                     padding: '12px',
                     border: '2px solid #cbd5e1',
                   }}
-                  placeholder="¿Qué aprenderán los alumnos?"
+                  placeholder="Â¿QuÃ© aprenderÃ¡n los alumnos?"
                   value={cursoEditForm.descripcion}
                   onChange={(e) =>
                     setCursoEditForm({ ...cursoEditForm, descripcion: e.target.value })
@@ -571,7 +576,7 @@ export default function CrudCursosModulos() {
         </CModalFooter>
       </CModal>
 
-      {/* Modal de confirmación para eliminar curso */}
+      {/* Modal de confirmaciÃ³n para eliminar curso */}
       <CModal
         visible={modalConfirmCurso}
         onClose={() => setModalConfirmCurso(false)}
@@ -590,9 +595,9 @@ export default function CrudCursosModulos() {
             </div>
             <div>
               <h5 className="mb-0 fw-bold" style={{ color: azulProfundo }}>
-                Confirmar Eliminación de Curso
+                Confirmar EliminaciÃ³n de Curso
               </h5>
-              <small className="text-muted">Esta acción no se puede deshacer</small>
+              <small className="text-muted">Esta acciÃ³n no se puede deshacer</small>
             </div>
           </div>
         </CModalHeader>
@@ -600,7 +605,7 @@ export default function CrudCursosModulos() {
         {/* BODY */}
         <CModalBody className="p-4">
           <div className="text-center mb-4">
-            <p className="text-muted">Estás a punto de eliminar el siguiente curso del sistema:</p>
+            <p className="text-muted">EstÃ¡s a punto de eliminar el siguiente curso del sistema:</p>
           </div>
 
           <CRow className="g-3">
@@ -632,8 +637,8 @@ export default function CrudCursosModulos() {
 
           <div className="mt-4 p-3 rounded-3 bg-light border text-center">
             <p className="mb-0 text-secondary" style={{ fontSize: '0.9rem' }}>
-              ⚠️ Al eliminar este curso se eliminarán todos los módulos, inscripciones y registros
-              asociados de forma permanente.
+              âš ï¸ Al eliminar este curso se eliminarÃ¡n todos los mÃ³dulos, inscripciones y
+              registros asociados de forma permanente.
             </p>
           </div>
         </CModalBody>
@@ -665,7 +670,7 @@ export default function CrudCursosModulos() {
               handleDeleteCurso()
             }}
           >
-            SÍ, ELIMINAR CURSO
+            SÃ, ELIMINAR CURSO
           </CButton>
         </CModalFooter>
       </CModal>
@@ -685,12 +690,12 @@ export default function CrudCursosModulos() {
             </div>
             <div>
               <h5 className="mb-0 fw-bold" style={{ color: azulProfundo }}>
-                Eliminar Módulo
+                Eliminar MÃ³dulo
               </h5>
             </div>
           </div>
         </CModalHeader>
-        <CModalBody>¿Estás seguro de que deseas eliminar este módulo?</CModalBody>
+        <CModalBody>Â¿EstÃ¡s seguro de que deseas eliminar este mÃ³dulo?</CModalBody>
         <CModalFooter className="border-0">
           <CButton color="light" onClick={() => setModalConfirmModulo(false)}>
             Cancelar

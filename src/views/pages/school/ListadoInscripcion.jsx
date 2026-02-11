@@ -62,7 +62,7 @@ const MateriasInscritasAdmin = () => {
     setLoading(true)
     try {
       const token = localStorage.getItem('token')
-      let url = `http://localhost:4000/estudiantes-materias-inscritas?`
+      let url = `https://mateweb-production.up.railway.app/estudiantes-materias-inscritas?`
       if (filtro) url += `filtro=${encodeURIComponent(filtro)}&`
       if (anioEscolar) url += `anioEscolar=${encodeURIComponent(anioEscolar)}&`
       const res = await fetch(url, {
@@ -78,7 +78,7 @@ const MateriasInscritasAdmin = () => {
 
   const fetchAniosEscolares = async () => {
     try {
-      const res = await fetch('http://localhost:4000/aniosescolares')
+      const res = await fetch('https://mateweb-production.up.railway.app/aniosescolares')
       const data = await res.json()
       setAniosEscolares(data.añosEscolares || [])
     } catch (error) {
@@ -97,10 +97,13 @@ const MateriasInscritasAdmin = () => {
   const handleEliminar = async (id) => {
     try {
       const token = localStorage.getItem('token')
-      const res = await fetch(`http://localhost:4000/materias-inscritas/${id}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
-      })
+      const res = await fetch(
+        `https://mateweb-production.up.railway.app/materias-inscritas/${id}`,
+        {
+          method: 'DELETE',
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      )
       const data = await res.json()
       setMensaje(data.mensaje)
       fetchEstudiantes()
@@ -274,7 +277,7 @@ const MateriasInscritasAdmin = () => {
                               className="btn-print d-flex align-items-center px-4"
                               onClick={() =>
                                 window.open(
-                                  `http://localhost:4000/comprobante-inscripcion/${est.id_inscripcion}`,
+                                  `https://mateweb-production.up.railway.app/comprobante-inscripcion/${est.id_inscripcion}`,
                                   '_blank',
                                 )
                               }

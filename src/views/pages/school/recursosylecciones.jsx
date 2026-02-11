@@ -64,7 +64,7 @@ export default function CrudLecciones() {
   const [page, setPage] = useState(1)
 
   useEffect(() => {
-    fetch('http://localhost:4000/obtenermodulos')
+    fetch('https://mateweb-production.up.railway.app/obtenermodulos')
       .then((r) => r.json())
       .then(setModulos)
       .catch(() => setModulos([]))
@@ -72,7 +72,7 @@ export default function CrudLecciones() {
   }, [])
 
   const fetchLecciones = () => {
-    fetch('http://localhost:4000/obtenerlecciones')
+    fetch('https://mateweb-production.up.railway.app/obtenerlecciones')
       .then((r) => r.json())
       .then(setLecciones)
       .catch(() => setLecciones([]))
@@ -87,31 +87,31 @@ export default function CrudLecciones() {
     }
 
     try {
-      await fetch('http://localhost:4000/crearleccion', {
+      await fetch('https://mateweb-production.up.railway.app/crearleccion', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(leccionForm),
       })
       setLeccionForm({ id_modulo: '', nombre_leccion: '', descripcion: '' })
       fetchLecciones()
-      setMensaje('¡Éxito! La lección ha sido creada.')
+      setMensaje('Â¡Ã‰xito! La lecciÃ³n ha sido creada.')
       setTipoMensaje('success')
     } catch {
-      setMensaje('Error al intentar crear la lección')
+      setMensaje('Error al intentar crear la lecciÃ³n')
       setTipoMensaje('danger')
     }
   }
 
   const handleEditSave = async () => {
     try {
-      await fetch(`http://localhost:4000/lecciones/${leccionEdit.id_leccion}`, {
+      await fetch(`https://mateweb-production.up.railway.app/lecciones/${leccionEdit.id_leccion}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(leccionEdit),
       })
       setLeccionEdit(null)
       fetchLecciones()
-      setMensaje('Lección actualizada correctamente')
+      setMensaje('LecciÃ³n actualizada correctamente')
       setTipoMensaje('success')
     } catch {
       setMensaje('Error al editar')
@@ -121,12 +121,15 @@ export default function CrudLecciones() {
 
   const handleDelete = async () => {
     try {
-      await fetch(`http://localhost:4000/lecciones/${leccionEliminar.id_leccion}`, {
-        method: 'DELETE',
-      })
+      await fetch(
+        `https://mateweb-production.up.railway.app/lecciones/${leccionEliminar.id_leccion}`,
+        {
+          method: 'DELETE',
+        },
+      )
       setLeccionEliminar(null)
       fetchLecciones()
-      setMensaje('Lección eliminada permanentemente')
+      setMensaje('LecciÃ³n eliminada permanentemente')
       setTipoMensaje('info')
     } catch {
       setMensaje('Error al eliminar')
@@ -186,13 +189,13 @@ export default function CrudLecciones() {
           )}
 
           <CRow className="g-4">
-            {/* FORMULARIO DE CREACIÓN */}
+            {/* FORMULARIO DE CREACIÃ“N */}
             <CCol lg={4}>
               <CCard className="custom-card">
                 <CCardHeader className="header-dark p-3">
                   <div className="p-4 text-white text-center" style={{ background: azulProfundo }}>
                     <CIcon icon={cilPlus} size="xl" className="mb-2" />
-                    <h4 className="fw-bold mb-0">Nueva Lección</h4>
+                    <h4 className="fw-bold mb-0">Nueva LecciÃ³n</h4>
                     <p className="small opacity-75">
                       Asigna nuevas lecciones a modulos correspondientes
                     </p>
@@ -200,13 +203,13 @@ export default function CrudLecciones() {
                 </CCardHeader>
                 <CCardBody>
                   <CForm onSubmit={handleSubmit}>
-                    <label className="small mb-1 fw-bold text-muted">Módulo Padre</label>
+                    <label className="small mb-1 fw-bold text-muted">MÃ³dulo Padre</label>
                     <CInputGroup className="mb-3">
                       <CInputGroupText>
                         <CIcon icon={cilSearch} />
                       </CInputGroupText>
                       <CFormInput
-                        placeholder="Buscar módulo..."
+                        placeholder="Buscar mÃ³dulo..."
                         value={filtroModuloForm}
                         onChange={(e) => setFiltroModuloForm(e.target.value)}
                       />
@@ -219,7 +222,7 @@ export default function CrudLecciones() {
                         setLeccionForm({ ...leccionForm, id_modulo: e.target.value })
                       }
                     >
-                      <option value="">Seleccione un módulo</option>
+                      <option value="">Seleccione un mÃ³dulo</option>
                       {modulos
                         .filter((m) =>
                           m.nombre_modulo.toLowerCase().includes(filtroModuloForm.toLowerCase()),
@@ -231,20 +234,20 @@ export default function CrudLecciones() {
                         ))}
                     </CFormSelect>
 
-                    <label className="small mb-1 fw-bold text-muted">Título</label>
+                    <label className="small mb-1 fw-bold text-muted">TÃ­tulo</label>
                     <CFormInput
                       className="mb-3"
-                      placeholder="Ej: Introducción a React"
+                      placeholder="Ej: IntroducciÃ³n a React"
                       value={leccionForm.nombre_leccion}
                       onChange={(e) =>
                         setLeccionForm({ ...leccionForm, nombre_leccion: e.target.value })
                       }
                     />
 
-                    <label className="small mb-1 fw-bold text-muted">Descripción Corta</label>
+                    <label className="small mb-1 fw-bold text-muted">DescripciÃ³n Corta</label>
                     <CFormInput
                       className="mb-4"
-                      placeholder="¿De qué trata esta lección?"
+                      placeholder="Â¿De quÃ© trata esta lecciÃ³n?"
                       value={leccionForm.descripcion}
                       onChange={(e) =>
                         setLeccionForm({ ...leccionForm, descripcion: e.target.value })
@@ -257,7 +260,7 @@ export default function CrudLecciones() {
                       style={{ background: azulProfundo }}
                     >
                       <CIcon icon={cilSave} className="me-2" />
-                      Registrar Lección
+                      Registrar LecciÃ³n
                     </CButton>
                   </CForm>
                 </CCardBody>
@@ -324,7 +327,7 @@ export default function CrudLecciones() {
                     </CTableBody>
                   </CTable>
 
-                  {/* PAGINACIÓN ESTILO IMAGEN */}
+                  {/* PAGINACIÃ“N ESTILO IMAGEN */}
                   <div className="d-flex justify-content-center py-4 border-top">
                     <CPagination className="mb-0 shadow-sm rounded">
                       <CPaginationItem
@@ -375,9 +378,9 @@ export default function CrudLecciones() {
             </div>
             <div>
               <h5 className="mb-0 fw-bold" style={{ color: '#070145' }}>
-                Editar Lección
+                Editar LecciÃ³n
               </h5>
-              <small className="text-muted">Actualiza la información de la lección</small>
+              <small className="text-muted">Actualiza la informaciÃ³n de la lecciÃ³n</small>
             </div>
           </div>
         </CModalHeader>
@@ -399,7 +402,7 @@ export default function CrudLecciones() {
                     className="fw-bold small text-uppercase d-block mb-2"
                     style={{ color: '#070145', letterSpacing: '1px' }}
                   >
-                    Nombre de la lección
+                    Nombre de la lecciÃ³n
                   </label>
                   <CFormInput
                     className="shadow-sm"
@@ -409,7 +412,7 @@ export default function CrudLecciones() {
                       borderRadius: '10px',
                       border: '2px solid #cbd5e1',
                     }}
-                    placeholder="Ej: Introducción a React"
+                    placeholder="Ej: IntroducciÃ³n a React"
                     value={leccionEdit.nombre_leccion}
                     onChange={(e) =>
                       setLeccionEdit({ ...leccionEdit, nombre_leccion: e.target.value })
@@ -418,7 +421,7 @@ export default function CrudLecciones() {
                 </div>
               </CCol>
 
-              {/* Descripción */}
+              {/* DescripciÃ³n */}
               <CCol md={12}>
                 <div
                   className="p-3 rounded-4"
@@ -431,7 +434,7 @@ export default function CrudLecciones() {
                     className="fw-bold small text-uppercase d-block mb-2"
                     style={{ color: '#070145', letterSpacing: '1px' }}
                   >
-                    Descripción
+                    DescripciÃ³n
                   </label>
                   <CFormInput
                     className="shadow-sm"
@@ -441,7 +444,7 @@ export default function CrudLecciones() {
                       borderRadius: '10px',
                       border: '2px solid #cbd5e1',
                     }}
-                    placeholder="Breve descripción de la lección"
+                    placeholder="Breve descripciÃ³n de la lecciÃ³n"
                     value={leccionEdit.descripcion}
                     onChange={(e) =>
                       setLeccionEdit({ ...leccionEdit, descripcion: e.target.value })
@@ -501,9 +504,9 @@ export default function CrudLecciones() {
             </div>
             <div>
               <h5 className="mb-0 fw-bold" style={{ color: '#070145' }}>
-                Confirmar Eliminación de Lección
+                Confirmar EliminaciÃ³n de LecciÃ³n
               </h5>
-              <small className="text-muted">Esta acción no se puede deshacer</small>
+              <small className="text-muted">Esta acciÃ³n no se puede deshacer</small>
             </div>
           </div>
         </CModalHeader>
@@ -512,7 +515,7 @@ export default function CrudLecciones() {
         <CModalBody className="p-4">
           <div className="text-center mb-4">
             <p className="text-muted">
-              Estás a punto de eliminar la siguiente lección del sistema:
+              EstÃ¡s a punto de eliminar la siguiente lecciÃ³n del sistema:
             </p>
           </div>
 
@@ -526,7 +529,7 @@ export default function CrudLecciones() {
                   className="fw-bold small text-uppercase opacity-50 d-block mb-2"
                   style={{ letterSpacing: '1px' }}
                 >
-                  Lección a eliminar
+                  LecciÃ³n a eliminar
                 </label>
 
                 <div className="d-flex align-items-center">
@@ -534,7 +537,7 @@ export default function CrudLecciones() {
                     <CIcon icon={cilEducation} className="text-white" size="lg" />
                   </div>
                   <span className="fs-4 fw-bold text-dark">
-                    {leccionEliminar?.nombre_leccion || 'Lección no seleccionada'}
+                    {leccionEliminar?.nombre_leccion || 'LecciÃ³n no seleccionada'}
                   </span>
                 </div>
               </div>
@@ -543,7 +546,7 @@ export default function CrudLecciones() {
 
           <div className="mt-4 p-3 rounded-3 bg-light border text-center">
             <p className="mb-0 text-secondary" style={{ fontSize: '0.9rem' }}>
-              ⚠️ Al eliminar esta lección se perderá toda la información asociada de forma
+              âš ï¸ Al eliminar esta lecciÃ³n se perderÃ¡ toda la informaciÃ³n asociada de forma
               permanente.
             </p>
           </div>
@@ -573,7 +576,7 @@ export default function CrudLecciones() {
             }}
             onClick={handleDelete}
           >
-            SÍ, ELIMINAR LECCIÓN
+            SÃ, ELIMINAR LECCIÃ“N
           </CButton>
         </CModalFooter>
       </CModal>

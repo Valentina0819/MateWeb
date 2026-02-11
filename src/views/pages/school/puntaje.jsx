@@ -44,17 +44,17 @@ export default function GestionNotas() {
   const [notasRegistradas, setNotasRegistradas] = useState([])
   const azulProfundo = '#070145'
   useEffect(() => {
-    fetch('http://localhost:4000/obtenercursos')
+    fetch('https://mateweb-production.up.railway.app/obtenercursos')
       .then((res) => res.json())
       .then(setCursos)
   }, [])
 
   useEffect(() => {
     if (cursoSel) {
-      fetch(`http://localhost:4000/estudiantes-curso/${cursoSel}`)
+      fetch(`https://mateweb-production.up.railway.app/estudiantes-curso/${cursoSel}`)
         .then((res) => res.json())
         .then(setEstudiantes)
-      fetch(`http://localhost:4000/evaluaciones-modulo/${cursoSel}`)
+      fetch(`https://mateweb-production.up.railway.app/evaluaciones-modulo/${cursoSel}`)
         .then((res) => res.json())
         .then(setEvaluaciones)
     } else {
@@ -69,7 +69,9 @@ export default function GestionNotas() {
 
   useEffect(() => {
     if (estudianteSel && cursoSel) {
-      fetch(`http://localhost:4000/resultados-ejercicios/${estudianteSel}/${cursoSel}`)
+      fetch(
+        `https://mateweb-production.up.railway.app/resultados-ejercicios/${estudianteSel}/${cursoSel}`,
+      )
         .then((res) => res.json())
         .then(setResultados)
     } else {
@@ -79,7 +81,9 @@ export default function GestionNotas() {
 
   useEffect(() => {
     if (estudianteSel && cursoSel) {
-      fetch(`http://localhost:4000/notas-registradas/${estudianteSel}/${cursoSel}`)
+      fetch(
+        `https://mateweb-production.up.railway.app/notas-registradas/${estudianteSel}/${cursoSel}`,
+      )
         .then((res) => res.json())
         .then(setNotasRegistradas)
     } else {
@@ -102,18 +106,21 @@ export default function GestionNotas() {
       return
     }
     try {
-      const res = await fetch('http://localhost:4000/registrar-nota-evaluacion', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          id_usuario: estudianteSel,
-          nota_final: nota,
-          id_curso: cursoSel,
-        }),
-      })
+      const res = await fetch(
+        'https://mateweb-production.up.railway.app/registrar-nota-evaluacion',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            id_usuario: estudianteSel,
+            nota_final: nota,
+            id_curso: cursoSel,
+          }),
+        },
+      )
       const data = await res.json()
       if (res.ok) {
-        setMensaje('¡Nota registrada correctamente!')
+        setMensaje('Â¡Nota registrada correctamente!')
         setNota('')
         setNotasRegistradas([{ id_usuario: estudianteSel }])
       } else {
@@ -121,7 +128,7 @@ export default function GestionNotas() {
         setTipoMensaje('danger')
       }
     } catch {
-      setMensaje('Error de conexión')
+      setMensaje('Error de conexiÃ³n')
       setTipoMensaje('danger')
     }
   }
@@ -129,7 +136,10 @@ export default function GestionNotas() {
   // Imprimir PDF
   const handleImprimirPDF = () => {
     if (!estudianteSel || !cursoSel) return
-    window.open(`http://localhost:4000/imprimir-lecciones/${estudianteSel}/${cursoSel}`, '_blank')
+    window.open(
+      `https://mateweb-production.up.railway.app/imprimir-lecciones/${estudianteSel}/${cursoSel}`,
+      '_blank',
+    )
   }
 
   return (
@@ -151,7 +161,7 @@ export default function GestionNotas() {
         `}
       </style>
       <CRow className="justify-content-center">
-        {/* Columna de selección/registro de notas */}
+        {/* Columna de selecciÃ³n/registro de notas */}
         <CCol md={4} lg={3}>
           <CCard className="mb-4 shadow">
             <CCardHeader className="header-dark p-3">
@@ -204,7 +214,7 @@ export default function GestionNotas() {
                       onChange={(e) => setEvaluacionSel(e.target.value)}
                       required
                     >
-                      <option value="">Seleccione evaluación</option>
+                      <option value="">Seleccione evaluaciÃ³n</option>
                       {evaluaciones.map((ev) => (
                         <option key={ev.id_evaluacion} value={ev.id_evaluacion}>
                           {ev.nombre_evaluacion}
@@ -243,8 +253,8 @@ export default function GestionNotas() {
                 <CTableHead>
                   <CTableRow>
                     <CTableHeaderCell>ENUNCIADO</CTableHeaderCell>
-                    <CTableHeaderCell>LECCIÓN</CTableHeaderCell>
-                    <CTableHeaderCell>MÓDULO</CTableHeaderCell>
+                    <CTableHeaderCell>LECCIÃ“N</CTableHeaderCell>
+                    <CTableHeaderCell>MÃ“DULO</CTableHeaderCell>
                     <CTableHeaderCell>RESPUESTA ESTUDIANTE</CTableHeaderCell>
                     <CTableHeaderCell>RESPUESTA CORRECTA</CTableHeaderCell>
                     <CTableHeaderCell>PUNTAJE</CTableHeaderCell>

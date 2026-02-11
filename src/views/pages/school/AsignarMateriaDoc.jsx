@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react'
 import {
   CContainer,
   CRow,
@@ -13,45 +13,45 @@ import {
   CButton,
   CAlert,
   CFormInput,
-} from "@coreui/react";
+} from '@coreui/react'
 
 const AsignarMaterias = () => {
-  const [docentes, setDocentes] = useState([]);
-  const [añosMateria, setAñosMateria] = useState([]);
-  const [secciones, setSecciones] = useState([]);
-  const [añosEscolares, setAñosEscolares] = useState([]);
-  const [idDocenteSeleccionado, setIdDocenteSeleccionado] = useState("");
-  const [idAñoMateriaSeleccionado, setIdAñoMateriaSeleccionado] = useState("");
-  const [idSeccionSeleccionada, setIdSeccionSeleccionada] = useState([]);
-  const [idAñoEscolarSeleccionado, setIdAñoEscolarSeleccionado] = useState("");
-  const [mensaje, setMensaje] = useState("");
-  const [busquedaDocente, setBusquedaDocente] = useState(""); // Nuevo estado para búsqueda de docente
-  const [busquedaMateria, setBusquedaMateria] = useState("");
-  const [busquedaSeccion, setBusquedaSeccion] = useState("");
+  const [docentes, setDocentes] = useState([])
+  const [añosMateria, setAñosMateria] = useState([])
+  const [secciones, setSecciones] = useState([])
+  const [añosEscolares, setAñosEscolares] = useState([])
+  const [idDocenteSeleccionado, setIdDocenteSeleccionado] = useState('')
+  const [idAñoMateriaSeleccionado, setIdAñoMateriaSeleccionado] = useState('')
+  const [idSeccionSeleccionada, setIdSeccionSeleccionada] = useState([])
+  const [idAñoEscolarSeleccionado, setIdAñoEscolarSeleccionado] = useState('')
+  const [mensaje, setMensaje] = useState('')
+  const [busquedaDocente, setBusquedaDocente] = useState('') // Nuevo estado para búsqueda de docente
+  const [busquedaMateria, setBusquedaMateria] = useState('')
+  const [busquedaSeccion, setBusquedaSeccion] = useState('')
 
   // Obtener usuario y rol
-  const usuarioGuardado = localStorage.getItem("usuario");
-  const usuario = usuarioGuardado ? JSON.parse(usuarioGuardado) : null;
+  const usuarioGuardado = localStorage.getItem('usuario')
+  const usuario = usuarioGuardado ? JSON.parse(usuarioGuardado) : null
 
   useEffect(() => {
-    obtenerDatosParaAsignar();
-  }, []);
+    obtenerDatosParaAsignar()
+  }, [])
 
   const obtenerDatosParaAsignar = async () => {
     try {
-      const res = await fetch("http://localhost:4000/asignar-materias");
-      const data = await res.json();
-      setDocentes(data.docentes || []);
-      setAñosMateria(data.añosMateria || []);
-      setSecciones(data.secciones || []);
-      setAñosEscolares(data.añosEscolares || []);
+      const res = await fetch('https://mateweb-production.up.railway.app/asignar-materias')
+      const data = await res.json()
+      setDocentes(data.docentes || [])
+      setAñosMateria(data.añosMateria || [])
+      setSecciones(data.secciones || [])
+      setAñosEscolares(data.añosEscolares || [])
     } catch (error) {
-      console.error("Error obteniendo datos:", error);
+      console.error('Error obteniendo datos:', error)
     }
-  };
+  }
 
   const handleAsignar = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
 
     if (
       !idDocenteSeleccionado ||
@@ -59,17 +59,17 @@ const AsignarMaterias = () => {
       !idSeccionSeleccionada.length ||
       !idAñoEscolarSeleccionado
     ) {
-      setMensaje("Selecciona todos los campos antes de asignar.");
-      setTimeout(() => setMensaje(""), 2500);
-      return;
+      setMensaje('Selecciona todos los campos antes de asignar.')
+      setTimeout(() => setMensaje(''), 2500)
+      return
     }
 
     try {
-      const res = await fetch("http://localhost:4000/asignar-docente", {
-        method: "POST",
+      const res = await fetch('https://mateweb-production.up.railway.app/asignar-docente', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
         body: JSON.stringify({
           id_docente: idDocenteSeleccionado,
@@ -77,59 +77,59 @@ const AsignarMaterias = () => {
           id_secciones: idSeccionSeleccionada,
           fk_año_escolar: idAñoEscolarSeleccionado,
         }),
-      });
+      })
 
-      const data = await res.json();
+      const data = await res.json()
       if (res.ok) {
-        setMensaje("Materias asignadas correctamente.");
-        setIdDocenteSeleccionado("");
-        setIdAñoMateriaSeleccionado("");
-        setIdSeccionSeleccionada([]);
-        setIdAñoEscolarSeleccionado("");
+        setMensaje('Materias asignadas correctamente.')
+        setIdDocenteSeleccionado('')
+        setIdAñoMateriaSeleccionado('')
+        setIdSeccionSeleccionada([])
+        setIdAñoEscolarSeleccionado('')
       } else {
-        setMensaje(`Error: ${data.mensaje}`);
+        setMensaje(`Error: ${data.mensaje}`)
       }
-      setTimeout(() => setMensaje(""), 2500);
+      setTimeout(() => setMensaje(''), 2500)
     } catch (error) {
-      console.error("Error asignando materias:", error);
-      setMensaje("Error en la conexión con el servidor.");
-      setTimeout(() => setMensaje(""), 2500);
+      console.error('Error asignando materias:', error)
+      setMensaje('Error en la conexión con el servidor.')
+      setTimeout(() => setMensaje(''), 2500)
     }
-  };
+  }
 
   // Filtrar docentes por nombre o cédula
   const docentesFiltrados = docentes.filter((docente) =>
-    (`${docente.nombre} ${docente.cedula}`.toLowerCase().includes(busquedaDocente.toLowerCase()))
-  );
+    `${docente.nombre} ${docente.cedula}`.toLowerCase().includes(busquedaDocente.toLowerCase()),
+  )
 
   // Filtrar materias según la búsqueda
   const materiasFiltradas = añosMateria.filter((materia) =>
     `${materia.codigo_materia} ${materia.nombre_materia} ${materia.nombre_año}`
       .toLowerCase()
-      .includes(busquedaMateria.toLowerCase())
-  );
+      .includes(busquedaMateria.toLowerCase()),
+  )
 
   // Filtrar secciones según la búsqueda por año
   const seccionesFiltradas = secciones.filter((seccion) =>
-    seccion.nombre_año.toLowerCase().includes(busquedaSeccion.toLowerCase())
-  );
+    seccion.nombre_año.toLowerCase().includes(busquedaSeccion.toLowerCase()),
+  )
 
   return (
     <CContainer className="py-4">
       <CRow className="justify-content-center">
         <CCol xs={12} md={10} lg={8}>
           <CCard className="shadow-sm">
-            <CCardHeader className="" style={{ backgroundColor: "#114c5f", color: "white" }}>
+            <CCardHeader className="" style={{ backgroundColor: '#114c5f', color: 'white' }}>
               <CCardTitle>Asignar Materias a Docentes</CCardTitle>
             </CCardHeader>
             <CCardBody>
-              {usuario?.rol === "admin" ? (
+              {usuario?.rol === 'admin' ? (
                 <>
                   {mensaje && (
                     <CAlert
-                      color={mensaje.toLowerCase().includes("error") ? "danger" : "success"}
+                      color={mensaje.toLowerCase().includes('error') ? 'danger' : 'success'}
                       dismissible
-                      onClose={() => setMensaje("")}
+                      onClose={() => setMensaje('')}
                     >
                       {mensaje}
                     </CAlert>
@@ -143,7 +143,7 @@ const AsignarMaterias = () => {
                           placeholder="Ej: Juan o 12345678"
                           className="mb-2"
                           value={busquedaDocente}
-                          onChange={e => setBusquedaDocente(e.target.value)}
+                          onChange={(e) => setBusquedaDocente(e.target.value)}
                         />
                         <CFormLabel>Docente</CFormLabel>
                         <CFormSelect
@@ -154,7 +154,7 @@ const AsignarMaterias = () => {
                           <option value="">Seleccione un docente</option>
                           {docentesFiltrados.map((docente) => (
                             <option key={docente.id_docente} value={docente.id_docente}>
-                              Nombre: {docente.nombre}  Cedula: {docente.cedula}
+                              Nombre: {docente.nombre} Cedula: {docente.cedula}
                             </option>
                           ))}
                         </CFormSelect>
@@ -175,11 +175,9 @@ const AsignarMaterias = () => {
                         >
                           <option value="">Seleccione una materia</option>
                           {materiasFiltradas.map((materia) => (
-                            <option
-                              key={materia.id_año_materia}
-                              value={materia.id_año_materia}
-                            >
-                              Codigo: {materia.codigo_materia} Nombre: {materia.nombre_materia} Año: {materia.nombre_año}
+                            <option key={materia.id_año_materia} value={materia.id_año_materia}>
+                              Codigo: {materia.codigo_materia} Nombre: {materia.nombre_materia} Año:{' '}
+                              {materia.nombre_año}
                             </option>
                           ))}
                         </CFormSelect>
@@ -196,12 +194,12 @@ const AsignarMaterias = () => {
                         />
                         <div
                           style={{
-                            border: "1px solid #ced4da",
+                            border: '1px solid #ced4da',
                             borderRadius: 4,
                             padding: 8,
                             maxHeight: 180,
-                            overflowY: "auto",
-                            background: "#f8f9fa"
+                            overflowY: 'auto',
+                            background: '#f8f9fa',
                           }}
                         >
                           {seccionesFiltradas.length === 0 && (
@@ -215,15 +213,25 @@ const AsignarMaterias = () => {
                                 id={`seccion-${seccion.id_seccion}`}
                                 value={seccion.id_seccion}
                                 checked={idSeccionSeleccionada.includes(seccion.id_seccion)}
-                                onChange={e => {
+                                onChange={(e) => {
                                   if (e.target.checked) {
-                                    setIdSeccionSeleccionada([...idSeccionSeleccionada, seccion.id_seccion]);
+                                    setIdSeccionSeleccionada([
+                                      ...idSeccionSeleccionada,
+                                      seccion.id_seccion,
+                                    ])
                                   } else {
-                                    setIdSeccionSeleccionada(idSeccionSeleccionada.filter(id => id !== seccion.id_seccion));
+                                    setIdSeccionSeleccionada(
+                                      idSeccionSeleccionada.filter(
+                                        (id) => id !== seccion.id_seccion,
+                                      ),
+                                    )
                                   }
                                 }}
                               />
-                              <label className="form-check-label" htmlFor={`seccion-${seccion.id_seccion}`}>
+                              <label
+                                className="form-check-label"
+                                htmlFor={`seccion-${seccion.id_seccion}`}
+                              >
                                 {seccion.nombre_seccion} - {seccion.nombre_año}
                               </label>
                             </div>
@@ -246,7 +254,12 @@ const AsignarMaterias = () => {
                         </CFormSelect>
                       </CCol>
                       <CCol md={12} className="d-grid mt-3">
-                        <CButton color="" type="submit" size="lg" style={{ backgroundColor: '#9cd2d3', color: '#114c5f'}}>
+                        <CButton
+                          color=""
+                          type="submit"
+                          size="lg"
+                          style={{ backgroundColor: '#9cd2d3', color: '#114c5f' }}
+                        >
                           Asignar Materias
                         </CButton>
                       </CCol>
@@ -263,7 +276,7 @@ const AsignarMaterias = () => {
         </CCol>
       </CRow>
     </CContainer>
-  );
-};
+  )
+}
 
-export default AsignarMaterias;
+export default AsignarMaterias

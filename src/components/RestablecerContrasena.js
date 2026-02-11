@@ -36,11 +36,11 @@ const RestablecerContrasena = () => {
     setMensaje('')
     setError('')
     if (nuevaContrasena !== repeat) {
-      setError('Las contraseñas no coinciden')
+      setError('Las contraseÃ±as no coinciden')
       return
     }
     try {
-      const res = await fetch(`http://localhost:4000/restablecer/${token}`, {
+      const res = await fetch(`https://mateweb-production.up.railway.app/restablecer/${token}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ nuevaContrasena }),
@@ -49,7 +49,7 @@ const RestablecerContrasena = () => {
       if (res.ok) setMensaje(data.mensaje)
       else setError(data.mensaje)
     } catch {
-      setError('Error en la conexión')
+      setError('Error en la conexiÃ³n')
     }
   }
 
@@ -60,32 +60,32 @@ const RestablecerContrasena = () => {
           <CCard className="shadow-lg border-0">
             <CCardHeader className="text-center" style={{ background: '#114c5f' }}>
               <CCardTitle style={{ color: '#fff', fontWeight: 600, fontSize: '1.5rem' }}>
-                Restablecer Contraseña
+                Restablecer ContraseÃ±a
               </CCardTitle>
             </CCardHeader>
             <CCardBody style={{ background: '#f8f9fa' }}>
               <p className="text-center mb-4" style={{ color: '#114c5f' }}>
-                Ingresa tu nueva contraseña y confírmala para restablecer el acceso.
+                Ingresa tu nueva contraseÃ±a y confÃ­rmala para restablecer el acceso.
               </p>
               <CForm onSubmit={handleSubmit}>
                 <CFormInput
                   type="password"
-                  placeholder="Nueva contraseña"
+                  placeholder="Nueva contraseÃ±a"
                   value={nuevaContrasena}
                   onChange={(e) => setNuevaContrasena(e.target.value)}
                   required
                   className="mb-3"
-                  floatingLabel="Nueva contraseña"
+                  floatingLabel="Nueva contraseÃ±a"
                   autoComplete="new-password"
                 />
                 <CFormInput
                   type="password"
-                  placeholder="Repetir contraseña"
+                  placeholder="Repetir contraseÃ±a"
                   value={repeat}
                   onChange={(e) => setRepeat(e.target.value)}
                   required
                   className="mb-3"
-                  floatingLabel="Repetir contraseña"
+                  floatingLabel="Repetir contraseÃ±a"
                   autoComplete="new-password"
                 />
                 <CButton

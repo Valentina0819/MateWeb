@@ -1,51 +1,70 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react'
 import {
-  CContainer, CRow, CCol, CCard, CCardHeader, CCardBody, CCardTitle,
-  CTable, CTableHead, CTableRow, CTableHeaderCell, CTableBody, CTableDataCell, CButton,
-  CFormSelect, CPagination, CPaginationItem
-} from "@coreui/react";
+  CContainer,
+  CRow,
+  CCol,
+  CCard,
+  CCardHeader,
+  CCardBody,
+  CCardTitle,
+  CTable,
+  CTableHead,
+  CTableRow,
+  CTableHeaderCell,
+  CTableBody,
+  CTableDataCell,
+  CButton,
+  CFormSelect,
+  CPagination,
+  CPaginationItem,
+} from '@coreui/react'
 
 const MisAsignaciones = () => {
-  const [asignaciones, setAsignaciones] = useState([]);
-  const [aniosEscolares, setAniosEscolares] = useState([]);
-  const [anioSeleccionado, setAnioSeleccionado] = useState("");
-  const [pagina, setPagina] = useState(1);
-  const porPagina = 10;
+  const [asignaciones, setAsignaciones] = useState([])
+  const [aniosEscolares, setAniosEscolares] = useState([])
+  const [anioSeleccionado, setAnioSeleccionado] = useState('')
+  const [pagina, setPagina] = useState(1)
+  const porPagina = 10
 
   useEffect(() => {
     const fetchAsignaciones = async () => {
-      const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:4000/recibir", {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const data = await res.json();
-      setAsignaciones(data.asignaciones || []);
+      const token = localStorage.getItem('token')
+      const res = await fetch('https://mateweb-production.up.railway.app/recibir', {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      const data = await res.json()
+      setAsignaciones(data.asignaciones || [])
       // Extraer y ordenar años escolares
-      const anios = [...new Set((data.asignaciones || []).map(a => a.año_escolar))]
+      const anios = [...new Set((data.asignaciones || []).map((a) => a.año_escolar))]
         .filter(Boolean)
-        .sort((a, b) => b.localeCompare(a));
-      setAniosEscolares(anios);
-      setAnioSeleccionado(anios[0] || "");
-    };
-    fetchAsignaciones();
-  }, []);
+        .sort((a, b) => b.localeCompare(a))
+      setAniosEscolares(anios)
+      setAnioSeleccionado(anios[0] || '')
+    }
+    fetchAsignaciones()
+  }, [])
 
   // Filtrar por año escolar seleccionado
-  const asignacionesFiltradas = asignaciones.filter(a => a.año_escolar === anioSeleccionado);
+  const asignacionesFiltradas = asignaciones.filter((a) => a.año_escolar === anioSeleccionado)
 
   // Paginación
-  const totalPaginas = Math.ceil(asignacionesFiltradas.length / porPagina);
-  const asignacionesPagina = asignacionesFiltradas.slice((pagina - 1) * porPagina, pagina * porPagina);
+  const totalPaginas = Math.ceil(asignacionesFiltradas.length / porPagina)
+  const asignacionesPagina = asignacionesFiltradas.slice(
+    (pagina - 1) * porPagina,
+    pagina * porPagina,
+  )
 
   // Reiniciar página al cambiar año escolar
-  useEffect(() => { setPagina(1); }, [anioSeleccionado]);
+  useEffect(() => {
+    setPagina(1)
+  }, [anioSeleccionado])
 
   return (
     <CContainer className="py-4">
       <CRow className="justify-content-center">
         <CCol xs={12} md={10} lg={8}>
           <CCard className="shadow-sm">
-            <CCardHeader style={{ backgroundColor: "#114c5f", color: "white" }}>
+            <CCardHeader style={{ backgroundColor: '#114c5f', color: 'white' }}>
               <CCardTitle>Mis Asignaciones</CCardTitle>
             </CCardHeader>
             <CCardBody>
@@ -54,11 +73,13 @@ const MisAsignaciones = () => {
                 <CFormSelect
                   className="mb-3"
                   value={anioSeleccionado}
-                  onChange={e => setAnioSeleccionado(e.target.value)}
+                  onChange={(e) => setAnioSeleccionado(e.target.value)}
                   style={{ maxWidth: 300 }}
                 >
-                  {aniosEscolares.map(anio => (
-                    <option key={anio} value={anio}>{anio}</option>
+                  {aniosEscolares.map((anio) => (
+                    <option key={anio} value={anio}>
+                      {anio}
+                    </option>
                   ))}
                 </CFormSelect>
               )}
@@ -73,7 +94,7 @@ const MisAsignaciones = () => {
                   </CTableRow>
                 </CTableHead>
                 <CTableBody>
-                  {asignacionesPagina.map(asig => (
+                  {asignacionesPagina.map((asig) => (
                     <CTableRow key={asig.id_asignacion}>
                       <CTableDataCell>{asig.materia}</CTableDataCell>
                       <CTableDataCell>{asig.año}</CTableDataCell>
@@ -84,8 +105,8 @@ const MisAsignaciones = () => {
                           color="primary"
                           onClick={() =>
                             window.open(
-                              `http://localhost:4000/docente/registro-calificaciones/${asig.id_asignacion}`,
-                              "_blank"
+                              `https://mateweb-production.up.railway.app/docente/registro-calificaciones/${asig.id_asignacion}`,
+                              '_blank',
                             )
                           }
                         >
@@ -100,10 +121,7 @@ const MisAsignaciones = () => {
               {totalPaginas > 1 && (
                 <div className="d-flex justify-content-center mt-3">
                   <CPagination>
-                    <CPaginationItem
-                      disabled={pagina === 1}
-                      onClick={() => setPagina(pagina - 1)}
-                    >
+                    <CPaginationItem disabled={pagina === 1} onClick={() => setPagina(pagina - 1)}>
                       &laquo;
                     </CPaginationItem>
                     {Array.from({ length: totalPaginas }, (_, i) => (
@@ -129,7 +147,7 @@ const MisAsignaciones = () => {
         </CCol>
       </CRow>
     </CContainer>
-  );
-};
+  )
+}
 
-export default MisAsignaciones;
+export default MisAsignaciones

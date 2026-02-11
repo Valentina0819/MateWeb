@@ -94,36 +94,6 @@ const AppHeaderDropdown = () => {
             Mi Perfil
           </CDropdownItem>
 
-          <CDropdownItem className="custom-item" href="#">
-            <CIcon icon={cilBell} className="me-2 icon-purple" />
-            Notificaciones
-            <CBadge color="primary" shape="rounded-pill" className="ms-auto">
-              12
-            </CBadge>
-          </CDropdownItem>
-
-          <CDropdownItem className="custom-item" href="#">
-            <CIcon icon={cilEnvelopeOpen} className="me-2 icon-purple" />
-            Mensajes
-            <CBadge color="success" shape="rounded-pill" className="ms-auto">
-              5
-            </CBadge>
-          </CDropdownItem>
-
-          <CDropdownHeader className="custom-header my-2">Configuración</CDropdownHeader>
-
-          <CDropdownItem className="custom-item" href="#">
-            <CIcon icon={cilSettings} className="me-2 icon-purple" />
-            Ajustes de Cuenta
-          </CDropdownItem>
-
-          <CDropdownItem className="custom-item" href="#">
-            <CIcon icon={cilLockLocked} className="me-2 icon-purple" />
-            Seguridad
-          </CDropdownItem>
-
-          <CDropdownDivider />
-
           <CDropdownItem className="custom-item text-danger" href="/login">
             <CIcon icon={cilAccountLogout} className="me-2" />
             Cerrar Sesión

@@ -9,7 +9,7 @@ app.options('/api/registro', (req, res) => {
 
 export const registrarUsuario = async (datos) => {
   try {
-    const respuesta = await fetch('http://localhost:4000/users', {  // Asegúrate de usar /users
+    const respuesta = await fetch('https://mateweb-production.up.railway.app/users', {  // AsegÃºrate de usar /users
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(datos)

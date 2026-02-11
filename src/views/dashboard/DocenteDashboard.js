@@ -34,7 +34,7 @@ export default function DashboardDocente() {
   const moradoAcento = '#6b21a8'
 
   useEffect(() => {
-    fetch('http://localhost:4000/dashboard-docente/estadisticas')
+    fetch('https://mateweb-production.up.railway.app/dashboard-docente/estadisticas')
       .then((res) => res.json())
       .then(setStats)
   }, [])
@@ -91,7 +91,7 @@ export default function DashboardDocente() {
         </h2>
       </div>
 
-      {/* Widgets de Estadísticas Uniformes */}
+      {/* Widgets de EstadÃ­sticas Uniformes */}
       <CRow className="mb-4">
         <CCol md={4}>
           <CWidgetStatsA
@@ -126,7 +126,7 @@ export default function DashboardDocente() {
         {/* Tabla Estudiantes */}
         <CCol lg={6}>
           <CCard className="card-uniform h-100">
-            <CCardHeader className="header-morado py-3">Distribución de Alumnos</CCardHeader>
+            <CCardHeader className="header-morado py-3">DistribuciÃ³n de Alumnos</CCardHeader>
             <CCardBody>
               <CTable hover responsive className="align-middle">
                 <CTableHead>
@@ -243,12 +243,12 @@ export default function DashboardDocente() {
         </CCol>
       </CRow>
 
-      {/* Gráfica de Barras */}
+      {/* GrÃ¡fica de Barras */}
       <CRow className="justify-content-center">
         <CCol md={12}>
           <CCard className="card-uniform border-0">
             <CCardHeader className="header-morado py-3">
-              Visualización de Rendimiento Académico
+              VisualizaciÃ³n de Rendimiento AcadÃ©mico
             </CCardHeader>
             <CCardBody className="p-4">
               <div style={{ height: '300px' }}>
